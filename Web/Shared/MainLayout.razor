@@ -1,0 +1,74 @@
+﻿@inherits LayoutComponentBase
+@inject IGlobalConfiguration_Services _GlobalConfiguration
+@inject NavigationManager NavigationManager
+@inject IGlobalElements_Services _GlobalElements
+@inject IAuthenticationService _AuthenticationService
+@*@inject IToastServices _Toast*@
+@*@inject HttpClient Http*@
+
+
+<AuthorizeView>
+    <Authorized>
+        <NavMenu />
+
+        <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+            <TopMenu />
+
+            <div class="container-fluid py-4">@Body</div>
+        </main>
+
+        <_ToastComponent />
+    </Authorized>
+
+    <NotAuthorized>
+        <_SinLogin />
+    </NotAuthorized>
+
+</AuthorizeView>
+
+
+@code {
+    public string styleHidden = "";
+
+    public string NombreDeUsuario { get; set; } = "Usuario";
+    public string URL_ImagenDePerfil { get; set; } = ImagenesHelpers.User_Default;
+    public string Empresa { get; set; } = "UNG system";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+
+            if (_GlobalElements._Usuario == null)
+            {
+                _GlobalElements._Usuario = await _AuthenticationService.GetLogin();
+                if (_GlobalElements._Usuario != null)
+                {
+                    NombreDeUsuario = _GlobalElements._Usuario.Nombre;
+                    URL_ImagenDePerfil = _GlobalElements._Usuario.URL_ImagenDePerfil;
+                    Empresa = _GlobalElements._Usuario.Empresa;
+                }
+                else
+                {
+                    NavigationManager.NavigateTo("/");
+
+                }
+            }
+        }
+        catch (Exception) { }
+
+        _GlobalElements.OnChange += _GlobalElements_Changed;
+        _GlobalConfiguration.OnChange += _GlobalConfiguration_Changed;
+    }
+
+    private void _GlobalElements_Changed()
+    {
+        StateHasChanged();
+    }
+
+    private void _GlobalConfiguration_Changed()
+    {
+        StateHasChanged();
+    }
+
+}
