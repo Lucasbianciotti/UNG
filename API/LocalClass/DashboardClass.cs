@@ -50,7 +50,7 @@ namespace API.LocalClass
         //                         into cas
         //                         from unidad in cas.DefaultIfEmpty()
 
-        //                         where ingreso.IDestado == EstadosEnum.Activo
+        //                         where ingreso.IDstatus == EstadosEnum.Activo
 
         //                         && (
         //                             (ingreso.Fecha_Emision >= filterModel.Fecha_Inicio.Value && ingreso.Fecha_Emision < filterModel.Fecha_Final.Value)

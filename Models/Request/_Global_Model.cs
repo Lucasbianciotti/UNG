@@ -8,7 +8,7 @@ namespace Models.Request
         public long ID { get; set; }
 
 
-        //public string IDestado { get; set; }
+        //public string IDstatus { get; set; }
 
         public DateTime Fecha_Creacion { get; set; }
 

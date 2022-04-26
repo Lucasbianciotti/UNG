@@ -654,7 +654,7 @@
     {
         if (_GlobalElements._Usuario != null)
         {
-            _PermisoParaVer = UsuariosClass.UsuarioTienePermiso(_GlobalElements._Usuario, SeccionesEnum.Dashboard, AccionesEnum.Ver);
+            _PermisoParaVer = UsersClass.UsuarioTienePermiso(_GlobalElements._Usuario, SeccionesEnum.Dashboard, AccionesEnum.View);
 
             if (_PermisoParaVer)
                 await CargarInformacion();
@@ -682,7 +682,7 @@
         catch (Exception e)
         {
             _GlobalConfiguration.NuevoLog("No se pudo cargar la información del Dashboard", AccionesDelSistemaEnum.CargaDeInformacionCompleta, e, CodigosDeErrorEnum.Error);
-            _Toast.ShowError("No se pudo cargar la información. Verifique su conexión a internet.");
+            _Toast.ShowError("The information could not be loaded.");
         }
         finally
         {

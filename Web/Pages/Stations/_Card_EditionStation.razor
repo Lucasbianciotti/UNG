@@ -1,0 +1,204 @@
+﻿@inject HttpClient Http
+@inject IGlobalConfiguration_Services _GlobalConfiguration
+@inject IGlobalElements_Services _GlobalElements
+@inject IToastServices _Toast
+
+@attribute [Authorize]
+
+
+<SfDialog IsModal="false" CloseOnEscape="false"
+          Target="#content-body"
+          CssClass="dialog-max-content"
+          @bind-Visible="@Ventana_Edicion_IsVisible">
+
+    <DialogTemplates>
+        <Content>
+            <div class="row justify-content-md-center">
+                <div class="col col-12 col-md-12">
+                    <SfCard>
+                        <div class="card border-top-blue border-top-3 border-bottom-blue">
+                            <div class="card-header border-bottom-blue">
+                                <div class=" row mbl">
+                                    <i class="fas fa-cash-register mbl"></i>
+                                    <h4 class="card-title title-modal mgn-l-6">
+                                        @Titulo_Ventana_Edicion
+                                    </h4>
+                                </div>
+                                <div class="heading-elements-nvo">
+                                    <ul class="list-inline mb-0">
+                                        <li>
+                                            <div class="e-btn-group col-12 p-0">
+                                                <SfButton @onclick="(async () => await _Page.CargarInformacion())"
+                                                          CssClass="e-outline e-info col-6"
+                                                          IconCss="fas fa-redo-alt" />
+                                                <SfButton @onclick="@(() => Cerrar())"
+                                                          CssClass="e-outline e-warning col-6"
+                                                          IconCss="fas fa-times" />
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <CardContent>
+                                <div class="card-content">
+                                    <div class="card-body">
+                                        <EditForm Model="@_Model" OnInvalidSubmit="(() => StateHasChanged())">
+                                            <DataAnnotationsValidator />
+
+                                            <div class="form-row justify-content-between">
+                                            </div>
+
+                                            <div class="form-actions col-12 text-center">
+                                                @if (_Cargando)
+                                                {
+                                                    <_BotonCargando />
+                                                }
+                                                else
+                                                {
+                                                    <button @onclick="(() => Cerrar())" type="button" class="e-btn e-outline e-danger mx-1">Atrás</button>
+
+                                                    @if (_Creando)
+                                                    {
+                                                        <button type="submit" @onclick="Crear" class="e-btn e-outline e-success mx-1">Guardar</button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button type="submit" @onclick="Modificar" class="e-btn e-outline e-success mx-1">Guardar</button>
+                                                    }
+                                                }
+                                            </div>
+
+                                        </EditForm>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </div>
+                    </SfCard>
+                </div>
+            </div>
+        </Content>
+    </DialogTemplates>
+
+    <DialogAnimationSettings Effect="@_GlobalConfiguration.AnimationEffect" Duration=@_GlobalConfiguration.AnimationTime />
+    <DialogPositionData X="center" Y="start"></DialogPositionData>
+</SfDialog>
+
+
+@code {
+
+    [Parameter]
+    public Stations _Page { get; set; }
+
+    private Equipment_Request _Model { get; set; } = new();
+
+    private bool _Cargando { get; set; }
+    private bool _CargadoConExito { get; set; } = true;
+    private bool _Creando { get; set; }
+    private NumberFormatInfo nfi = new NumberFormatInfo { NumberDecimalSeparator = ",", NumberGroupSeparator = "." };
+
+
+    private bool Ventana_Edicion_IsVisible { get; set; } = false;
+    private string Titulo_Ventana_Edicion { get; set; }
+
+
+    private async Task Crear()
+    {
+        if (Validar())
+        {
+            try
+            {
+                _Cargando = true;
+                StateHasChanged();
+
+                var statusResponse = await HttpClass.PostSet(Http, URLs.Crear_Dron, _Model, _Toast, _GlobalElements);
+                if (statusResponse)
+                    Cerrar();
+            }
+            catch (Exception e)
+            {
+                _GlobalConfiguration.NuevoLog("No se pudo crear", AccionesDelSistemaEnum.Crear, e, CodigosDeErrorEnum.Error);
+                _Toast.ShowError("No se pudo crear. Verifique su conexión a internet y reintente.");
+            }
+            finally
+            {
+                _Cargando = false;
+                StateHasChanged();
+            }
+        }
+    }
+
+    private async Task Modificar()
+    {
+        if (Validar())
+        {
+            try
+            {
+                _Cargando = true;
+                StateHasChanged();
+
+                var statusResponse = await HttpClass.PostSet(Http, URLs.Modificar_Dron, _Model, _Toast, _GlobalElements);
+                if (statusResponse)
+                    Cerrar();
+            }
+            catch (Exception e)
+            {
+                _GlobalConfiguration.NuevoLog("No se pudo modificar", AccionesDelSistemaEnum.Modificar, e, CodigosDeErrorEnum.Error);
+                _Toast.ShowError("No se pudo modificar. Verifique su conexión a internet y reintente.");
+            }
+            finally
+            {
+                _Cargando = false;
+                StateHasChanged();
+            }
+        }
+    }
+
+
+    #region Metodos
+    private bool Validar()
+    {
+        //if (_Model.IDunidadDeNegocio == 0)
+        //{
+        //    _Toast.ShowWarning("Seleccione una unidad de negocio.");
+        //    return false;
+        //}
+
+        return true;
+    }
+    #endregion Metodos
+
+
+
+    #region Abrir Cerrar
+
+    public void Abrir_CrearVenta()
+    {
+        _Creando = true;
+
+        _Model = new();
+        _Model.Filtros = _GlobalElements.Drones.Filtros;
+
+        Ventana_Edicion_IsVisible = true;
+        Titulo_Ventana_Edicion = "Añadir un equipo";
+        StateHasChanged();
+    }
+
+    public void Abrir_ModificarVenta(Equipment_Request model)
+    {
+        _Model = model;
+        _Creando = false;
+        Ventana_Edicion_IsVisible = true;
+        Titulo_Ventana_Edicion = "Modificando el equipo";
+        StateHasChanged();
+    }
+
+    public void Cerrar()
+    {
+        Ventana_Edicion_IsVisible = false;
+        StateHasChanged();
+        _Page.MostrarVentana_Principal();
+    }
+
+    #endregion
+}

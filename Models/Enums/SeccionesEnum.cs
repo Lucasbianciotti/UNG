@@ -9,17 +9,18 @@ namespace Models.Enums
             "Dashboard",
             "Drones",
             "Configuracion",
-            "Usuarios",
+            "Users",
         };
 
         #region Secciones
         public static string Dashboard { get { return "Dashboard"; } }
 
-        public static string Ventas_Presupuestos { get { return "Drones"; } }
+        public static string Lecturas { get { return "Lecturas"; } }
+        public static string Drones { get { return "Drones"; } }
 
         public static string Configuracion { get { return "Configuracion"; } }
 
-        public static string Usuarios { get { return "Usuarios"; } }
+        public static string Users { get { return "Users"; } }
         #endregion
 
     }

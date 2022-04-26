@@ -7,7 +7,7 @@ using System.Security.Claims;
 
 namespace API.LocalClass
 {
-    public static class UsuariosClass
+    public static class UsersClass
     {
 
         #region Get
@@ -16,7 +16,7 @@ namespace API.LocalClass
 
             var data = new GlobalResponse_Request()
             {
-                Usuarios = ListaDeUsuarios(user),
+                Users = ListaDeUsers(user),
             };
 
             return data;
@@ -27,39 +27,39 @@ namespace API.LocalClass
 
             var data = new GlobalResponse_Request()
             {
-                Usuarios = ListaDeUsuarios(user),
+                Users = ListaDeUsers(user),
             };
 
             return data;
         }
 
 
-        public static Usuario_Request BuscarUsuario(string stringConnection, long IDusuario)
+        public static User_Request BuscarUsuario(string stringConnection, long IDuser)
         {
             using var db = new UNG_Context();
 
             try
             {
-                var first = (from usuario in db.Usuarios
-                             where usuario.ID == IDusuario
-                             && usuario.IDestado == EncrypterService.Codify(EstadosEnum.Activo)
-                             select new Usuario_Request
+                var first = (from usuario in db.Users
+                             where usuario.ID == IDuser
+                             && usuario.IDstatus == EncrypterService.Codify(StatusEnum.Active)
+                             select new User_Request
                              {
                                  ID = usuario.ID,
 
-                                 Nombre = EncrypterService.Decodify(usuario.Nombre),
-                                 Apellido = EncrypterService.Decodify(usuario.Apellido),
-                                 NombreCompleto = EncrypterService.Decodify(usuario.Nombre) + " " + EncrypterService.Decodify(usuario.Apellido),
+                                 Name = EncrypterService.Decodify(usuario.Name),
+                                 Surname = EncrypterService.Decodify(usuario.Surname),
+                                 CompleteName = EncrypterService.Decodify(usuario.Name) + " " + EncrypterService.Decodify(usuario.Surname),
                                  Email = EncrypterService.Decodify(usuario.Email),
 
-                                 //PermisosDeUsuario = (from permiso in db.PermisosDeUsuarios
+                                 //PermisosDeUsuario = (from permiso in db.PermisosDeUsers
 
-                                 //                     where permiso.IDusuario == usuario.ID
+                                 //                     where permiso.IDuser == usuario.ID
 
                                  //                     select new PermisosDeUsuario_Request
                                  //                     {
                                  //                         ID = permiso.ID,
-                                 //                         IDusuario = permiso.IDusuario,
+                                 //                         IDuser = permiso.IDuser,
 
                                  //                         IDunidadDeNegocio = permiso.IDunidadDeNegocio,
 
@@ -82,34 +82,34 @@ namespace API.LocalClass
             }
         }
 
-        public static Usuario_Request BuscarUsuario(ClaimsPrincipal user)
+        public static User_Request BuscarUsuario(ClaimsPrincipal user)
         {
 
             using var db = new UNG_Context();
 
             try
             {
-                var idUsuario = UsuariosClass.GetID_User(user);
+                var IDuser = UsersClass.GetID_User(user);
 
-                var first = (from usuario in db.Usuarios
-                             where usuario.ID == idUsuario
-                             && usuario.IDestado == EncrypterService.Codify(EstadosEnum.Activo)
-                             select new Usuario_Request
+                var first = (from usuario in db.Users
+                             where usuario.ID == IDuser
+                             && usuario.IDstatus == EncrypterService.Codify(StatusEnum.Active)
+                             select new User_Request
                              {
                                  ID = usuario.ID,
-                                 Nombre = EncrypterService.Decodify(usuario.Nombre),
-                                 Apellido = EncrypterService.Decodify(usuario.Apellido),
-                                 NombreCompleto = EncrypterService.Decodify(usuario.Nombre) + " " + EncrypterService.Decodify(usuario.Apellido),
+                                 Name = EncrypterService.Decodify(usuario.Name),
+                                 Surname = EncrypterService.Decodify(usuario.Surname),
+                                 CompleteName = EncrypterService.Decodify(usuario.Name) + " " + EncrypterService.Decodify(usuario.Surname),
                                  Email = EncrypterService.Decodify(usuario.Email),
 
-                                 //PermisosDeUsuario = (from permiso in db.PermisosDeUsuarios
+                                 //PermisosDeUsuario = (from permiso in db.PermisosDeUsers
 
-                                 //                     where permiso.IDusuario == usuario.ID
+                                 //                     where permiso.IDuser == usuario.ID
 
                                  //                     select new PermisosDeUsuario_Request
                                  //                     {
                                  //                         ID = permiso.ID,
-                                 //                         IDusuario = permiso.IDusuario,
+                                 //                         IDuser = permiso.IDuser,
 
                                  //                         IDunidadDeNegocio = permiso.IDunidadDeNegocio,
 
@@ -133,30 +133,30 @@ namespace API.LocalClass
         }
 
 
-        public static List<Usuario_Request> ListaDeUsuarios(ClaimsPrincipal user)
+        public static List<User_Request> ListaDeUsers(ClaimsPrincipal user)
         {
             using var db = new UNG_Context();
 
             try
             {
-                var lista = (from usuario in db.Usuarios
-                             where usuario.IDestado == EncrypterService.Codify(EstadosEnum.Activo)
-                             select new Usuario_Request
+                var lista = (from usuario in db.Users
+                             where usuario.IDstatus == EncrypterService.Codify(StatusEnum.Active)
+                             select new User_Request
                              {
                                  ID = usuario.ID,
-                                 Nombre = EncrypterService.Decodify(usuario.Nombre),
-                                 Apellido = EncrypterService.Decodify(usuario.Apellido),
-                                 NombreCompleto = EncrypterService.Decodify(usuario.Nombre) + " " + EncrypterService.Decodify(usuario.Apellido),
+                                 Name = EncrypterService.Decodify(usuario.Name),
+                                 Surname = EncrypterService.Decodify(usuario.Surname),
+                                 CompleteName = EncrypterService.Decodify(usuario.Name) + " " + EncrypterService.Decodify(usuario.Surname),
                                  Email = EncrypterService.Decodify(usuario.Email),
 
-                                 //PermisosDeUsuario = (from permiso in db.PermisosDeUsuarios
+                                 //PermisosDeUsuario = (from permiso in db.PermisosDeUsers
 
-                                 //                     where permiso.IDusuario == usuario.ID
+                                 //                     where permiso.IDuser == usuario.ID
 
                                  //                     select new PermisosDeUsuario_Request
                                  //                     {
                                  //                         ID = permiso.ID,
-                                 //                         IDusuario = permiso.IDusuario,
+                                 //                         IDuser = permiso.IDuser,
 
                                  //                         IDunidadDeNegocio = permiso.IDunidadDeNegocio,
 
@@ -178,42 +178,42 @@ namespace API.LocalClass
                 Logs_ErroresClass.NuevoLog(user,
                         new New_Error_Request()
                         {
-                            Comentario = "No se pudo buscar la lista de usuarios",
+                            Comentario = "No se pudo buscar la lista de Users",
                             Excepcion = e,
                             Accion = AccionesDelSistemaEnum.BuscarLista,
                             Sistema = TiposDeSistemaEnum.API,
                         });
 
-                throw new Exception("No se pudo buscar la lista de usuarios.");
+                throw new Exception("No se pudo buscar la lista de Users.");
             }
         }
 
-        //public static List<Usuario_Request> ListaDeUsuariosConRolEnEspecial(ClaimsPrincipal user, string _seccion)
+        //public static List<Usuario_Request> ListaDeUsersConRolEnEspecial(ClaimsPrincipal user, string _seccion)
         //{
         //    using var db = new UNG_Context();
 
         //    try
         //    {
-        //        var lista = (from permiso in db.PermisosDeUsuarios
+        //        var lista = (from permiso in db.PermisosDeUsers
 
-        //                     join usuario in db.Usuarios
-        //                     on permiso.IDusuario equals usuario.ID
+        //                     join usuario in db.Users
+        //                     on permiso.IDuser equals usuario.ID
         //                     into caq
         //                     from usuario in caq.DefaultIfEmpty()
 
-        //                     where usuario.IDestado == EncrypterService.Codify(EstadosEnum.Activo)
+        //                     where usuario.IDstatus == EncrypterService.Codify(EstadosEnum.Activo)
         //                     && permiso.Seccion.ToLower() == _seccion.ToLower()
         //                     && (permiso.Crear || permiso.Ver || permiso.Modificar || permiso.Eliminar || permiso.Exportar)
 
         //                     select new Usuario_Request
         //                     {
         //                         ID = usuario.ID,
-        //                         Nombre = EncrypterService.Decodify(usuario.Nombre),
-        //                         Apellido = EncrypterService.Decodify(usuario.Apellido),
-        //                         NombreCompleto = EncrypterService.Decodify(usuario.Nombre) + " " + EncrypterService.Decodify(usuario.Apellido),
+        //                         Name = EncrypterService.Decodify(usuario.Name),
+        //                         Surname = EncrypterService.Decodify(usuario.Surname),
+        //                         NameCompleto = EncrypterService.Decodify(usuario.Name) + " " + EncrypterService.Decodify(usuario.Surname),
         //                         Email = EncrypterService.Decodify(usuario.Email),
 
-        //                         //IDestado = EncrypterService.Decodify(usuario.IDestado),
+        //                         //IDstatus = EncrypterService.Decodify(usuario.IDstatus),
         //                         //Area = EncrypterService.Decodify(usuario.Area),
         //                         Cargo = EncrypterService.Decodify(usuario.Cargo),
         //                         //Celular = EncrypterService.Decodify(usuario.Celular),
@@ -233,14 +233,14 @@ namespace API.LocalClass
         //                         //FechaAltaDeUsuario = DateTime.Parse(EncrypterService.Decodify(usuario.FechaAltaDeUsuario)),
         //                         //FechaUltimoIngreso = DateTime.Parse(EncrypterService.Decodify(usuario.FechaUltimoIngreso)),
 
-        //                         PermisosDeUsuario = (from permiso in db.PermisosDeUsuarios
+        //                         PermisosDeUsuario = (from permiso in db.PermisosDeUsers
 
-        //                                              where permiso.IDusuario == usuario.ID
+        //                                              where permiso.IDuser == usuario.ID
 
         //                                              select new PermisosDeUsuario_Request
         //                                              {
         //                                                  ID = permiso.ID,
-        //                                                  IDusuario = permiso.IDusuario,
+        //                                                  IDuser = permiso.IDuser,
 
         //                                                  IDunidadDeNegocio = permiso.IDunidadDeNegocio,
 
@@ -262,25 +262,25 @@ namespace API.LocalClass
         //        Logs_ErroresClass.NuevoLog(user,
         //                new New_Error_Request()
         //                {
-        //                    Comentario = "No se pudo buscar la lista de usuarios con algún rol especial",
+        //                    Comentario = "No se pudo buscar la lista de Users con algún rol especial",
         //                    Excepcion = e,
         //                    Accion = AccionesDelSistemaEnum.BuscarLista,
         //                    Sistema = TiposDeSistemaEnum.API,
         //                });
 
-        //        throw new Exception("No se pudo buscar la lista de usuarios con algún rol especial.");
+        //        throw new Exception("No se pudo buscar la lista de Users con algún rol especial.");
         //    }
         //}
 
-        public static Usuarios LoginDeUsuario(UNG_Context db, string email, string password)
+        public static Users LoginDeUsuario(UNG_Context db, string email, string password)
         {
             try
             {
                 string passwordEncrypted = EncrypterService.GetSHA256(password);
                 string emailEncrypted = EncrypterService.Codify(email.ToLower().Trim());
-                string estadoEncrypted = EncrypterService.Codify(EstadosEnum.Activo);
+                string estadoEncrypted = EncrypterService.Codify(StatusEnum.Active);
 
-                return db.Usuarios.Where(x => x.Email == emailEncrypted && x.PasswordHash == passwordEncrypted && x.IDestado == estadoEncrypted).FirstOrDefault();
+                return db.Users.Where(x => x.Email == emailEncrypted && x.PasswordHash == passwordEncrypted && x.IDstatus == estadoEncrypted).FirstOrDefault();
             }
             catch (Exception)
             {
@@ -301,7 +301,7 @@ namespace API.LocalClass
             {
 
                 var iduser = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var usuarioAdmin = db.Usuarios.Where(x => x.ID.ToString() == iduser).FirstOrDefault();
+                var usuarioAdmin = db.Users.Where(x => x.ID.ToString() == iduser).FirstOrDefault();
                 if (usuarioAdmin == null) throw new Exception("No se encontró el usuario");
 
                 if (usuarioAdmin.PasswordHash != EncrypterService.GetSHA256(model.ContraseñaAnterior))
@@ -340,7 +340,7 @@ namespace API.LocalClass
             }
         }
 
-        public static Respuesta Crear(ClaimsPrincipal user, Usuario_Request model)
+        public static Respuesta Crear(ClaimsPrincipal user, User_Request model)
         {
             using var db = new UNG_Context();
             using var transaction = db.Database.BeginTransaction();
@@ -352,26 +352,26 @@ namespace API.LocalClass
                 var password = Guid.NewGuid().ToString().Remove(5);
                 model.Contraseña = password;
 
-                var usuario = new Usuarios
+                var usuario = new Users
                 {
                     Email = EncrypterService.Codify(model.Email.ToLower().Trim()),
                     PasswordHash = EncrypterService.GetSHA256(model.Contraseña),
-                    IDestado = EncrypterService.Codify(EstadosEnum.Activo),
-                    IDempresa = GetID_Company(user),
-                    Nombre = EncrypterService.Codify(model.Nombre),
-                    Apellido = EncrypterService.Codify(model.Apellido),
-                    FechaAltaDeUsuario = EncrypterService.Codify(DateTime.Now.ToString()),
+                    IDstatus = EncrypterService.Codify(StatusEnum.Active),
+                    IDcompany = GetID_Company(user),
+                    Name = EncrypterService.Codify(model.Name),
+                    Surname = EncrypterService.Codify(model.Surname),
+                    DateOf_Creation = EncrypterService.Codify(DateTime.Now.ToString()),
                 };
 
-                db.Usuarios.Add(usuario);
+                db.Users.Add(usuario);
                 db.SaveChanges();
 
                 //#region Permisos
                 //foreach (var item in model.PermisosDeUsuario)
                 //{
-                //    var permiso = new PermisosDeUsuarios()
+                //    var permiso = new PermisosDeUsers()
                 //    {
-                //        IDusuario = usuario.ID,
+                //        IDuser = usuario.ID,
                 //        IDseccion = item.IDseccion,
                 //        Seccion = item.Seccion,
                 //        IDunidadDeNegocio = item.IDunidadDeNegocio,
@@ -381,7 +381,7 @@ namespace API.LocalClass
                 //        Eliminar = item.Eliminar,
                 //        Exportar = item.Exportar,
                 //    };
-                //    db.PermisosDeUsuarios.Add(permiso);
+                //    db.PermisosDeUsers.Add(permiso);
                 //}
                 //db.SaveChanges();
                 //#endregion Permisos
@@ -413,19 +413,19 @@ namespace API.LocalClass
             }
         }
 
-        public static Respuesta Modificar(ClaimsPrincipal user, Usuario_Request model)
+        public static Respuesta Modificar(ClaimsPrincipal user, User_Request model)
         {
             using var db = new UNG_Context();
             using var transaction = db.Database.BeginTransaction();
 
             try
             {
-                var usuario = db.Usuarios.Find(model.ID);
+                var usuario = db.Users.Find(model.ID);
                 if (usuario == null)
                     throw new Exception("No se encontró el usuario");
 
-                usuario.Nombre = EncrypterService.Codify(model.Nombre);
-                usuario.Apellido = EncrypterService.Codify(model.Apellido);
+                usuario.Name = EncrypterService.Codify(model.Name);
+                usuario.Surname = EncrypterService.Codify(model.Surname);
                 usuario.Email = EncrypterService.Codify(model.Email.ToLower().Trim());
 
                 db.Entry(usuario).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
@@ -433,15 +433,15 @@ namespace API.LocalClass
 
 
                 //#region Permisos
-                //var permisos = db.PermisosDeUsuarios.Where(x => x.IDusuario == model.ID).ToList();
-                //db.PermisosDeUsuarios.RemoveRange(permisos);
+                //var permisos = db.PermisosDeUsers.Where(x => x.IDuser == model.ID).ToList();
+                //db.PermisosDeUsers.RemoveRange(permisos);
                 //db.SaveChanges();
 
                 //foreach (var item in model.PermisosDeUsuario)
                 //{
-                //    var permiso = new PermisosDeUsuarios()
+                //    var permiso = new PermisosDeUsers()
                 //    {
-                //        IDusuario = usuario.ID,
+                //        IDuser = usuario.ID,
                 //        IDseccion = item.IDseccion,
                 //        Seccion = item.Seccion,
                 //        IDunidadDeNegocio = item.IDunidadDeNegocio,
@@ -451,7 +451,7 @@ namespace API.LocalClass
                 //        Eliminar = item.Eliminar,
                 //        Exportar = item.Exportar,
                 //    };
-                //    db.PermisosDeUsuarios.Add(permiso);
+                //    db.PermisosDeUsers.Add(permiso);
                 //}
                 //db.SaveChanges();
                 //#endregion Permisos
@@ -493,17 +493,17 @@ namespace API.LocalClass
                 if (GetID_User(user) == model.ID)
                     throw new Exception("No puede eliminar su propio usuario");
 
-                var usuario = db.Usuarios.Find(model.ID);
+                var usuario = db.Users.Find(model.ID);
                 if (usuario == null)
                     throw new Exception("No se encontró el usuario");
 
-                usuario.IDestado = EncrypterService.Codify(EstadosEnum.Eliminado);
+                usuario.IDstatus = EncrypterService.Codify(StatusEnum.Deleted);
                 db.Entry(usuario).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                 db.SaveChanges();
 
 
-                //var permisos = db.PermisosDeUsuarios.Where(x => x.IDusuario == model.ID).ToList();
-                //db.PermisosDeUsuarios.RemoveRange(permisos);
+                //var permisos = db.PermisosDeUsers.Where(x => x.IDuser == model.ID).ToList();
+                //db.PermisosDeUsers.RemoveRange(permisos);
                 //db.SaveChanges();
 
 
@@ -542,9 +542,9 @@ namespace API.LocalClass
 
             try
             {
-                var usuario = db.Usuarios.Where(x => x.Email.ToLower() == EncrypterService.Codify(Email.ToLower().Trim())).FirstOrDefault();
+                var usuario = db.Users.Where(x => x.Email.ToLower() == EncrypterService.Codify(Email.ToLower().Trim())).FirstOrDefault();
                 if (usuario == null) return;
-                usuario.FechaUltimoIngreso = EncrypterService.Codify(DateTime.Now.ToString());
+                usuario.DateOf_LastLogin = EncrypterService.Codify(DateTime.Now.ToString());
                 db.Entry(usuario).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                 db.SaveChanges();
             }
@@ -567,8 +567,8 @@ namespace API.LocalClass
         {
             try
             {
-                var user = db.Usuarios.Where(x => x.Email == EncrypterService.Codify(email)
-                && x.IDestado == EncrypterService.Codify(EstadosEnum.Activo)).FirstOrDefault();
+                var user = db.Users.Where(x => x.Email == EncrypterService.Codify(email)
+                && x.IDstatus == EncrypterService.Codify(StatusEnum.Active)).FirstOrDefault();
 
                 if (user == null)
                     return false;
@@ -586,7 +586,7 @@ namespace API.LocalClass
             return UsuarioTienePermiso(usuario, seccion, accion);
         }
 
-        public static bool UsuarioTienePermiso(Usuario_Request user, string seccion, string accion)
+        public static bool UsuarioTienePermiso(User_Request user, string seccion, string accion)
         {
             try
             {
@@ -616,7 +616,7 @@ namespace API.LocalClass
             {
                 using var db = new UNG_Context();
 
-                lista = db.Empresas.Where(x => x.IDestado == EstadosEnum.Activo)
+                lista = db.Companies.Where(x => x.IDstatus == StatusEnum.Active)
                         .Select(x => x.ID)
                         .ToList();
             }

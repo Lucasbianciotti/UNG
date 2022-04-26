@@ -11,11 +11,11 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsuariosController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
 
-        public UsuariosController(IUserService userService)
+        public UsersController(IUserService userService)
         {
             _userService = userService;
         }
@@ -29,7 +29,7 @@ namespace API.Controllers
 
 
             using var db = new UNG_Context();
-            var usuarioAdmin = UsuariosClass.LoginDeUsuario(db, model.Email, model.Password);
+            var usuarioAdmin = UsersClass.LoginDeUsuario(db, model.Email, model.Password);
             if (usuarioAdmin == null) return BadRequest("Usuario o contraseña incorrecta");
 
 
@@ -84,13 +84,13 @@ namespace API.Controllers
             #region Authorized
             if (User == null)
                 return Unauthorized();
-            if (!UsuariosClass.UsuarioTienePermiso(User, SeccionesEnum.Usuarios, AccionesEnum.Ver))
+            if (!UsersClass.UsuarioTienePermiso(User, SeccionesEnum.Users, AccionesEnum.View))
                 return Forbid();
             #endregion Authorized
 
             try
             {
-                return Ok(UsuariosClass.InformacionCompleta(User));
+                return Ok(UsersClass.InformacionCompleta(User));
             }
             catch (Exception ex)
             {
@@ -101,20 +101,20 @@ namespace API.Controllers
 
         [HttpPost("Crear")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public IActionResult Crear([FromBody] Usuario_Request model)
+        public IActionResult Crear([FromBody] User_Request model)
         {
             #region Authorized
             if (User == null)
                 return Unauthorized();
-            if (!UsuariosClass.UsuarioTienePermiso(User, SeccionesEnum.Usuarios, AccionesEnum.Crear))
+            if (!UsersClass.UsuarioTienePermiso(User, SeccionesEnum.Users, AccionesEnum.Create))
                 return Forbid();
             #endregion Authorized
 
             try
             {
-                var _Respuesta = UsuariosClass.Crear(User, model);
+                var _Respuesta = UsersClass.Crear(User, model);
                 if (_Respuesta.StatusCode == StatusCodes.Status200OK || _Respuesta.StatusCode == StatusCodes.Status201Created)
-                    return Ok(UsuariosClass.InformacionParcial(User));
+                    return Ok(UsersClass.InformacionParcial(User));
 
                 return StatusCode(_Respuesta.StatusCode, _Respuesta.Mensaje);
             }
@@ -126,20 +126,20 @@ namespace API.Controllers
 
         [HttpPost("Modificar")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public IActionResult Modificar([FromBody] Usuario_Request model)
+        public IActionResult Modificar([FromBody] User_Request model)
         {
             #region Authorized
             if (User == null)
                 return Unauthorized();
-            if (!UsuariosClass.UsuarioTienePermiso(User, SeccionesEnum.Usuarios, AccionesEnum.Modificar))
+            if (!UsersClass.UsuarioTienePermiso(User, SeccionesEnum.Users, AccionesEnum.Modify))
                 return Forbid();
             #endregion Authorized
 
             try
             {
-                var _Respuesta = UsuariosClass.Modificar(User, model);
+                var _Respuesta = UsersClass.Modificar(User, model);
                 if (_Respuesta.StatusCode == StatusCodes.Status200OK || _Respuesta.StatusCode == StatusCodes.Status201Created)
-                    return Ok(UsuariosClass.InformacionParcial(User));
+                    return Ok(UsersClass.InformacionParcial(User));
 
                 return StatusCode(_Respuesta.StatusCode, _Respuesta.Mensaje);
             }
@@ -157,13 +157,13 @@ namespace API.Controllers
             #region Authorized
             if (User == null)
                 return Unauthorized();
-            //if (!UsuariosClass.UsuarioTienePermiso(User, SeccionesEnum.Usuarios, AccionesEnum.Modificar))
+            //if (!UsersClass.UsuarioTienePermiso(User, SeccionesEnum.Users, AccionesEnum.Modificar))
             //    return Forbid();
             #endregion Authorized
 
             try
             {
-                var _Respuesta = UsuariosClass.CambiarContraseña(User, model);
+                var _Respuesta = UsersClass.CambiarContraseña(User, model);
                 if (_Respuesta.StatusCode == StatusCodes.Status200OK || _Respuesta.StatusCode == StatusCodes.Status201Created)
                     return Ok(new GlobalResponse_Request());
 
@@ -183,15 +183,15 @@ namespace API.Controllers
             #region Authorized
             if (User == null)
                 return Unauthorized();
-            if (!UsuariosClass.UsuarioTienePermiso(User, SeccionesEnum.Usuarios, AccionesEnum.Eliminar))
+            if (!UsersClass.UsuarioTienePermiso(User, SeccionesEnum.Users, AccionesEnum.Detele))
                 return Forbid();
             #endregion Authorized
 
             try
             {
-                var _Respuesta = UsuariosClass.Eliminar(User, model);
+                var _Respuesta = UsersClass.Eliminar(User, model);
                 if (_Respuesta.StatusCode == StatusCodes.Status200OK || _Respuesta.StatusCode == StatusCodes.Status201Created)
-                    return Ok(UsuariosClass.InformacionParcial(User));
+                    return Ok(UsersClass.InformacionParcial(User));
 
                 return StatusCode(_Respuesta.StatusCode, _Respuesta.Mensaje);
             }

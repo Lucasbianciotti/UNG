@@ -1,21 +1,20 @@
 ﻿using Models.EntityFrameworks;
-using System.Security.Claims;
 
 namespace API.LocalClass
 {
     public static class EmpresasClass
     {
-        public static Empresas BuscarEmpresa(Usuarios user)
+        public static Companies BuscarEmpresa(Users user)
         {
             using var db = new UNG_Context();
 
             try
             {
-                return db.Empresas.Find(user.IDempresa);
+                return db.Companies.Find(user.IDcompany);
             }
             catch (Exception)
             {
-                throw new Exception("No se pudo buscar la compañía.");
+                throw new Exception("The company was not found.");
             }
         }
 

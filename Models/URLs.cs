@@ -11,12 +11,19 @@
         public readonly static string Dashboard = _API + "api/dashboard/index";
         #endregion
 
+        #region Dron
+        public readonly static string Crear_Dron = _API + "api/Drones/Crear";
+        public readonly static string Modificar_Dron = _API + "api/Drones/Modificar";
+        public readonly static string Eliminar_Dron = _API + "api/Drones/Eliminar";
+        public readonly static string Drones = _API + "api/Drones/index";
+        #endregion
+
         #region Usuario
-        public readonly static string CambiarContraseña_Usuario = _API + "api/Usuarios/CambiarContrasena";
-        public readonly static string Crear_Usuario = _API + "api/Usuarios/Crear";
-        public readonly static string Modificar_Usuario = _API + "api/Usuarios/Modificar";
-        public readonly static string Eliminar_Usuario = _API + "api/Usuarios/Eliminar";
-        public readonly static string Usuarios = _API + "api/Usuarios/index";
+        public readonly static string CambiarContraseña_Usuario = _API + "api/Users/CambiarContrasena";
+        public readonly static string Crear_Usuario = _API + "api/Users/Crear";
+        public readonly static string Modificar_Usuario = _API + "api/Users/Modificar";
+        public readonly static string Eliminar_Usuario = _API + "api/Users/Eliminar";
+        public readonly static string Users = _API + "api/Users/index";
         #endregion
 
         #region Movimientos del sistema
@@ -24,9 +31,9 @@
         #endregion
 
         #region Login
-        public readonly static string Login = _API + "api/Usuarios/Login";
-        public readonly static string Login_ReestablecerContraseña = _API + "api/Usuarios/Login_ReestablecerContrasena";
-        public readonly static string Login_ActualizarContraseña = _API + "api/Usuarios/Login_ActualizarContrasena";
+        public readonly static string Login = _API + "api/Users/Login";
+        public readonly static string Login_ReestablecerContraseña = _API + "api/Users/Login_ReestablecerContrasena";
+        public readonly static string Login_ActualizarContraseña = _API + "api/Users/Login_ActualizarContrasena";
         #endregion
 
         #region Errores

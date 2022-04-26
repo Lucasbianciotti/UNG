@@ -35,7 +35,7 @@ namespace Web.LocalClass
             {
                 Logs_ErroresClass.NuevoLog(Http, "No se pudo deserializar.", AccionesDelSistemaEnum.GET, TiposDeSistemaEnum.WEB, e, CodigosDeErrorEnum.Error);
 
-                _Toast.ShowError("No se pudo cargar la información. Verifique su conexión a internet.");
+                _Toast.ShowError("The information could not be loaded.");
             }
 
             return null;
@@ -63,7 +63,7 @@ namespace Web.LocalClass
             catch (Exception e)
             {
                 Logs_ErroresClass.NuevoLog(Http, "No se pudo deserializar.", AccionesDelSistemaEnum.GET, TiposDeSistemaEnum.WEB, e, CodigosDeErrorEnum.Error);
-                _Toast.ShowError("No se pudo cargar la información. Verifique su conexión a internet.");
+                _Toast.ShowError("The information could not be loaded.");
             }
 
             return false;
@@ -95,7 +95,7 @@ namespace Web.LocalClass
             catch (Exception e)
             {
                 Logs_ErroresClass.NuevoLog(Http, "No se pudo deserializar.", AccionesDelSistemaEnum.GET, TiposDeSistemaEnum.WEB, e, CodigosDeErrorEnum.Error);
-                _Toast.ShowError("No se pudo cargar la información. Verifique su conexión a internet.");
+                _Toast.ShowError("The information could not be loaded.");
             }
 
             return null;
@@ -118,7 +118,7 @@ namespace Web.LocalClass
             catch (Exception e)
             {
                 Logs_ErroresClass.NuevoLog(Http, "No se pudo deserializar.", AccionesDelSistemaEnum.POST, TiposDeSistemaEnum.WEB, e, CodigosDeErrorEnum.Error);
-                _Toast.ShowError("No se pudo cargar la información. Verifique su conexión a internet.");
+                _Toast.ShowError("The information could not be loaded.");
             }
 
             return false;
@@ -135,8 +135,8 @@ namespace Web.LocalClass
                     var cadena = await post.Content.ReadAsStringAsync();
                     var temp = JsonConvert.DeserializeObject<GlobalResponse_Request>(cadena);
 
-                    if (!string.IsNullOrEmpty(temp._Mensaje))
-                        _Toast.ShowSuccess(temp._Mensaje, "Atención");
+                    if (!string.IsNullOrEmpty(temp._Message))
+                        _Toast.ShowSuccess(temp._Message, "Atención");
 
                     return temp;
                 }
@@ -146,7 +146,7 @@ namespace Web.LocalClass
             catch (Exception e)
             {
                 Logs_ErroresClass.NuevoLog(Http, "No se pudo deserializar.", AccionesDelSistemaEnum.POST, TiposDeSistemaEnum.WEB, e, CodigosDeErrorEnum.Error);
-                _Toast.ShowError("No se pudo cargar la información. Verifique su conexión a internet.");
+                _Toast.ShowError("The information could not be loaded.");
             }
 
             return null;
@@ -172,7 +172,7 @@ namespace Web.LocalClass
                         return "No se pudo conectar con el servidor.";
 
                     case HttpStatusCode.NotFound:
-                        return "No se encontró la URL.";
+                        return "The URL was not found.";
 
                     case HttpStatusCode.InternalServerError:
                         return "Error en el servidor.";
