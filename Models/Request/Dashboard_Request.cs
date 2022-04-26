@@ -2,25 +2,25 @@ namespace Models.Request
 {
     public static class LapsosParaFiltro_Dashboard
     {
-        public static string Dia { get { return "Dia"; } }
-        public static string Semana { get { return "Semana"; } }
-        public static string Mes { get { return "Mes"; } }
-        public static string Año { get { return "Ano"; } }
+        public static string Day { get { return "Day"; } }
+        public static string Week { get { return "Week"; } }
+        public static string Month { get { return "Month"; } }
+        public static string Year { get { return "Year"; } }
     }
 
     public class FilterDashboard_Request
     {
-        public DateTime? Fecha_Inicio { get; set; }
+        public DateTime? Date_Start { get; set; }
 
-        public DateTime? Fecha_Final { get; set; }
+        public DateTime? Date_End { get; set; }
 
         public string Lapso { get; set; }
 
         public FilterDashboard_Request()
         {
-            Lapso = LapsosParaFiltro_Dashboard.Mes;
-            Fecha_Inicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-            Fecha_Final = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month));
+            Lapso = LapsosParaFiltro_Dashboard.Month;
+            Date_Start = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            Date_End = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month));
         }
     }
 

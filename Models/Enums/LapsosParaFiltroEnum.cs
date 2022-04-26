@@ -11,23 +11,23 @@ namespace Models.Enums
             {
                 new xEditableItem
                 {
-                    Text = "Día",
-                    ValueAux = LapsosParaFiltro_Dashboard.Dia
+                    Text = "Day",
+                    ValueAux = LapsosParaFiltro_Dashboard.Day
                 },
                 new xEditableItem
                 {
-                    Text = "Semana",
-                    ValueAux = LapsosParaFiltro_Dashboard.Semana
+                    Text = "Week",
+                    ValueAux = LapsosParaFiltro_Dashboard.Week
                 },
                 new xEditableItem
                 {
-                    Text = "Mes",
-                    ValueAux = LapsosParaFiltro_Dashboard.Mes
+                    Text = "Month",
+                    ValueAux = LapsosParaFiltro_Dashboard.Month
                 },
                 new xEditableItem
                 {
-                    Text = "Año",
-                    ValueAux = LapsosParaFiltro_Dashboard.Año
+                    Text = "Year",
+                    ValueAux = LapsosParaFiltro_Dashboard.Year
                 }
             };
 

@@ -9,14 +9,14 @@ namespace API.LocalClass
 
         public static Dashboard_Request InformacionCompleta(ClaimsPrincipal user, FilterDashboard_Request Filtro)
         {
-            Filtro.Fecha_Inicio = GlobalClass.FechaInicialDeFiltro(Filtro.Fecha_Inicio);
-            Filtro.Fecha_Final = GlobalClass.FechaFinalDeFiltro(Filtro.Fecha_Final);
+            Filtro.Date_Start = GlobalClass.FechaInicialDeFiltro(Filtro.Date_Start);
+            Filtro.Date_End = GlobalClass.FechaFinalDeFiltro(Filtro.Date_End);
 
             var filtroAnual = new FilterDashboard_Request()
             {
                 Lapso = Filtro.Lapso,
-                Fecha_Inicio = new DateTime(DateTime.Now.Year, 1, 1),
-                Fecha_Final = new DateTime(DateTime.Now.Year, 12, 31)
+                Date_Start = new DateTime(DateTime.Now.Year, 1, 1),
+                Date_End = new DateTime(DateTime.Now.Year, 12, 31)
             };
 
             try
@@ -89,7 +89,6 @@ namespace API.LocalClass
         //        throw new Exception("No se pudo buscar los datos del gráfico.");
         //    }
         //}
-
         #endregion Get
 
         #region Metodos
