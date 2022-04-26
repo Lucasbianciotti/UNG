@@ -68,7 +68,7 @@ namespace API.Services
 
                 string pin = new Guid().ToString();
 
-                var callbackUrl = URLs._API + "actualizarcontraseña?pin=\"" + pin + "\"";
+                var callbackUrl = URLs._API + "actualizarpassword?pin=\"" + pin + "\"";
 
                 Task.Run(async () =>
                 {

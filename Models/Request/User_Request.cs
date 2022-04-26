@@ -69,21 +69,21 @@ namespace Models.Request
     public class ChangePasswordUser_Request
     {
 
-        [Required(ErrorMessage = "Ingrese la contraseña anterior")]
+        [Required(ErrorMessage = "Ingrese la password anterior")]
         [DataType(DataType.Password)]
         public string PasswordOld { get; set; }
 
 
-        [Required(ErrorMessage = "Ingrese la nueva contraseña")]
-        [StringLength(255, ErrorMessage = "La contraseña debe tener al menos 5 caracteres", MinimumLength = 5)]
+        [Required(ErrorMessage = "Ingrese la nueva password")]
+        [StringLength(255, ErrorMessage = "La password debe tener al menos 5 caracteres", MinimumLength = 5)]
         [DataType(DataType.Password)]
         public string NewPassword { get; set; }
 
 
-        [Required(ErrorMessage = "Confirme la nueva contraseña")]
-        [StringLength(255, ErrorMessage = "La contraseña debe tener al menos 5 caracteres", MinimumLength = 5)]
+        [Required(ErrorMessage = "Confirme la nueva password")]
+        [StringLength(255, ErrorMessage = "La password debe tener al menos 5 caracteres", MinimumLength = 5)]
         [DataType(DataType.Password)]
-        [Compare("NuevaContraseña", ErrorMessage = "La nueva contraseña no coincide")]
+        [Compare("NuevaPassword", ErrorMessage = "La nueva password no coincide")]
         public string RepeatNewPassword { get; set; }
 
     }

@@ -15,7 +15,7 @@ namespace Web.Helpers
         }
 
         public static string RemitenteDeEmail { get { return GetConfigValue("RemitenteDeEmail"); } }
-        public static string ContraseñaDeEmail { get { return GetConfigValue("ContraseñaDeEmail"); } }
+        public static string PasswordDeEmail { get { return GetConfigValue("PasswordDeEmail"); } }
         public static string PuertoDeEmail { get { return GetConfigValue("PuertoDeEmail"); } }
         public static string ServidorDeEmail { get { return GetConfigValue("ServidorDeEmail"); } }
 

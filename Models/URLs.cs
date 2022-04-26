@@ -19,7 +19,7 @@
         #endregion
 
         #region Usuario
-        public readonly static string CambiarContraseña_Usuario = _API + "api/Users/CambiarContrasena";
+        public readonly static string CambiarPassword_Usuario = _API + "api/Users/CambiarContrasena";
         public readonly static string Crear_Usuario = _API + "api/Users/Crear";
         public readonly static string Modificar_Usuario = _API + "api/Users/Modificar";
         public readonly static string Eliminar_Usuario = _API + "api/Users/Eliminar";
@@ -32,8 +32,8 @@
 
         #region Login
         public readonly static string Login = _API + "api/Users/Login";
-        public readonly static string Login_ReestablecerContraseña = _API + "api/Users/Login_ReestablecerContrasena";
-        public readonly static string Login_ActualizarContraseña = _API + "api/Users/Login_ActualizarContrasena";
+        public readonly static string Login_ReestablecerPassword = _API + "api/Users/Login_ReestablecerContrasena";
+        public readonly static string Login_ActualizarPassword = _API + "api/Users/Login_ActualizarContrasena";
         #endregion
 
         #region Errores

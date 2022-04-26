@@ -1,5 +1,4 @@
 using Models.Request;
-using System.Threading.Tasks;
 
 namespace Web.Services
 {
@@ -11,8 +10,8 @@ namespace Web.Services
         Task<User_Request> GetLogin();
 
         Task<string> Login(Login_Request userForAuthentication);
-        Task<string> ReestablecerContraseña(Login_RestorePassword_Request Model);
-        Task<string> ActualizarContraseña(Login_UpdatePassword_Request Model);
+        Task<string> ReestablecerPassword(Login_RestorePassword_Request Model);
+        Task<string> ActualizarPassword(Login_UpdatePassword_Request Model);
 
         Task Logout();
     }
