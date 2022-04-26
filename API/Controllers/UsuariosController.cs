@@ -42,13 +42,13 @@ namespace API.Controllers
 
 
         [HttpPost("Login_ReestablecerContrasena")]
-        public IActionResult Login_ReestablecerContrasena([FromBody] Login_ReestablecerContraseña_Request model)
+        public IActionResult Login_ReestablecerContrasena([FromBody] Login_RestorePassword_Request model)
         {
             if (!ModelState.IsValid)
                 return BadRequest("Modelo no válido.");
 
 
-            var response = _userService.ReestablecerContraseña(model);
+            var response = _userService.RestorePassword(model);
             if (!response)
                 return BadRequest("No se pudo reestablecer la contraseña. Reintente.");
 
@@ -57,13 +57,13 @@ namespace API.Controllers
 
 
         [HttpPost("Login_ActualizarContrasena")]
-        public IActionResult Login_ActualizarContrasena([FromBody] Login_ActualizarContraseña_Request model)
+        public IActionResult Login_ActualizarContrasena([FromBody] Login_UpdatePassword_Request model)
         {
             if (!ModelState.IsValid)
                 return BadRequest("Modelo no válido.");
 
 
-            var response = _userService.ActualizarContraseña(model);
+            var response = _userService.UpdatePassword(model);
             if (response)
                 return BadRequest("No se pudo actualizar la contraseña. Reintente.");
 
@@ -152,7 +152,7 @@ namespace API.Controllers
 
 
         [HttpPost("CambiarContrasena")]
-        public IActionResult CambiarContrasena([FromBody] CambiarContraseñaUsuario_Request model)
+        public IActionResult CambiarContrasena([FromBody] ChangePasswordUser_Request model)
         {
             #region Authorized
             if (User == null)
@@ -163,7 +163,7 @@ namespace API.Controllers
 
             try
             {
-                var _Respuesta = UsersClass.CambiarContraseña(User, model);
+                var _Respuesta = UsersClass.ChangePassword(User, model);
                 if (_Respuesta.StatusCode == StatusCodes.Status200OK || _Respuesta.StatusCode == StatusCodes.Status201Created)
                     return Ok(new GlobalResponse_Request());
 

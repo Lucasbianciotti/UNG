@@ -8,7 +8,7 @@ namespace Web.Services
         public GlobalElements_Services()
         {
             TituloDePagina = "UNG system";
-            Empresa = "";
+            Company = "";
 
             _Usuario = null;
 
@@ -50,7 +50,7 @@ namespace Web.Services
 
         #region Variables
         public string TituloDePagina { get; set; }
-        public string Empresa { get; set; }
+        public string Company { get; set; }
 
 
         private bool _Modal_ImprimirFactura_Visible;

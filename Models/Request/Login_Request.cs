@@ -4,35 +4,35 @@ namespace Models.Request
 {
     public class Login_Request
     {
-        [Required(ErrorMessage = "El email es requerido.")]
+        [Required(ErrorMessage = "The email is required.")]
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "La contraseña es requerida.")]
+        [Required(ErrorMessage = "The password is required.")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
     }
 
 
-    public class Login_ReestablecerContraseña_Request
+    public class Login_RestorePassword_Request
     {
-        [Required(ErrorMessage = "El email es requerido.")]
+        [Required(ErrorMessage = "The email is required.")]
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
     }
 
-    public class Login_ActualizarContraseña_Request
+    public class Login_UpdatePassword_Request
     {
-        [Required(ErrorMessage = "El email es requerido.")]
+        [Required(ErrorMessage = "The email is required.")]
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "La contraseña es requerida.")]
+        [Required(ErrorMessage = "The password is required.")]
         [StringLength(255, ErrorMessage = "La contraseña debe tener entre 6 y 255 carácteres.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        [Required(ErrorMessage = "Confirm Password is required")]
+        [Required(ErrorMessage = "Confirm password is required")]
         [StringLength(255, ErrorMessage = "La contraseña debe tener entre 6 y 255 carácteres.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Compare("Password")]

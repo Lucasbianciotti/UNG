@@ -11,8 +11,8 @@ namespace Web.Services
         Task<User_Request> GetLogin();
 
         Task<string> Login(Login_Request userForAuthentication);
-        Task<string> ReestablecerContraseña(Login_ReestablecerContraseña_Request Model);
-        Task<string> ActualizarContraseña(Login_ActualizarContraseña_Request Model);
+        Task<string> ReestablecerContraseña(Login_RestorePassword_Request Model);
+        Task<string> ActualizarContraseña(Login_UpdatePassword_Request Model);
 
         Task Logout();
     }

@@ -6,7 +6,7 @@ namespace API.Services
     public interface IUserService
     {
         Response_Login_Request Login(Users usuarioAdmin);
-        bool ActualizarContraseña(Login_ActualizarContraseña_Request model);
-        bool ReestablecerContraseña(Login_ReestablecerContraseña_Request model);
+        bool UpdatePassword(Login_UpdatePassword_Request model);
+        bool RestorePassword(Login_RestorePassword_Request model);
     }
 }

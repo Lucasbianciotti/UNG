@@ -31,7 +31,7 @@
 
     public string NameDeUsuario { get; set; } = "Usuario";
     public string URL_ImagenDePerfil { get; set; } = ImagenesHelpers.User_Default;
-    public string Empresa { get; set; } = "UNG system";
+    public string Company { get; set; } = "UNG system";
 
     protected override async Task OnInitializedAsync()
     {
@@ -45,7 +45,7 @@
                 {
                     NameDeUsuario = _GlobalElements._Usuario.Name;
                     URL_ImagenDePerfil = _GlobalElements._Usuario.URL_ImagenDePerfil;
-                    Empresa = _GlobalElements._Usuario.Empresa;
+                    Company = _GlobalElements._Usuario.Company;
                 }
                 else
                 {

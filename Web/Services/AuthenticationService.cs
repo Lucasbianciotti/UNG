@@ -37,7 +37,7 @@ namespace Web.Services
                 if (await _localStorage.GetItemAsync<long>("ID") == 0)
                     return string.Empty;
 
-                return await _localStorage.GetItemAsync<string>("Empresa");
+                return await _localStorage.GetItemAsync<string>("Company");
             }
             catch (Exception)
             {
@@ -61,18 +61,18 @@ namespace Web.Services
                     URL_ImagenDePerfil = await _localStorage.GetItemAsync<string>("URL_ImagenDePerfil"),
                     PermisosDeUsuario = await _localStorage.GetItemAsync<List<PermisosDeUsuario_Request>>("PermisosDeUsuario"),
                     IDcompany = await _localStorage.GetItemAsync<long>("IDcompany"),
-                    Empresa = await _localStorage.GetItemAsync<string>("Empresa")
+                    Company = await _localStorage.GetItemAsync<string>("Company")
                 };
 
                 usuario.Name = EncryptClass.Decodify(usuario.Name);
                 usuario.Surname= EncryptClass.Decodify(usuario.Surname);
                 usuario.CompleteName = EncryptClass.Decodify(usuario.Name) + " " + EncryptClass.Decodify(usuario.Surname);
-                usuario.Empresa = EncryptClass.Decodify(usuario.Empresa);
+                usuario.Company = EncryptClass.Decodify(usuario.Company);
 
                 _GlobalElements._Usuario = usuario;
 
-                _GlobalElements.TituloDePagina = "UNG system - " + usuario.Empresa;
-                _GlobalElements.Empresa = usuario.Empresa;
+                _GlobalElements.TituloDePagina = "UNG system - " + usuario.Company;
+                _GlobalElements.Company = usuario.Company;
 
                 return usuario;
             }
@@ -123,7 +123,7 @@ namespace Web.Services
                     await _localStorage.SetItemAsync("Company", response.Company);
 
                     _GlobalElements.TituloDePagina = "UNG system - " + response.Company;
-                    _GlobalElements.Empresa = response.Company;
+                    _GlobalElements.Company = response.Company;
 
                     ((AuthStateProvider)_authStateProvider).NotifyUserAuthentication(userForAuthentication.Email);
                     _HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", response.Token);
@@ -143,7 +143,7 @@ namespace Web.Services
             }
         }
 
-        public async Task<string> ReestablecerContraseña(Login_ReestablecerContraseña_Request Model)
+        public async Task<string> ReestablecerContraseña(Login_RestorePassword_Request Model)
         {
             HttpResponseMessage post = null;
 
@@ -179,7 +179,7 @@ namespace Web.Services
 
         }
 
-        public async Task<string> ActualizarContraseña(Login_ActualizarContraseña_Request Model)
+        public async Task<string> ActualizarContraseña(Login_UpdatePassword_Request Model)
         {
             HttpResponseMessage post = null;
 

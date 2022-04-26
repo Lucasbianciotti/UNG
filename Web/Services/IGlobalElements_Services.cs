@@ -12,7 +12,7 @@ namespace Web.Services
 
 
         public string TituloDePagina { get; set; }
-        public string Empresa { get; set; }
+        public string Company { get; set; }
 
 
         public InformacionDeDrones_Request Drones { get; set; }
