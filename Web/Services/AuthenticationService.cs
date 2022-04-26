@@ -143,7 +143,7 @@ namespace Web.Services
             }
         }
 
-        public async Task<string> ReestablecerContraseña(Login_RestorePassword_Request Model)
+        public async Task<string> ReestablecerPassword(Login_RestorePassword_Request Model)
         {
             HttpResponseMessage post = null;
 
@@ -152,7 +152,7 @@ namespace Web.Services
                 var content = JsonConvert.SerializeObject(Model);
                 var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
 
-                var requestMessage = new HttpRequestMessage(HttpMethod.Post, URLs.Login_ReestablecerContraseña)
+                var requestMessage = new HttpRequestMessage(HttpMethod.Post, URLs.Login_ReestablecerPassword)
                 {
                     Content = bodyContent
                 };
@@ -172,14 +172,14 @@ namespace Web.Services
             }
             catch (Exception e)
             {
-                Logs_ErroresClass.NuevoLog(_HttpClient, "No se pudo reestablecer la contraseña. No se pudo deserializar.", AccionesDelSistemaEnum.Login, TiposDeSistemaEnum.WEB, e, CodigosDeErrorEnum.Error);
+                Logs_ErroresClass.NuevoLog(_HttpClient, "No se pudo reestablecer la password. No se pudo deserializar.", AccionesDelSistemaEnum.Login, TiposDeSistemaEnum.WEB, e, CodigosDeErrorEnum.Error);
 
-                return "No se pudo reestablecer la contraseña. Verifique su conexión a internet.";
+                return "No se pudo reestablecer la password. Verifique su conexión a internet.";
             }
 
         }
 
-        public async Task<string> ActualizarContraseña(Login_UpdatePassword_Request Model)
+        public async Task<string> ActualizarPassword(Login_UpdatePassword_Request Model)
         {
             HttpResponseMessage post = null;
 
@@ -188,7 +188,7 @@ namespace Web.Services
                 var content = JsonConvert.SerializeObject(Model);
                 var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
 
-                var requestMessage = new HttpRequestMessage(HttpMethod.Post, URLs.Login_ActualizarContraseña)
+                var requestMessage = new HttpRequestMessage(HttpMethod.Post, URLs.Login_ActualizarPassword)
                 {
                     Content = bodyContent
                 };
@@ -208,9 +208,9 @@ namespace Web.Services
             }
             catch (Exception e)
             {
-                Logs_ErroresClass.NuevoLog(_HttpClient, "No se pudo actualizar la contraseña. No se pudo deserializar.", AccionesDelSistemaEnum.Login, TiposDeSistemaEnum.WEB, e, CodigosDeErrorEnum.Error);
+                Logs_ErroresClass.NuevoLog(_HttpClient, "No se pudo actualizar la password. No se pudo deserializar.", AccionesDelSistemaEnum.Login, TiposDeSistemaEnum.WEB, e, CodigosDeErrorEnum.Error);
 
-                return "No se pudo actualizar la contraseña. Verifique su conexión a internet.";
+                return "No se pudo actualizar la password. Verifique su conexión a internet.";
             }
         }
 

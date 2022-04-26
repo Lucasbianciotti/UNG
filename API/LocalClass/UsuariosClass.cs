@@ -305,10 +305,10 @@ namespace API.LocalClass
                 if (usuarioAdmin == null) throw new Exception("No se encontró el usuario");
 
                 if (usuarioAdmin.PasswordHash != EncrypterService.GetSHA256(model.PasswordOld))
-                    throw new Exception("La contraseña anterior es incorrecta");
+                    throw new Exception("La password anterior es incorrecta");
 
                 if (model.NewPassword != model.RepeatNewPassword)
-                    throw new Exception("Las contraseñas no coinciden");
+                    throw new Exception("Las passwords no coinciden");
 
 
                 usuarioAdmin.PasswordHash = EncrypterService.GetSHA256(model.NewPassword);
@@ -330,13 +330,13 @@ namespace API.LocalClass
 
                 Logs_ErroresClass.NuevoLog(user, new New_Error_Request()
                 {
-                    Comentario = "No se pudo cambiar la contraseña del usuario",
+                    Comentario = "No se pudo cambiar la password del usuario",
                     Excepcion = e,
                     Accion = AccionesDelSistemaEnum.Crear,
                     Sistema = TiposDeSistemaEnum.API,
                 });
 
-                return new Respuesta(StatusCodes.Status500InternalServerError, "No se pudo cambiar la contraseña. " + e.Message.ToString());
+                return new Respuesta(StatusCodes.Status500InternalServerError, "No se pudo cambiar la password. " + e.Message.ToString());
             }
         }
 

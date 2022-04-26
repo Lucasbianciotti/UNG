@@ -13,7 +13,7 @@ namespace API.LocalClass
         public static async Task<string> SendCode_RestorePassword(string email, string callbackUrl)
         {
             string Asunto = "UNG system - Restore password";
-            string Mensaje = "Para restablecer la contraseña, haga clic <a href=\"" + callbackUrl + "\">aquí</a>";
+            string Mensaje = "Para restablecer la password, haga clic <a href=\"" + callbackUrl + "\">aquí</a>";
 
             return await SendEmail(email, Asunto, Mensaje);
         }
@@ -21,7 +21,7 @@ namespace API.LocalClass
 
 
 
-        public static async Task<string> SendPasswordForNewUser(ClaimsPrincipal user, User_Request usuario, string contraseña)
+        public static async Task<string> SendPasswordForNewUser(ClaimsPrincipal user, User_Request usuario, string password)
         {
             string Asunto = string.Empty;
             string Mensaje = string.Empty;
@@ -30,8 +30,8 @@ namespace API.LocalClass
             var Email = db.Emails.Where(x => x.Type == TiposDeEmailEnum.Bienvenida).FirstOrDefault();
             if (Email == null)
             {
-                Asunto = Reemplazar(Email.Subject, usuario.Name, usuario.Surname, usuario.Email, contraseña);
-                Mensaje = Reemplazar(Email.Message, usuario.Name, usuario.Surname, usuario.Email, contraseña);
+                Asunto = Reemplazar(Email.Subject, usuario.Name, usuario.Surname, usuario.Email, password);
+                Mensaje = Reemplazar(Email.Message, usuario.Name, usuario.Surname, usuario.Email, password);
             }
             else
             {
@@ -43,13 +43,13 @@ namespace API.LocalClass
 
 
         #region Metodos
-        private static string Reemplazar(string Mensaje, string Name = "", string Surname = "", string Email = "", string Contraseña = "")
+        private static string Reemplazar(string Mensaje, string Name = "", string Surname = "", string Email = "", string Password = "")
         {
             Mensaje = Mensaje.Replace("{app}", "MODDY");
             Mensaje = Mensaje.Replace("{Name}", Name);
             Mensaje = Mensaje.Replace("{Surname}", Surname);
             Mensaje = Mensaje.Replace("{usuario}", Email);
-            Mensaje = Mensaje.Replace("{contrasena}", Contraseña);
+            Mensaje = Mensaje.Replace("{contrasena}", Password);
             Mensaje = Mensaje.Replace("{URL}", "https://moddy.cloudnetsolutions.com.ar/");
 
             return Mensaje;
@@ -60,7 +60,7 @@ namespace API.LocalClass
             try
             {
                 string EmailDelRemitente = "Administracion@CloudnetSolutions.com.ar";
-                string Contraseña = "Cloud_Admin2020";
+                string Password = "Cloud_Admin2020";
                 string Proveedor = "smtp-mail.outlook.com";
                 int Puerto = 587;
 
@@ -69,7 +69,7 @@ namespace API.LocalClass
                     EnableSsl = true,
                     UseDefaultCredentials = false,
                     Port = Puerto,
-                    Credentials = new System.Net.NetworkCredential(EmailDelRemitente, Contraseña)
+                    Credentials = new System.Net.NetworkCredential(EmailDelRemitente, Password)
                 };
 
                 MailMessage oMailMessage = new(EmailDelRemitente, Email, Asunto, Mensaje)

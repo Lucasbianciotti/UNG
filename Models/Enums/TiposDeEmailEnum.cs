@@ -3,9 +3,9 @@
     public class TiposDeEmailEnum
     {
         public static string Bienvenida { get { return "Bienvenida"; } }
-        public static string CambioDeContraseña { get { return "Cambio de contraseña"; } }
+        public static string CambioDePassword { get { return "Cambio de password"; } }
         public static string Cumpleaños { get { return "Cumpleaños"; } }
-        public static string ReestablecerContraseña { get { return "Reestablecer contraseña"; } }
+        public static string ReestablecerPassword { get { return "Reestablecer password"; } }
 
     }
 }

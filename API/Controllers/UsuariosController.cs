@@ -30,12 +30,12 @@ namespace API.Controllers
 
             using var db = new UNG_Context();
             var usuarioAdmin = UsersClass.LoginDeUsuario(db, model.Email, model.Password);
-            if (usuarioAdmin == null) return BadRequest("Usuario o contraseña incorrecta");
+            if (usuarioAdmin == null) return BadRequest("Usuario o password incorrecta");
 
 
             var respuesta = _userService.Login(usuarioAdmin);
             if (respuesta == null)
-                return BadRequest("Usuario o contraseña incorrecta");
+                return BadRequest("Usuario o password incorrecta");
 
             return Ok(respuesta);
         }
@@ -50,9 +50,9 @@ namespace API.Controllers
 
             var response = _userService.RestorePassword(model);
             if (!response)
-                return BadRequest("No se pudo reestablecer la contraseña. Reintente.");
+                return BadRequest("No se pudo reestablecer la password. Reintente.");
 
-            return Ok("Si el email fue correcto, se le envió un correo para reestablecer su contraseña.");
+            return Ok("Si el email fue correcto, se le envió un correo para reestablecer su password.");
         }
 
 
@@ -65,9 +65,9 @@ namespace API.Controllers
 
             var response = _userService.UpdatePassword(model);
             if (response)
-                return BadRequest("No se pudo actualizar la contraseña. Reintente.");
+                return BadRequest("No se pudo actualizar la password. Reintente.");
 
-            return Ok("Contraseña actualizada con éxito. Ahora puede iniciar sesión.");
+            return Ok("Password actualizada con éxito. Ahora puede iniciar sesión.");
         }
 
 
