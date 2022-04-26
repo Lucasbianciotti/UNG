@@ -8,7 +8,7 @@ namespace Web.Services
     {
         Task<string> GetLogin_CompanyName();
 
-        Task<Usuario_Request> GetLogin();
+        Task<User_Request> GetLogin();
 
         Task<string> Login(Login_Request userForAuthentication);
         Task<string> ReestablecerContraseña(Login_ReestablecerContraseña_Request Model);

@@ -6,12 +6,8 @@ using Models;
 using Models.Enums;
 using Models.Request;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
 using Web.LocalClass;
 
 namespace Web.Services
@@ -49,26 +45,31 @@ namespace Web.Services
             }
         }
 
-        public async Task<Usuario_Request> GetLogin()
+        public async Task<User_Request> GetLogin()
         {
             try
             {
                 if (await _localStorage.GetItemAsync<long>("ID") == 0)
                     return null;
 
-                var usuario = new Usuario_Request
+                var usuario = new User_Request
                 {
                     ID = await _localStorage.GetItemAsync<long>("ID"),
-                    Nombre = await _localStorage.GetItemAsync<string>("Nombre"),
-                    Apellido = await _localStorage.GetItemAsync<string>("Apellido"),
+                    Name = await _localStorage.GetItemAsync<string>("Name"),
+                    Surname = await _localStorage.GetItemAsync<string>("Surname"),
                     Email = await _localStorage.GetItemAsync<string>("Email"),
                     URL_ImagenDePerfil = await _localStorage.GetItemAsync<string>("URL_ImagenDePerfil"),
                     PermisosDeUsuario = await _localStorage.GetItemAsync<List<PermisosDeUsuario_Request>>("PermisosDeUsuario"),
-                    IDempresa = await _localStorage.GetItemAsync<long>("IDempresa"),
+                    IDcompany = await _localStorage.GetItemAsync<long>("IDcompany"),
                     Empresa = await _localStorage.GetItemAsync<string>("Empresa")
                 };
 
-                usuario.NombreCompleto = usuario.Nombre + " " + usuario.Apellido;
+                usuario.Name = EncryptClass.Decodify(usuario.Name);
+                usuario.Surname= EncryptClass.Decodify(usuario.Surname);
+                usuario.CompleteName = EncryptClass.Decodify(usuario.Name) + " " + EncryptClass.Decodify(usuario.Surname);
+                usuario.Empresa = EncryptClass.Decodify(usuario.Empresa);
+
+                _GlobalElements._Usuario = usuario;
 
                 _GlobalElements.TituloDePagina = "UNG system - " + usuario.Empresa;
                 _GlobalElements.Empresa = usuario.Empresa;
@@ -113,16 +114,16 @@ namespace Web.Services
 
                     await _localStorage.SetItemAsync("authToken", response.Token);
                     await _localStorage.SetItemAsync("ID", response.ID);
-                    await _localStorage.SetItemAsync("Nombre", response.Nombre);
-                    await _localStorage.SetItemAsync("Apellido", response.Apellido);
+                    await _localStorage.SetItemAsync("Name", response.Name);
+                    await _localStorage.SetItemAsync("Surname", response.Surname);
                     await _localStorage.SetItemAsync("Email", response.Email);
                     await _localStorage.SetItemAsync("URL_ImagenDePerfil", response.URL_ImagenDePerfil);
                     await _localStorage.SetItemAsync("PermisosDeUsuario", response.PermisosDeUsuario);
-                    await _localStorage.SetItemAsync("IDempresa", response.IDempresa);
-                    await _localStorage.SetItemAsync("Empresa", response.Empresa);
+                    await _localStorage.SetItemAsync("IDcompany", response.IDcompany);
+                    await _localStorage.SetItemAsync("Company", response.Company);
 
-                    _GlobalElements.TituloDePagina = "UNG system - " + response.Empresa;
-                    _GlobalElements.Empresa = response.Empresa;
+                    _GlobalElements.TituloDePagina = "UNG system - " + response.Company;
+                    _GlobalElements.Empresa = response.Company;
 
                     ((AuthStateProvider)_authStateProvider).NotifyUserAuthentication(userForAuthentication.Email);
                     _HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", response.Token);
@@ -217,13 +218,13 @@ namespace Web.Services
         {
             await _localStorage.RemoveItemAsync("authToken");
             await _localStorage.RemoveItemAsync("ID");
-            await _localStorage.RemoveItemAsync("Nombre");
-            await _localStorage.RemoveItemAsync("Apellido");
+            await _localStorage.RemoveItemAsync("Name");
+            await _localStorage.RemoveItemAsync("Surname");
             await _localStorage.RemoveItemAsync("Email");
             await _localStorage.RemoveItemAsync("URL_ImagenDePerfil");
             await _localStorage.RemoveItemAsync("PermisosDeUsuario");
-            await _localStorage.RemoveItemAsync("Empresa");
-            await _localStorage.RemoveItemAsync("IDempresa");
+            await _localStorage.RemoveItemAsync("Company");
+            await _localStorage.RemoveItemAsync("IDcompany");
 
             ((AuthStateProvider)_authStateProvider).NotifyUserLogout();
             _HttpClient.DefaultRequestHeaders.Authorization = null;

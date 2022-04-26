@@ -14,15 +14,11 @@
    "SelectedToBeGenerated": 0,
    "Tables": [
       {
-         "Name": "[dbo].[Config]",
+         "Name": "[dbo].[Companies]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[Datos]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[Drones]",
+         "Name": "[dbo].[Data]",
          "ObjectType": 0
       },
       {
@@ -30,19 +26,23 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[Empresas]",
+         "Name": "[dbo].[Equipments]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[Logs_Errores]",
+         "Name": "[dbo].[Logs_Errors]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[Logs_MovimientosDelSistema]",
+         "Name": "[dbo].[Logs_SystemMoves]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[Usuarios]",
+         "Name": "[dbo].[Stations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Users]",
          "ObjectType": 0
       }
    ],

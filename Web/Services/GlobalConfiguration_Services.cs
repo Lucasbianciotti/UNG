@@ -52,8 +52,8 @@ namespace Web.Services
             //{
             //    var error = new Logs_Errores
             //    {
-            //        IDusuario = UsuariosClass.GetID_User(user),
-            //        IDcompania = UsuariosClass.GetID_Company(user),
+            //        IDuser = UsersClass.GetID_User(user),
+            //        IDcompania = UsersClass.GetID_Company(user),
             //        Fecha = DateTime.Now,
             //        Sistema = sistema.ToString(),
             //        Codigo = codigo.ToString(),

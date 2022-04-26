@@ -1,0 +1,245 @@
+﻿@page "/stations"
+
+@inject HttpClient Http
+@inject IAuthenticationService _AuthenticationService
+@inject IGlobalElements_Services _GlobalElements
+@inject IGlobalConfiguration_Services _GlobalConfiguration
+@inject IToastServices _Toast
+
+@attribute [Authorize]
+
+<Title Value="@_GlobalElements.TituloDePagina"></Title>
+
+
+<SfDialog IsModal="false" CloseOnEscape="false"
+          Target="#content-body"
+          CssClass="dialog-max-content"
+          @bind-Visible="@Ventana_Principal_IsVisible">
+
+    <DialogTemplates>
+        <Content>
+
+            <div class="col-12">
+                <SfCard>
+                    <div class="card mb-4">
+
+                        <div class="card-header pb-0 d-flex justify-content-between">
+                            <h6>Stations</h6>
+
+                            <div class="e-btn-group p-0">
+                                <button @onclick="(async () => await CargarInformacion())" class="btn btn-icon btn-2 btn-sm btn-outline-info" type="button">
+                                    <span class="btn-inner--icon"><i class="fas fa-redo-alt"></i></span>
+                                </button>
+
+                                <button @onclick="MostrarVentana_Nuevo" class="btn btn-icon btn-2 btn-sm btn-outline-info" type="button">
+                                    <span class="btn-inner--icon"><i class="fa-solid fa-plus"></i></span>
+                                </button>
+                            </div>
+
+                        </div>
+
+
+                        <CardContent>
+
+                            <div class="card-body px-0 pt-0 pb-2">
+                                <div class="table-responsive p-0">
+
+
+                                </div>
+                            </div>
+
+                        </CardContent>
+                    </div>
+
+
+                </SfCard>
+            </div>
+        </Content>
+    </DialogTemplates>
+
+    <DialogAnimationSettings Effect="@_GlobalConfiguration.AnimationEffect" Duration=@_GlobalConfiguration.AnimationTime />
+    <DialogPositionData X="center" Y="start"></DialogPositionData>
+</SfDialog>
+
+
+<_Card_EditionStation @ref="_Ventana_Edicion"
+                      _Page="this" />
+
+
+@code {
+    #region Variables
+    private _Card_EditionStation _Ventana_Edicion = new();
+
+    private NumberFormatInfo nfi = new NumberFormatInfo { NumberDecimalSeparator = ",", NumberGroupSeparator = "." };
+
+    private bool _Cargando { get; set; } = true;
+    private bool _CargadoConExito { get; set; } = true;
+
+    private bool _PermisoParaCrear { get; set; } = true;
+    private bool _PermisoParaModificar { get; set; } = true;
+    private bool _PermisoParaVer { get; set; } = true;
+    private bool _PermisoParaEliminar { get; set; } = true;
+    private bool _PermisoParaExportar { get; set; } = true;
+
+    private SfGrid<Equipment_Request> _Grid = new();
+    #endregion
+
+    #region Mostrar informacion
+
+    protected override async Task OnInitializedAsync()
+    {
+        Ventana_Principal_IsVisible = true;
+
+        _GlobalElements._Usuario = await _AuthenticationService.GetLogin();
+        if (_GlobalElements._Usuario != null)
+        {
+            /*
+            _PermisoParaVer = UsersClass.UsuarioTienePermiso(_Usuario, SeccionesEnum.Ventas_Presupuestos, AccionesEnum.Ver);
+            _PermisoParaCrear = UsersClass.UsuarioTienePermiso(_Usuario, SeccionesEnum.Ventas_Presupuestos, AccionesEnum.Crear);
+            _PermisoParaModificar = UsersClass.UsuarioTienePermiso(_Usuario, SeccionesEnum.Ventas_Presupuestos, AccionesEnum.Modificar);
+            _PermisoParaEliminar = UsersClass.UsuarioTienePermiso(_Usuario, SeccionesEnum.Ventas_Presupuestos, AccionesEnum.Eliminar);
+            _PermisoParaExportar = UsersClass.UsuarioTienePermiso(_Usuario, SeccionesEnum.Ventas_Presupuestos, AccionesEnum.Exportar);
+            */
+
+            if (_PermisoParaVer)
+                await CargarInformacion();
+        }
+
+    }
+
+    public async Task CargarInformacion()
+    {
+        try
+        {
+            _CargadoConExito = false;
+            _Cargando = true;
+            StateHasChanged();
+
+            var statusResponse = await HttpClass.GetSet(Http, URLs.Drones, _Toast, _GlobalElements, _GlobalElements.Drones.Filtros);
+            if (statusResponse)
+            {
+                _CargadoConExito = true;
+                ActualizarVista(_GlobalElements.Drones);
+            }
+        }
+        catch (Exception e)
+        {
+            _GlobalConfiguration.NuevoLog("No se pudo cargar la información", AccionesDelSistemaEnum.CargaDeInformacionCompleta, e, CodigosDeErrorEnum.Error);
+            _Toast.ShowError("The information could not be loaded.");
+        }
+        finally
+        {
+            _Cargando = false;
+            StateHasChanged();
+        }
+    }
+
+    public void ActualizarVista(InformacionDeDrones_Request informacion)
+    {
+        try
+        {
+            _Cargando = true;
+            StateHasChanged();
+
+            _GlobalElements.Drones.List_Drone = informacion.List_Drone;
+            //_ResumenCVIG_childComponent.ActualizarVista(informacion);
+
+            _Cargando = false;
+            StateHasChanged();
+
+            _Grid.Refresh();
+        }
+        catch (Exception) { }
+    }
+
+    #endregion
+
+
+    #region Grilla
+
+    public void ToolbarClick(Syncfusion.Blazor.Navigations.ClickEventArgs args)
+    {
+        if (_PermisoParaExportar)
+        {
+            if (args.Item.Id.Contains("pdfexport"))
+                this._Grid.PdfExport();
+
+            else if (args.Item.Id.Contains("excelexport"))
+                this._Grid.ExcelExport();
+
+            else if (args.Item.Id.Contains("csvexport"))
+                this._Grid.CsvExport();
+        }
+        else
+        {
+            _Toast.ShowWarning("No tiene permiso para exportar.");
+        }
+    }
+
+    public void OnCommandClicked(Equipment_Request args, CommandButtonType comando)
+    {
+        if (comando == CommandButtonType.Edit)
+        {
+            if (_PermisoParaModificar)
+                MostrarVentana_Modificar(args);
+            else
+                _Toast.ShowWarning("No tiene permiso para modificar.");
+        }
+        //else if (comando == CommandButtonType.Delete)
+        //{
+        //    if (_PermisoParaEliminar)
+        //        AbrirModal_Eliminar(args);
+        //    else
+        //        _Toast.ShowWarning("No tiene permiso para eliminar.");
+        //}
+    }
+
+    #endregion Grilla
+
+
+    #region Modales y ventanas
+
+    private bool Ventana_Principal_IsVisible { get; set; } = true;
+
+    public void MostrarVentana_Principal()
+    {
+        Ventana_Principal_IsVisible = true;
+        StateHasChanged();
+    }
+
+    #endregion
+
+    #region Nuevo
+
+    private void MostrarVentana_Nuevo()
+    {
+        if (_PermisoParaCrear)
+        {
+            Ventana_Principal_IsVisible = false;
+            _Ventana_Edicion.Abrir_CrearVenta();
+        }
+        else
+        {
+            _Toast.ShowWarning("No tiene permiso para crear.");
+        }
+    }
+    #endregion Nuevo
+
+
+    #region Modificar
+    private void MostrarVentana_Modificar(Equipment_Request model)
+    {
+        if (_PermisoParaModificar)
+        {
+            model.Filtros = _GlobalElements.Drones.Filtros;
+            Ventana_Principal_IsVisible = false;
+            _Ventana_Edicion.Abrir_ModificarVenta(model);
+        }
+        else
+        {
+            _Toast.ShowWarning("No tiene permiso para modificar.");
+        }
+    }
+    #endregion Modificar
+
+}

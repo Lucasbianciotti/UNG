@@ -7,7 +7,7 @@ namespace Models.Enums
         public long IDunidad { get; set; }
         public string Rol { get; set; }
     }
-    public static class RolesDeUsuariosEnum
+    public static class RolesDeUsersEnum
     {
 
         public static readonly List<string> Tipos = new List<string>()

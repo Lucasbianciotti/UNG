@@ -21,17 +21,17 @@ namespace API.LocalClass
 
 
 
-        public static async Task<string> EnviarContraseñaParaNuevoUsuario(ClaimsPrincipal user, Usuario_Request usuario, string contraseña)
+        public static async Task<string> EnviarContraseñaParaNuevoUsuario(ClaimsPrincipal user, User_Request usuario, string contraseña)
         {
             string Asunto = string.Empty;
             string Mensaje = string.Empty;
 
             using var db = new UNG_Context();
-            var Email = db.Emails.Where(x => x.TipoDeEmail == TiposDeEmailEnum.Bienvenida).FirstOrDefault();
+            var Email = db.Emails.Where(x => x.Type == TiposDeEmailEnum.Bienvenida).FirstOrDefault();
             if (Email == null)
             {
-                Asunto = Reemplazar(Email.Asunto, usuario.Nombre, usuario.Apellido, usuario.Email, contraseña);
-                Mensaje = Reemplazar(Email.Mensaje, usuario.Nombre, usuario.Apellido, usuario.Email, contraseña);
+                Asunto = Reemplazar(Email.Subject, usuario.Name, usuario.Surname, usuario.Email, contraseña);
+                Mensaje = Reemplazar(Email.Message, usuario.Name, usuario.Surname, usuario.Email, contraseña);
             }
             else
             {
@@ -43,11 +43,11 @@ namespace API.LocalClass
 
 
         #region Metodos
-        private static string Reemplazar(string Mensaje, string Nombre = "", string Apellido = "", string Email = "", string Contraseña = "")
+        private static string Reemplazar(string Mensaje, string Name = "", string Surname = "", string Email = "", string Contraseña = "")
         {
             Mensaje = Mensaje.Replace("{app}", "MODDY");
-            Mensaje = Mensaje.Replace("{nombre}", Nombre);
-            Mensaje = Mensaje.Replace("{apellido}", Apellido);
+            Mensaje = Mensaje.Replace("{Name}", Name);
+            Mensaje = Mensaje.Replace("{Surname}", Surname);
             Mensaje = Mensaje.Replace("{usuario}", Email);
             Mensaje = Mensaje.Replace("{contrasena}", Contraseña);
             Mensaje = Mensaje.Replace("{URL}", "https://moddy.cloudnetsolutions.com.ar/");

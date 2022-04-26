@@ -14,10 +14,10 @@ namespace Models.EntityFrameworks
         public long ID { get; set; }
         [Required]
         [StringLength(250)]
-        public string TipoDeEmail { get; set; }
+        public string Type { get; set; }
         [Required]
-        public string Asunto { get; set; }
+        public string Subject { get; set; }
         [Required]
-        public string Mensaje { get; set; }
+        public string Message { get; set; }
     }
 }

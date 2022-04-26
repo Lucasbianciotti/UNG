@@ -18,16 +18,16 @@ namespace API.LocalClass
 
                 try
                 {
-                    var error = new Logs_Errores
+                    var error = new Logs_Errors
                     {
-                        IDusuario = UsuariosClass.GetID_User(user),
-                        IDempresa = UsuariosClass.GetID_Company(user),
-                        Fecha = DateTime.Now,
-                        Sistema = sistema.ToString(),
-                        Codigo = codigo.ToString(),
-                        Comentario = comentario,
+                        IDuser = UsersClass.GetID_User(user),
+                        IDcompany = UsersClass.GetID_Company(user),
+                        Date = DateTime.Now,
+                        System = sistema.ToString(),
+                        Code = codigo.ToString(),
+                        Commentary = comentario,
                         Aux = null,
-                        Accion = accion.ToString(),
+                        Action = accion.ToString(),
                     };
 
                     if (exception != null)
@@ -45,13 +45,13 @@ namespace API.LocalClass
                                               Class = frame.GetMethod().DeclaringType,
                                           }).FirstOrDefault();
 
-                            error.Excepcion = exception.ToString();
-                            error.Excepcion_Archivo = frame.FileName;
-                            error.Excepcion_Metodo = frame.Class.ToString() + " - " + frame.Method.ToString();
-                            error.Excepcion_NumeroDeLinea = frame.LineNumber.ToString();
-                            error.Excepcion_Source = exception.Source;
+                            error.Exception = exception.ToString();
+                            error.Exception_File = frame.FileName;
+                            error.Exception_Method = frame.Class.ToString() + " - " + frame.Method.ToString();
+                            error.Exception_NumberOfLine = frame.LineNumber.ToString();
+                            error.Exception_Source = exception.Source;
                             if (exception.InnerException != null)
-                                error.Excepcion_Mensaje = exception.InnerException.ToString();
+                                error.Exception_Message = exception.InnerException.ToString();
                         }
                         catch (Exception)
                         {
@@ -59,7 +59,7 @@ namespace API.LocalClass
                         }
                     }
 
-                    db.Logs_Errores.Add(error);
+                    db.Logs_Errors.Add(error);
                     await db.SaveChangesAsync();
                 }
                 catch (Exception)

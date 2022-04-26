@@ -2,9 +2,9 @@
 
 namespace Web.LocalClass
 {
-    public static class UsuariosClass
+    public static class UsersClass
     {
-        public static bool UsuarioTienePermiso(Usuario_Request user, string seccion, string accion)
+        public static bool UsuarioTienePermiso(User_Request user, string seccion, string accion)
         {
             if (user == null)
                 return false;

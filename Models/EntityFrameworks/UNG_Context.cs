@@ -19,14 +19,14 @@ namespace Models.EntityFrameworks
         {
         }
 
-        public virtual DbSet<Config> Config { get; set; }
-        public virtual DbSet<Datos> Datos { get; set; }
-        public virtual DbSet<Drones> Drones { get; set; }
+        public virtual DbSet<Companies> Companies { get; set; }
+        public virtual DbSet<Data> Data { get; set; }
         public virtual DbSet<Emails> Emails { get; set; }
-        public virtual DbSet<Empresas> Empresas { get; set; }
-        public virtual DbSet<Logs_Errores> Logs_Errores { get; set; }
-        public virtual DbSet<Logs_MovimientosDelSistema> Logs_MovimientosDelSistema { get; set; }
-        public virtual DbSet<Usuarios> Usuarios { get; set; }
+        public virtual DbSet<Equipments> Equipments { get; set; }
+        public virtual DbSet<Logs_Errors> Logs_Errors { get; set; }
+        public virtual DbSet<Logs_SystemMoves> Logs_SystemMoves { get; set; }
+        public virtual DbSet<Stations> Stations { get; set; }
+        public virtual DbSet<Users> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -41,22 +41,18 @@ namespace Models.EntityFrameworks
         {
             modelBuilder.HasAnnotation("Relational:Collation", "Modern_Spanish_CI_AS");
 
-            modelBuilder.Entity<Config>(entity =>
+            modelBuilder.Entity<Companies>(entity =>
             {
-                entity.HasOne(d => d.IDempresaNavigation)
-                    .WithMany()
-                    .HasForeignKey(d => d.IDempresa)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Config_Empresas");
+                entity.Property(e => e.ID).ValueGeneratedNever();
             });
 
-            modelBuilder.Entity<Datos>(entity =>
+            modelBuilder.Entity<Data>(entity =>
             {
-                entity.HasOne(d => d.IDdronNavigation)
-                    .WithMany(p => p.Datos)
-                    .HasForeignKey(d => d.IDdron)
+                entity.HasOne(d => d.IDequipmentNavigation)
+                    .WithMany(p => p.Data)
+                    .HasForeignKey(d => d.IDequipment)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Datos_Drones");
+                    .HasConstraintName("FK_Data_Equipments");
             });
 
             modelBuilder.Entity<Emails>(entity =>
@@ -64,28 +60,63 @@ namespace Models.EntityFrameworks
                 entity.Property(e => e.ID).ValueGeneratedNever();
             });
 
-            modelBuilder.Entity<Logs_MovimientosDelSistema>(entity =>
+            modelBuilder.Entity<Equipments>(entity =>
             {
-                entity.HasOne(d => d.IDempresaNavigation)
-                    .WithMany(p => p.Logs_MovimientosDelSistema)
-                    .HasForeignKey(d => d.IDempresa)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Logs_MovimientosDelSistema_Empresas");
+                entity.Property(e => e.ID).ValueGeneratedNever();
 
-                entity.HasOne(d => d.IDusuarioNavigation)
-                    .WithMany(p => p.Logs_MovimientosDelSistema)
-                    .HasForeignKey(d => d.IDusuario)
+                entity.HasOne(d => d.IDstationNavigation)
+                    .WithMany(p => p.Equipments)
+                    .HasForeignKey(d => d.IDstation)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Logs_MovimientosDelSistema_Usuarios");
+                    .HasConstraintName("FK_Equipments_Stations");
             });
 
-            modelBuilder.Entity<Usuarios>(entity =>
+            modelBuilder.Entity<Logs_Errors>(entity =>
             {
-                entity.HasOne(d => d.IDempresaNavigation)
-                    .WithMany(p => p.Usuarios)
-                    .HasForeignKey(d => d.IDempresa)
+                entity.HasOne(d => d.IDcompanyNavigation)
+                    .WithMany(p => p.Logs_Errors)
+                    .HasForeignKey(d => d.IDcompany)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Usuarios_Empresas");
+                    .HasConstraintName("FK_Logs_Errors_Companies");
+
+                entity.HasOne(d => d.IDuserNavigation)
+                    .WithMany(p => p.Logs_Errors)
+                    .HasForeignKey(d => d.IDuser)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Logs_Errors_Users");
+            });
+
+            modelBuilder.Entity<Logs_SystemMoves>(entity =>
+            {
+                entity.HasOne(d => d.IDcompanyNavigation)
+                    .WithMany(p => p.Logs_SystemMoves)
+                    .HasForeignKey(d => d.IDcompany)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Logs_SystemMoves_Companies");
+
+                entity.HasOne(d => d.IDuserNavigation)
+                    .WithMany(p => p.Logs_SystemMoves)
+                    .HasForeignKey(d => d.IDuser)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Logs_SystemMoves_Users");
+            });
+
+            modelBuilder.Entity<Stations>(entity =>
+            {
+                entity.HasOne(d => d.IDcompanyNavigation)
+                    .WithMany(p => p.Stations)
+                    .HasForeignKey(d => d.IDcompany)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Stations_Companies");
+            });
+
+            modelBuilder.Entity<Users>(entity =>
+            {
+                entity.HasOne(d => d.IDcompanyNavigation)
+                    .WithMany(p => p.Users)
+                    .HasForeignKey(d => d.IDcompany)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Users_Companies");
             });
 
             OnModelCreatingPartial(modelBuilder);

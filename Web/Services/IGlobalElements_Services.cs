@@ -15,10 +15,11 @@ namespace Web.Services
         public string Empresa { get; set; }
 
 
-        public List<Dron_Request> Drones { get; set; }
-        public List<Usuario_Request> Usuarios { get; set; }
+        public InformacionDeDrones_Request Drones { get; set; }
 
-        public Usuario_Request _Usuario { get; set; }
+        public List<User_Request> Users { get; set; }
+
+        public User_Request _Usuario { get; set; }
 
     }
 }

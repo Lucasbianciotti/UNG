@@ -2,7 +2,7 @@ namespace Models.Global
 {
     //public class Errors
     //{
-    //    public List<string> Nombre { get; set; }
+    //    public List<string> Name { get; set; }
     //    public List<string> IDcategoria { get; set; }
     //    public List<string> IDunidadDeNegocio { get; set; }
     //}

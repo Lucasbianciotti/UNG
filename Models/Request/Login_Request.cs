@@ -49,13 +49,13 @@ namespace Models.Request
         public string Token { get; set; }
 
         public string Email { get; set; }
-        public string Nombre { get; set; }
-        public string Apellido { get; set; }
+        public string Name { get; set; }
+        public string Surname { get; set; }
 
         public string URL_ImagenDePerfil { get; set; }
 
-        public long IDempresa { get; set; }
-        public string Empresa { get; set; }
+        public long IDcompany { get; set; }
+        public string Company { get; set; }
 
 
         public List<PermisosDeUsuario_Request> PermisosDeUsuario { get; set; }

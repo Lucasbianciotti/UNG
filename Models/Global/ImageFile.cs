@@ -3,7 +3,7 @@
     public class ImageFile
     {
         public long ID { get; set; }
-        public string IDestado { get; set; }
+        public string IDstatus { get; set; }
 
         public string SRC_Imagen { get; set; }
 

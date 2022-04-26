@@ -3,8 +3,6 @@
 @inject NavigationManager NavigationManager
 @inject IGlobalElements_Services _GlobalElements
 @inject IAuthenticationService _AuthenticationService
-@*@inject IToastServices _Toast*@
-@*@inject HttpClient Http*@
 
 
 <AuthorizeView>
@@ -12,7 +10,8 @@
         <NavMenu />
 
         <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
-            <TopMenu />
+            <TopMenu _Page="this"
+                     _GlobalElements="_GlobalElements" />
 
             <div class="container-fluid py-4">@Body</div>
         </main>
@@ -30,7 +29,7 @@
 @code {
     public string styleHidden = "";
 
-    public string NombreDeUsuario { get; set; } = "Usuario";
+    public string NameDeUsuario { get; set; } = "Usuario";
     public string URL_ImagenDePerfil { get; set; } = ImagenesHelpers.User_Default;
     public string Empresa { get; set; } = "UNG system";
 
@@ -44,7 +43,7 @@
                 _GlobalElements._Usuario = await _AuthenticationService.GetLogin();
                 if (_GlobalElements._Usuario != null)
                 {
-                    NombreDeUsuario = _GlobalElements._Usuario.Nombre;
+                    NameDeUsuario = _GlobalElements._Usuario.Name;
                     URL_ImagenDePerfil = _GlobalElements._Usuario.URL_ImagenDePerfil;
                     Empresa = _GlobalElements._Usuario.Empresa;
                 }

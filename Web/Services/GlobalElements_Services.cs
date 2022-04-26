@@ -13,7 +13,7 @@ namespace Web.Services
             _Usuario = null;
 
             Drones = new();
-            Usuarios = new();
+            Users = new();
         }
 
 
@@ -23,20 +23,26 @@ namespace Web.Services
             if (temp == null)
                 return;
 
-            if (temp.Drones != null)
-                Drones = temp.Drones;
+            if (temp.List_Drone != null)
+            {
+                Drones.List_Drone = temp.List_Drone;
+                //Drones.Total = temp.Total;
+                //Drones.Cantidad = temp.Cantidad;
+                //Drones.ACobrar = temp.ACobrar_APagar;
+                //Drones.Cobrado = temp.Cobrado_Pagado;
+            }
 
-            if (temp.Usuarios != null)
-                Usuarios = temp.Usuarios;
+            if (temp.Users != null)
+                Users = temp.Users;
 
             ActualizarVista();
         }
 
 
         #region Listas
-        public List<Dron_Request> Drones { get; set; }
-        public Usuario_Request _Usuario { get; set; }
-        public List<Usuario_Request> Usuarios { get; set; }
+        public InformacionDeDrones_Request Drones { get; set; }
+        public User_Request _Usuario { get; set; }
+        public List<User_Request> Users { get; set; }
 
 
         #endregion Listas

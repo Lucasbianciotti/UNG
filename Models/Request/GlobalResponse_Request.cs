@@ -2,10 +2,10 @@
 {
     public class GlobalResponse_Request
     {
-        public List<Usuario_Request> Usuarios { get; set; }
+        public List<User_Request> Users { get; set; }
 
-        public List<Dron_Request> Drones { get; set; }
-        public List<MovimientosDelSistema_Request> ListaDeMovimientosDelSistema { get; set; }
+        public List<Equipment_Request> List_Drone { get; set; }
+        public List<SystemMove_Request> List_SystemMoves { get; set; }
 
 
 
@@ -14,7 +14,7 @@
         public byte[] ObjetoByte { get; set; }
 
 
-        public string _Mensaje { get; set; }
+        public string _Message { get; set; }
 
 
         public GlobalResponse_Request()

@@ -8,6 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Models.EntityFrameworks;
+using Models;
 
 namespace API.Services
 {
@@ -23,7 +24,7 @@ namespace API.Services
         }
 
 
-        public Response_Login_Request Login(Usuarios usuario)
+        public Response_Login_Request Login(Users usuario)
         {
             try
             {
@@ -35,14 +36,14 @@ namespace API.Services
                 {
                     ID = usuario.ID,
                     Email = usuario.Email,
-                    Nombre = usuario.Nombre,
-                    Apellido = usuario.Apellido,
+                    Name = usuario.Name,
+                    Surname = usuario.Surname,
                     //URL_ImagenDePerfil = usuario.URL_ImagenDePerfil,
                     //PermisosDeUsuario = usuario.PermisosDeUsuario,
                     IsAuthSuccessful = true,
-                    IDempresa = empresa.ID,
-                    Empresa = empresa.Nombre,
-                    Token = GenerarToken(usuario.ID, usuario.IDempresa, usuario.Email)
+                    IDcompany = empresa.ID,
+                    Company = empresa.Name,
+                    Token = GenerarToken(usuario.ID, usuario.IDcompany, usuario.Email)
                 };
 
                 return respuesta;
@@ -60,20 +61,20 @@ namespace API.Services
             {
                 using var db = new UNG_Context();
 
-                var usuario = db.Usuarios.Where(x => x.Email.ToLower() == EncrypterService.Codify(model.Email.ToLower())
-                && x.IDestado == EncrypterService.Codify(EstadosEnum.Activo)).FirstOrDefault();
+                var usuario = db.Users.Where(x => x.Email.ToLower() == EncrypterService.Codify(model.Email.ToLower())
+                && x.IDstatus == EncrypterService.Codify(StatusEnum.Active)).FirstOrDefault();
 
                 if (usuario == null) return false;
 
                 string pin = new Guid().ToString();
 
-                var callbackUrl = "www.moddy.com.ar/actualizarcontraseña?pin=\"" + pin + "\"";
+                var callbackUrl = URLs._API + "actualizarcontraseña?pin=\"" + pin + "\"";
 
                 Task.Run(async () =>
                 {
                     await EmailClass.EnviarCodigo_ReestablecerContraseña(usuario.Email, callbackUrl);
                 });
-                usuario.PinRestaurarContraseña = pin;
+                usuario.PinRestorePassword = pin;
                 db.Entry(usuario).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                 db.SaveChanges();
 
@@ -96,8 +97,8 @@ namespace API.Services
 
                 //using var db = new MODDY_AdministracionContext();
 
-                //var usuario = db.Usuarios.Where(x => x.Email.ToLower() == model.Email.ToLower()
-                //&& x.IDestado == EstadosDeUsuariosEnum.Activo).FirstOrDefault();
+                //var usuario = db.Users.Where(x => x.Email.ToLower() == model.Email.ToLower()
+                //&& x.IDstatus == EstadosDeUsersEnum.Activo).FirstOrDefault();
 
                 //if (usuario == null) return false;
 
@@ -117,7 +118,7 @@ namespace API.Services
 
 
 
-        private string GenerarToken(long IDuser, long IDempresa, string Email)
+        private string GenerarToken(long IDuser, long IDcompany, string Email)
         {
             var llave = Encoding.ASCII.GetBytes("5747511683d38b9e4e53070df9b16c1bcc35796fd89c3bab0504d29a89de1e8e");
 
@@ -128,7 +129,7 @@ namespace API.Services
                     {
                         new Claim(ClaimTypes.NameIdentifier, IDuser.ToString()),
                         new Claim(ClaimTypes.Email, Email),
-                        new Claim(ClaimTypes.PrimarySid, IDempresa.ToString()),
+                        new Claim(ClaimTypes.PrimarySid, IDcompany.ToString()),
                     }),
                 Expires = DateTime.UtcNow.AddDays(60),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(llave), SecurityAlgorithms.HmacSha256Signature)
