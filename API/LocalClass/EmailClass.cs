@@ -10,18 +10,18 @@ namespace API.LocalClass
     {
 
 
-        public static async Task<string> EnviarCodigo_ReestablecerContraseña(string email, string callbackUrl)
+        public static async Task<string> SendCode_RestorePassword(string email, string callbackUrl)
         {
-            string Asunto = "UNG system - Restablecer contraseña";
+            string Asunto = "UNG system - Restore password";
             string Mensaje = "Para restablecer la contraseña, haga clic <a href=\"" + callbackUrl + "\">aquí</a>";
 
-            return await EnviarEmail(email, Asunto, Mensaje);
+            return await SendEmail(email, Asunto, Mensaje);
         }
 
 
 
 
-        public static async Task<string> EnviarContraseñaParaNuevoUsuario(ClaimsPrincipal user, User_Request usuario, string contraseña)
+        public static async Task<string> SendPasswordForNewUser(ClaimsPrincipal user, User_Request usuario, string contraseña)
         {
             string Asunto = string.Empty;
             string Mensaje = string.Empty;
@@ -38,7 +38,7 @@ namespace API.LocalClass
                 throw new Exception("No se encontró la plantilla de email");
             }
 
-            return await EnviarEmail(usuario.Email, Asunto, Mensaje);
+            return await SendEmail(usuario.Email, Asunto, Mensaje);
         }
 
 
@@ -55,7 +55,7 @@ namespace API.LocalClass
             return Mensaje;
         }
 
-        private static async Task<string> EnviarEmail(string Email, string Asunto, string Mensaje)
+        private static async Task<string> SendEmail(string Email, string Asunto, string Mensaje)
         {
             try
             {

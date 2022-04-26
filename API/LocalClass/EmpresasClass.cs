@@ -2,9 +2,9 @@
 
 namespace API.LocalClass
 {
-    public static class EmpresasClass
+    public static class CompanysClass
     {
-        public static Companies BuscarEmpresa(Users user)
+        public static Companies BuscarCompany(Users user)
         {
             using var db = new UNG_Context();
 

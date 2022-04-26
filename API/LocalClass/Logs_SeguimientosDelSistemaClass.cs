@@ -110,7 +110,7 @@ namespace API.LocalClass
 
 
         #region Users
-        public static async Task CambiarContraseña_Usuario(ClaimsPrincipal user, Users usuarioAdmin)
+        public static async Task ChangePassword_User(ClaimsPrincipal user, Users usuarioAdmin)
         {
             var movimiento = new Logs_SystemMoves
             {

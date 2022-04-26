@@ -28,8 +28,8 @@ namespace API.Services
         {
             try
             {
-                var empresa = EmpresasClass.BuscarEmpresa(usuario);
-                if (empresa == null) return null;
+                var Company = CompanysClass.BuscarCompany(usuario);
+                if (Company == null) return null;
 
 
                 var respuesta = new Response_Login_Request
@@ -41,8 +41,8 @@ namespace API.Services
                     //URL_ImagenDePerfil = usuario.URL_ImagenDePerfil,
                     //PermisosDeUsuario = usuario.PermisosDeUsuario,
                     IsAuthSuccessful = true,
-                    IDcompany = empresa.ID,
-                    Company = empresa.Name,
+                    IDcompany = Company.ID,
+                    Company = Company.Name,
                     Token = GenerarToken(usuario.ID, usuario.IDcompany, usuario.Email)
                 };
 
@@ -55,7 +55,7 @@ namespace API.Services
             }
         }
 
-        public bool ReestablecerContraseña(Login_ReestablecerContraseña_Request model)
+        public bool RestorePassword(Login_RestorePassword_Request model)
         {
             try
             {
@@ -72,7 +72,7 @@ namespace API.Services
 
                 Task.Run(async () =>
                 {
-                    await EmailClass.EnviarCodigo_ReestablecerContraseña(usuario.Email, callbackUrl);
+                    await EmailClass.SendCode_RestorePassword(usuario.Email, callbackUrl);
                 });
                 usuario.PinRestorePassword = pin;
                 db.Entry(usuario).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
@@ -87,7 +87,7 @@ namespace API.Services
 
         }
 
-        public bool ActualizarContraseña(Login_ActualizarContraseña_Request model)
+        public bool UpdatePassword(Login_UpdatePassword_Request model)
         {
             try
             {

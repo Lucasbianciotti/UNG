@@ -46,11 +46,11 @@ namespace Models.Request
         [Required(ErrorMessage = "The email is required.")]
         [EmailAddress(ErrorMessage = "The email is not valid.")]
         public string Email { get; set; }
-        public string Contraseña { get; set; }
+        public string Password { get; set; }
 
 
         public long IDcompany { get; set; }
-        public string Empresa { get; set; }
+        public string Company { get; set; }
 
 
         public string URL_ImagenDePerfil { get; set; }
@@ -66,25 +66,25 @@ namespace Models.Request
         public long ID { get; set; }
     }
     
-    public class CambiarContraseñaUsuario_Request
+    public class ChangePasswordUser_Request
     {
 
         [Required(ErrorMessage = "Ingrese la contraseña anterior")]
         [DataType(DataType.Password)]
-        public string ContraseñaAnterior { get; set; }
+        public string PasswordOld { get; set; }
 
 
         [Required(ErrorMessage = "Ingrese la nueva contraseña")]
         [StringLength(255, ErrorMessage = "La contraseña debe tener al menos 5 caracteres", MinimumLength = 5)]
         [DataType(DataType.Password)]
-        public string NuevaContraseña { get; set; }
+        public string NewPassword { get; set; }
 
 
         [Required(ErrorMessage = "Confirme la nueva contraseña")]
         [StringLength(255, ErrorMessage = "La contraseña debe tener al menos 5 caracteres", MinimumLength = 5)]
         [DataType(DataType.Password)]
         [Compare("NuevaContraseña", ErrorMessage = "La nueva contraseña no coincide")]
-        public string RepetirNuevaContraseña { get; set; }
+        public string RepeatNewPassword { get; set; }
 
     }
 }

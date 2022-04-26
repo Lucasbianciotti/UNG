@@ -292,7 +292,7 @@ namespace API.LocalClass
 
 
         #region Post
-        internal static Respuesta CambiarContraseña(ClaimsPrincipal user, CambiarContraseñaUsuario_Request model)
+        internal static Respuesta ChangePassword(ClaimsPrincipal user, ChangePasswordUser_Request model)
         {
             using var db = new UNG_Context();
             using var transactionAdmin = db.Database.BeginTransaction();
@@ -304,14 +304,14 @@ namespace API.LocalClass
                 var usuarioAdmin = db.Users.Where(x => x.ID.ToString() == iduser).FirstOrDefault();
                 if (usuarioAdmin == null) throw new Exception("No se encontró el usuario");
 
-                if (usuarioAdmin.PasswordHash != EncrypterService.GetSHA256(model.ContraseñaAnterior))
+                if (usuarioAdmin.PasswordHash != EncrypterService.GetSHA256(model.PasswordOld))
                     throw new Exception("La contraseña anterior es incorrecta");
 
-                if (model.NuevaContraseña != model.RepetirNuevaContraseña)
+                if (model.NewPassword != model.RepeatNewPassword)
                     throw new Exception("Las contraseñas no coinciden");
 
 
-                usuarioAdmin.PasswordHash = EncrypterService.GetSHA256(model.NuevaContraseña);
+                usuarioAdmin.PasswordHash = EncrypterService.GetSHA256(model.NewPassword);
                 db.Entry(usuarioAdmin).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                 db.SaveChanges();
 
@@ -319,7 +319,7 @@ namespace API.LocalClass
 
                 Task.Run(async () =>
                 {
-                    await Logs_MovimientosDelSistemaClass.CambiarContraseña_Usuario(user, usuarioAdmin);
+                    await Logs_MovimientosDelSistemaClass.ChangePassword_User(user, usuarioAdmin);
                 });
 
                 return new Respuesta(StatusCodes.Status201Created);
@@ -350,12 +350,12 @@ namespace API.LocalClass
                 if (ExisteEmailEnBD(db, model.Email)) throw new Exception("Ya existe el email en la base de datos");
 
                 var password = Guid.NewGuid().ToString().Remove(5);
-                model.Contraseña = password;
+                model.Password = password;
 
                 var usuario = new Users
                 {
                     Email = EncrypterService.Codify(model.Email.ToLower().Trim()),
-                    PasswordHash = EncrypterService.GetSHA256(model.Contraseña),
+                    PasswordHash = EncrypterService.GetSHA256(model.Password),
                     IDstatus = EncrypterService.Codify(StatusEnum.Active),
                     IDcompany = GetID_Company(user),
                     Name = EncrypterService.Codify(model.Name),
@@ -391,7 +391,7 @@ namespace API.LocalClass
 
                 Task.Run(async () =>
                 {
-                    await EmailClass.EnviarContraseñaParaNuevoUsuario(user, model, model.Contraseña);
+                    await EmailClass.SendPasswordForNewUser(user, model, model.Password);
                     await Logs_MovimientosDelSistemaClass.Crear_Usuario(user, usuario);
                 });
 
