@@ -17,17 +17,32 @@ namespace Models.EntityFrameworks
 
         [Key]
         public long ID { get; set; }
+        public long Modify_IDuser { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime Modify_Date { get; set; }
+        public long IDclient { get; set; }
         [Required]
         [StringLength(50)]
         public string IDstatus { get; set; }
-        public long IDstation { get; set; }
+        public long? IDstation { get; set; }
         [Required]
         [StringLength(50)]
+        public string Name { get; set; }
+        public int Type { get; set; }
+        [StringLength(50)]
         public string MAC { get; set; }
+        [StringLength(150)]
+        public string Aux { get; set; }
 
+        [ForeignKey(nameof(IDclient))]
+        [InverseProperty(nameof(Clients.Equipments))]
+        public virtual Clients IDclientNavigation { get; set; }
         [ForeignKey(nameof(IDstation))]
         [InverseProperty(nameof(Stations.Equipments))]
         public virtual Stations IDstationNavigation { get; set; }
+        [ForeignKey(nameof(Modify_IDuser))]
+        [InverseProperty(nameof(Users.Equipments))]
+        public virtual Users Modify_IDuserNavigation { get; set; }
         [InverseProperty("IDequipmentNavigation")]
         public virtual ICollection<Data> Data { get; set; }
     }

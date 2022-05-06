@@ -4,22 +4,15 @@ namespace Web.Services
 {
     public interface IGlobalElements_Services
     {
-        event Action OnChange;
-        public void ActualizarVista();
-
-
         public void SetearInformacion(GlobalResponse_Request temp);
 
+        public string TitleOfPage { get; set; }
+        public string Client { get; set; }
 
-        public string TituloDePagina { get; set; }
-        public string Company { get; set; }
 
-
-        public InformacionDeDrones_Request Drones { get; set; }
-
-        public List<User_Request> Users { get; set; }
-
-        public User_Request _Usuario { get; set; }
-
+        public InformationOfStation_Request InformationOfStations { get; set; }
+        public InformationOfData_Request InformationOfData { get; set; }
+        public Permissions_Request PermissionForSection { get; set; }
+        public User_Request User { get; set; }
     }
 }

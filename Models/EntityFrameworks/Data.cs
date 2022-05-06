@@ -12,18 +12,26 @@ namespace Models.EntityFrameworks
     {
         [Key]
         public long ID { get; set; }
+        public long IDclient { get; set; }
+        public long IDstation { get; set; }
         public long IDequipment { get; set; }
+        public long Timespan { get; set; }
         [Column(TypeName = "datetime")]
-        public DateTime Date { get; set; }
+        public DateTime Datetime { get; set; }
         public int Count { get; set; }
         [Required]
-        [Column("Data")]
-        public string Data1 { get; set; }
+        public string Info { get; set; }
         [StringLength(50)]
         public string Aux { get; set; }
 
+        [ForeignKey(nameof(IDclient))]
+        [InverseProperty(nameof(Clients.Data))]
+        public virtual Clients IDclientNavigation { get; set; }
         [ForeignKey(nameof(IDequipment))]
         [InverseProperty(nameof(Equipments.Data))]
         public virtual Equipments IDequipmentNavigation { get; set; }
+        [ForeignKey(nameof(IDstation))]
+        [InverseProperty(nameof(Stations.Data))]
+        public virtual Stations IDstationNavigation { get; set; }
     }
 }

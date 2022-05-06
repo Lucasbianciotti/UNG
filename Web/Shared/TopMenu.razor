@@ -6,7 +6,7 @@
                 <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a></li>
                 <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Dashboard</li>
             </ol>
-            <h6 class="font-weight-bolder mb-0">@_GlobalElements.TituloDePagina</h6>
+            <h6 class="font-weight-bolder mb-0">@_GlobalElements.TitleOfPage</h6>
         </nav>
         <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
             @*<div class="ms-md-auto pe-md-3 d-flex align-items-center">
@@ -19,19 +19,20 @@
                 @*  <li class="nav-item d-flex align-items-center">
                     <a class="btn btn-outline-primary btn-sm mb-0 me-3" target="_blank" href="https://www.creative-tim.com/builder/soft-ui?ref=navbar-dashboard">Online Builder</a>
                     </li>*@
-                <li class="nav-item d-flex align-items-center">
+                <li class="nav-item d-flex align-items-center" style="margin-right: 20px;">
                     <a href="javascript:;" class="nav-link text-body font-weight-bold px-0">
                         <i class="fa fa-user me-sm-1"></i>
-                        @if (_GlobalElements._Usuario != null)
+                        @if (_GlobalElements.User != null)
                         {
-                            <span class="d-sm-inline d-none">@_GlobalElements._Usuario.Name</span>
+                            <span class="d-sm-inline d-none">@_GlobalElements.User.Name</span>
                         }
                         else
                         {
-                            <span class="d-sm-inline d-none">Usuario</span>
+                            <span class="d-sm-inline d-none">User</span>
                         }
                     </a>
                 </li>
+                
                 <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
                     <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
                         <div class="sidenav-toggler-inner">
@@ -39,6 +40,12 @@
                             <i class="sidenav-toggler-line"></i>
                             <i class="sidenav-toggler-line"></i>
                         </div>
+                    </a>
+                </li>
+                
+                <li class="nav-item d-flex align-items-center" style="margin-right: 20px;">
+                    <a href="/logout" class="nav-link text-body font-weight-bold px-0">
+                        <i class="fa-solid fa-right-from-bracket"></i>
                     </a>
                 </li>
                 @*  <li class="nav-item px-3 d-flex align-items-center">
@@ -119,6 +126,7 @@
                         </li>
                     </ul>
                 </li>
+
             </ul>
         </div>
     </div>

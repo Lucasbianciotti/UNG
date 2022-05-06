@@ -12,34 +12,59 @@ namespace Models.EntityFrameworks
     {
         public Stations()
         {
+            Data = new HashSet<Data>();
             Equipments = new HashSet<Equipments>();
         }
 
         [Key]
         public long ID { get; set; }
+        public long Modify_IDuser { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime Modify_Date { get; set; }
+        public long IDclient { get; set; }
         [Required]
         [StringLength(50)]
         public string IDstatus { get; set; }
-        public long IDcompany { get; set; }
         [Required]
         [StringLength(50)]
         public string Name { get; set; }
-        public long IP_Private { get; set; }
-        public long IP_Public { get; set; }
+        [Required]
+        [StringLength(150)]
+        public string Location { get; set; }
+        public long? Location_GPS_Lat { get; set; }
+        public long? Location_GPS_Lon { get; set; }
+        [Required]
+        [StringLength(250)]
+        public string Host { get; set; }
+        [Required]
+        [StringLength(20)]
+        public string IP_Private { get; set; }
+        public int Port { get; set; }
         [Required]
         [StringLength(150)]
         public string SSID_Int { get; set; }
         [Required]
         [StringLength(150)]
         public string PASS_Int { get; set; }
+        public int PASS_Int_SecurityType { get; set; }
+        [StringLength(20)]
+        public string IP_Public { get; set; }
         [StringLength(150)]
         public string SSID_Ext { get; set; }
         [StringLength(150)]
         public string PASS_Ext { get; set; }
+        public int? PASS_Ext_SecurityType { get; set; }
+        [StringLength(150)]
+        public string Aux { get; set; }
 
-        [ForeignKey(nameof(IDcompany))]
-        [InverseProperty(nameof(Companies.Stations))]
-        public virtual Companies IDcompanyNavigation { get; set; }
+        [ForeignKey(nameof(IDclient))]
+        [InverseProperty(nameof(Clients.Stations))]
+        public virtual Clients IDclientNavigation { get; set; }
+        [ForeignKey(nameof(Modify_IDuser))]
+        [InverseProperty(nameof(Users.Stations))]
+        public virtual Users Modify_IDuserNavigation { get; set; }
+        [InverseProperty("IDstationNavigation")]
+        public virtual ICollection<Data> Data { get; set; }
         [InverseProperty("IDstationNavigation")]
         public virtual ICollection<Equipments> Equipments { get; set; }
     }

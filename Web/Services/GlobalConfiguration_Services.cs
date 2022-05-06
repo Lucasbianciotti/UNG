@@ -33,7 +33,7 @@ namespace Web.Services
         }
 
 
-        public void NuevoLog(string comentario, AccionesDelSistemaEnum accion, Exception exception, CodigosDeErrorEnum codigo)
+        public void NuevoLog(string comentario, SystemActionsEnum accion, Exception exception, SystemErrorCodesEnum codigo)
         {
             //Task.Run(async () =>
             //{
@@ -42,7 +42,7 @@ namespace Web.Services
                 Comentario = comentario,
                 Excepcion = exception,
                 Accion = accion,
-                Sistema = TiposDeSistemaEnum.WEB,
+                Sistema = SystemTypesEnum.WEB,
                 Codigo = codigo
             };
 
@@ -52,8 +52,8 @@ namespace Web.Services
             //{
             //    var error = new Logs_Errores
             //    {
-            //        IDuser = UsersClass.GetID_User(user),
-            //        IDcompania = UsersClass.GetID_Company(user),
+            //        IDuser = UsersClass.GetID_User(_user),
+            //        IDcompania = UsersClass.GetID_Client(user),
             //        Fecha = DateTime.Now,
             //        Sistema = sistema.ToString(),
             //        Codigo = codigo.ToString(),

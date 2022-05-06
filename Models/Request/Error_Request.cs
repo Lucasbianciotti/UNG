@@ -12,10 +12,10 @@ namespace Models.Request
         public int Excepcion_NumeroDeLinea { get; set; }
 
 
-        public AccionesDelSistemaEnum Accion { get; set; }
+        public SystemActionsEnum Accion { get; set; }
         public string Comentario { get; set; }
         public string Aux { get; set; }
-        public TiposDeSistemaEnum Sistema { get; set; }
-        public CodigosDeErrorEnum Codigo { get; set; }
+        public SystemTypesEnum Sistema { get; set; }
+        public SystemErrorCodesEnum Codigo { get; set; }
     }
 }

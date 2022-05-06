@@ -1,54 +1,64 @@
-﻿using Models.Global;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Models.Request
 {
-    public class InformacionDeDrones_Request
-    {
-        public List<xEditableItem> Status_Drone { get; set; }
-
-        public Filter_Request Filtros { get; set; }
-
-        public List<Equipment_Request> List_Drone { get; set; }
-
-        public string Cobrado { get; set; }
-        public string ACobrar { get; set; }
-        public string Total { get; set; }
-        public string Cantidad { get; set; }
-
-        public InformacionDeDrones_Request()
-        {
-            Cobrado = "-";
-            ACobrar = "-";
-            Total = "-";
-            Cantidad = "-";
-
-            Filtros = new();
-
-            //EstadosDeDrones = EstadosDeVentasEnum.ListEditableItem_EstadosDeVentas();
-        }
-    }
-
     public class Equipment_Request
     {
         public Equipment_Request()
         {
-            Filtros = new();
+            Filters = new();
+            ListOfData = new();
         }
 
         [Key]
         public long ID { get; set; }
 
-        public Filter_Request Filtros { get; set; }
+        public Filter_Request? Filters { get; set; }
+
+        public long Modify_IDuser { get; set; }
+        public DateTime Modify_Date { get; set; }
+
+        public string IDstatus { get; set; }
 
 
 
-        public string Aux { get; set; }
+        public long? IDstation { get; set; }
+
+
+        [Required(ErrorMessage = "The client is required.")]
+        public long IDclient { get; set; }
+
+
+        [Required(ErrorMessage = "The name is required.")]
+        public string Name { get; set; }
+
+
+        [Required(ErrorMessage = "The type is required.")]
+        public int Type { get; set; }
+
+
+        public string? QRcode { get; set; }
+
+
+
+        public string? MAC { get; set; }
+
+        public List<Data_Request> ListOfData { get; set; }
+
+
+        public string? Aux { get; set; }
     }
 
-    public class EliminarDron_Request
+
+    public class DeleteEquipment_Request
     {
         [Required]
         public long ID { get; set; }
+
+        [Required]
+        public long IDstation { get; set; }
+
+        public Filter_Request Filters { get; set; }
+
     }
 }

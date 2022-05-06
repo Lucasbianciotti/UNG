@@ -22,6 +22,13 @@
     <link href="icons/fontawesome/css/fontawesome.css" rel="stylesheet" />
     <link href="icons/fontawesome/css/all.css" rel="stylesheet" />
 
+    <link href="_content/Syncfusion.Blazor/styles/material.css" rel="stylesheet" />
+
+    <link href="css/bootstrap/css/bootstrap.css" rel="stylesheet" />
+
+
+    <link href="css/styles.css" rel="stylesheet" />
+
     <link href="manifest.json" rel="manifest" />
 
     <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
@@ -33,13 +40,19 @@
 
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
 
-        <div id="app" class="container-fluid py-4">Loading...</div>
+        <div id="app" class="container-fluid py-4">
+            <div class="loader-min">
+                <div class="loader-inner d-flex justify-content-center align-items-center">
+                    <div class="cssload-loader-min"></div>
+                </div>
+            </div>
+        </div>
     </main>
 
 
     <div id="blazor-error-ui">
-        Ha ocurrido un error. Por favor recarga la página.
-        <a href="" class="reload">Recargar</a>
+        An error has occurred. Please reload the page.
+        <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
 
@@ -62,10 +75,14 @@
     </script>
 
     <!-- Github buttons -->
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<script async defer src="https://buttons.github.io/buttons.js"></script>-->
 
     <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
-    <script src="js/soft-ui-dashboard.min.js?v=1.0.5"></script>
+    <!--<script src="js/soft-ui-dashboard.min.js?v=1.0.5"></script>-->
+
+    <script src="css/bootstrap/js/bootstrap.js"></script>
+
+    <script src="_content/Syncfusion.Blazor/scripts/syncfusion-blazor.min.js" type="text/javascript"></script>
 
     <script src="_framework/blazor.webassembly.js"></script>
     <script>navigator.serviceWorker.register('service-worker.js');</script>

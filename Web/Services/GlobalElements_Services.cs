@@ -4,16 +4,25 @@ namespace Web.Services
 {
     public class GlobalElements_Services : IGlobalElements_Services
     {
+        private readonly ILocalStorage_Services _LocalStorage;
 
-        public GlobalElements_Services()
+        public GlobalElements_Services(ILocalStorage_Services localStorage)
         {
-            TituloDePagina = "UNG system";
-            Company = "";
+            _LocalStorage = localStorage;
 
-            _Usuario = null;
+            TitleOfPage = "UNG system";
+            Client = "";
 
-            Drones = new();
-            Users = new();
+            Task.Run(async () =>
+            {
+                User = await _LocalStorage.GetDecodified_Login();
+            });
+
+            PermissionForSection = new();
+
+
+            InformationOfStations = new();
+            InformationOfData = new();
         }
 
 
@@ -23,58 +32,51 @@ namespace Web.Services
             if (temp == null)
                 return;
 
-            if (temp.List_Drone != null)
+            Task.Run(async () =>
             {
-                Drones.List_Drone = temp.List_Drone;
+                await _LocalStorage.SetCodified_JSONPermission(temp.JSONListOfPermissions);
+            });
+
+            if (temp.InformationOfStations != null)
+            {
+                InformationOfStations = temp.InformationOfStations;
                 //Drones.Total = temp.Total;
                 //Drones.Cantidad = temp.Cantidad;
                 //Drones.ACobrar = temp.ACobrar_APagar;
                 //Drones.Cobrado = temp.Cobrado_Pagado;
             }
 
-            if (temp.Users != null)
-                Users = temp.Users;
+            if (temp.InformationOfData != null)
+            {
+                InformationOfData = temp.InformationOfData;
+                //Drones.Total = temp.Total;
+                //Drones.Cantidad = temp.Cantidad;
+                //Drones.ACobrar = temp.ACobrar_APagar;
+                //Drones.Cobrado = temp.Cobrado_Pagado;
+            }
 
-            ActualizarVista();
+            //if (temp.ListOfUsers != null)
+            //    ListOfUsers = temp.ListOfUsers;
+
+            //ActualizarVista();
         }
 
 
+
         #region Listas
-        public InformacionDeDrones_Request Drones { get; set; }
-        public User_Request _Usuario { get; set; }
-        public List<User_Request> Users { get; set; }
-
-
+        public InformationOfStation_Request InformationOfStations { get; set; }
+        public InformationOfData_Request InformationOfData { get; set; }
+        public Permissions_Request PermissionForSection { get; set; }
+        public User_Request User { get; set; }
         #endregion Listas
 
 
         #region Variables
-        public string TituloDePagina { get; set; }
-        public string Company { get; set; }
-
-
-        private bool _Modal_ImprimirFactura_Visible;
-        public bool Modal_ImprimirFactura_Visible
-        {
-            get
-            {
-                return _Modal_ImprimirFactura_Visible;
-            }
-            set
-            {
-                _Modal_ImprimirFactura_Visible = value;
-                ActualizarVista();
-            }
-        }
+        public string TitleOfPage { get; set; }
+        public string Client { get; set; }
 
         #endregion Variables
 
-
-        public event Action OnChange;
-        public void ActualizarVista()
-        {
-            OnChange?.Invoke();
-        }
 
     }
 

@@ -260,7 +260,7 @@ a {
 // And undo these styles for placeholder links/named anchors (without href).
 // It would be more straightforward to just use a[href] in previous block, but that
 // causes specificity issues in many other styles that are too complex to fix.
-// See https://github.com/twbs/bootstrap/issues/19402
+// Read https://github.com/twbs/bootstrap/issues/19402
 
 a:not([href]):not([class]) {
   &,
@@ -393,7 +393,7 @@ label {
 }
 
 // Remove the default `border-radius` that macOS Chrome adds.
-// See https://github.com/twbs/bootstrap/issues/24093
+// Read https://github.com/twbs/bootstrap/issues/24093
 
 button {
   // stylelint-disable-next-line property-disallowed-list
@@ -436,7 +436,7 @@ select {
 
 select {
   // Remove the inheritance of word-wrap in Safari.
-  // See https://github.com/twbs/bootstrap/issues/24990
+  // Read https://github.com/twbs/bootstrap/issues/24990
   word-wrap: normal;
 
   // Undo the opacity change from Chrome
@@ -446,7 +446,7 @@ select {
 }
 
 // Remove the dropdown arrow in Chrome from inputs built with datalists.
-// See https://stackoverflow.com/a/54997118
+// Read https://stackoverflow.com/a/54997118
 
 [list]::-webkit-calendar-picker-indicator {
   display: none;
@@ -486,7 +486,7 @@ textarea {
 // 1. Browsers set a default `min-width: min-content;` on fieldsets,
 //    unlike e.g. `<div>`s, which have `min-width: 0;` by default.
 //    So we reset that to ensure fieldsets behave more like a standard block element.
-//    See https://github.com/twbs/bootstrap/issues/12359
+//    Read https://github.com/twbs/bootstrap/issues/12359
 //    and https://html.spec.whatwg.org/multipage/#the-fieldset-and-legend-elements
 // 2. Reset the default outline behavior of fieldsets so they don't affect page layout.
 
@@ -500,7 +500,7 @@ fieldset {
 // 1. By using `float: left`, the legend will behave like a block element.
 //    This way the border of a fieldset wraps around the legend if present.
 // 2. Fix wrapping bug.
-//    See https://github.com/twbs/bootstrap/issues/29712
+//    Read https://github.com/twbs/bootstrap/issues/29712
 
 legend {
   float: left; // 1
@@ -517,7 +517,7 @@ legend {
 }
 
 // Fix height of inputs with a type of datetime-local, date, month, week, or time
-// See https://github.com/twbs/bootstrap/issues/18842
+// Read https://github.com/twbs/bootstrap/issues/18842
 
 ::-webkit-datetime-edit-fields-wrapper,
 ::-webkit-datetime-edit-text,
@@ -545,9 +545,9 @@ legend {
 }
 
 // 1. A few input types should stay LTR
-// See https://rtlstyling.com/posts/rtl-styling#form-inputs
+// Read https://rtlstyling.com/posts/rtl-styling#form-inputs
 // 2. RTL only output
-// See https://rtlcss.com/learn/usage-guide/control-directives/#raw
+// Read https://rtlcss.com/learn/usage-guide/control-directives/#raw
 
 /* rtl:raw:
 [type="tel"],

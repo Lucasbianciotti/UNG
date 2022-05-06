@@ -24,26 +24,30 @@ namespace API.Services
         }
 
 
-        public Response_Login_Request Login(Users usuario)
+        public Response_Login_Request Login(Users user)
         {
             try
             {
-                var Company = CompanysClass.BuscarCompany(usuario);
-                if (Company == null) return null;
-
+                var Client = ClientsClass.SearchClientOfUser(user);
+                if (Client == null) return null;
 
                 var respuesta = new Response_Login_Request
                 {
-                    ID = usuario.ID,
-                    Email = usuario.Email,
-                    Name = usuario.Name,
-                    Surname = usuario.Surname,
-                    //URL_ImagenDePerfil = usuario.URL_ImagenDePerfil,
-                    //PermisosDeUsuario = usuario.PermisosDeUsuario,
+                    User = new User_Request()
+                    {
+                        ID = user.ID,
+                        Name = user.Name,
+                        Surname = user.Surname,
+                        Aux = user.Aux,
+                        Email = user.Email,
+                        IDclient = Client.ID,
+                        Client = Client.Name,
+                        IDrole = user.IDrole,
+                        IDstatus = user.IDstatus,
+                        JSONListOfPermissions=user.JSONListOfPermissions,
+                    },
                     IsAuthSuccessful = true,
-                    IDcompany = Company.ID,
-                    Company = Company.Name,
-                    Token = GenerarToken(usuario.ID, usuario.IDcompany, usuario.Email)
+                    Token = GenerarToken(user.ID, user.Email, user.IDrole)
                 };
 
                 return respuesta;
@@ -55,16 +59,45 @@ namespace API.Services
             }
         }
 
+        private static string GenerarToken(long IDuser, string Email, int IDrole, long? IDclient = null)
+        {
+            var llave = Encoding.ASCII.GetBytes("5747511683d38b9e4e53070df9b16c1bcc35796fd89c3bab0504d29a89de1e8e");
+
+            string idcliente = (IDclient == null) ? string.Empty : IDclient.ToString();
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(
+                    new Claim[]
+                    {
+                        new Claim(ClaimTypes.PrimarySid, IDuser.ToString()),
+                        new Claim(ClaimTypes.GroupSid, IDclient.ToString()),
+                        new Claim(ClaimTypes.Email, Email),
+                        new Claim(ClaimTypes.Role, IDrole.ToString()),
+                    }),
+
+                Expires = DateTime.UtcNow.AddDays(60),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(llave), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            return tokenHandler.WriteToken(token);
+        }
+
+
+
         public bool RestorePassword(Login_RestorePassword_Request model)
         {
             try
             {
                 using var db = new UNG_Context();
 
-                var usuario = db.Users.Where(x => x.Email.ToLower() == EncrypterService.Codify(model.Email.ToLower())
+                var user = db.Users.Where(x => x.Email.ToLower() == EncrypterService.Codify(model.Email.ToLower())
                 && x.IDstatus == EncrypterService.Codify(StatusEnum.Active)).FirstOrDefault();
 
-                if (usuario == null) return false;
+                if (user == null) return false;
 
                 string pin = new Guid().ToString();
 
@@ -72,10 +105,10 @@ namespace API.Services
 
                 Task.Run(async () =>
                 {
-                    await EmailClass.SendCode_RestorePassword(usuario.Email, callbackUrl);
+                    await EmailClass.SendCode_RestorePassword(user.Email, callbackUrl);
                 });
-                usuario.PinRestorePassword = pin;
-                db.Entry(usuario).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                user.PinRestorePassword = pin;
+                db.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                 db.SaveChanges();
 
                 return true;
@@ -97,13 +130,13 @@ namespace API.Services
 
                 //using var db = new MODDY_AdministracionContext();
 
-                //var usuario = db.Users.Where(x => x.Email.ToLower() == model.Email.ToLower()
+                //var user = db.Users.Where(x => x.Email.ToLower() == model.Email.ToLower()
                 //&& x.IDstatus == EstadosDeUsersEnum.Activo).FirstOrDefault();
 
-                //if (usuario == null) return false;
+                //if (user == null) return false;
 
-                //usuario.PasswordHash = EncrypterClass.GetSHA256(model.Password);
-                //db.Entry(usuario).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                //user.PasswordHash = EncrypterClass.GetSHA256(model.Password);
+                //db.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                 //db.SaveChanges();
 
                 return true;
@@ -118,28 +151,6 @@ namespace API.Services
 
 
 
-        private string GenerarToken(long IDuser, long IDcompany, string Email)
-        {
-            var llave = Encoding.ASCII.GetBytes("5747511683d38b9e4e53070df9b16c1bcc35796fd89c3bab0504d29a89de1e8e");
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(
-                    new Claim[]
-                    {
-                        new Claim(ClaimTypes.NameIdentifier, IDuser.ToString()),
-                        new Claim(ClaimTypes.Email, Email),
-                        new Claim(ClaimTypes.PrimarySid, IDcompany.ToString()),
-                    }),
-                Expires = DateTime.UtcNow.AddDays(60),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(llave), SecurityAlgorithms.HmacSha256Signature)
-            };
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-
-            return tokenHandler.WriteToken(token);
-        }
 
     }
 

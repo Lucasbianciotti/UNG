@@ -12,7 +12,7 @@ namespace Models.EntityFrameworks
     {
         [Key]
         public long ID { get; set; }
-        public long IDcompany { get; set; }
+        public long IDclient { get; set; }
         public long IDuser { get; set; }
         [Required]
         [StringLength(50)]
@@ -25,9 +25,9 @@ namespace Models.EntityFrameworks
         [StringLength(50)]
         public string Aux { get; set; }
 
-        [ForeignKey(nameof(IDcompany))]
-        [InverseProperty(nameof(Companies.Logs_SystemMoves))]
-        public virtual Companies IDcompanyNavigation { get; set; }
+        [ForeignKey(nameof(IDclient))]
+        [InverseProperty(nameof(Clients.Logs_SystemMoves))]
+        public virtual Clients IDclientNavigation { get; set; }
         [ForeignKey(nameof(IDuser))]
         [InverseProperty(nameof(Users.Logs_SystemMoves))]
         public virtual Users IDuserNavigation { get; set; }

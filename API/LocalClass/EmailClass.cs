@@ -21,24 +21,24 @@ namespace API.LocalClass
 
 
 
-        public static async Task<string> SendPasswordForNewUser(ClaimsPrincipal user, User_Request usuario, string password)
+        public static async Task<string> SendPasswordForNewUser(ClaimsPrincipal _user, User_Request user, string password)
         {
             string Asunto = string.Empty;
             string Mensaje = string.Empty;
 
             using var db = new UNG_Context();
-            var Email = db.Emails.Where(x => x.Type == TiposDeEmailEnum.Bienvenida).FirstOrDefault();
+            var Email = db.Emails/*.Where(x => x.Type == TypesEnum.Bienvenida)*/.FirstOrDefault();
             if (Email == null)
             {
-                Asunto = Reemplazar(Email.Subject, usuario.Name, usuario.Surname, usuario.Email, password);
-                Mensaje = Reemplazar(Email.Message, usuario.Name, usuario.Surname, usuario.Email, password);
+                Asunto = Reemplazar(Email.Subject, user.Name, user.Surname, user.Email, password);
+                Mensaje = Reemplazar(Email.Message, user.Name, user.Surname, user.Email, password);
             }
             else
             {
                 throw new Exception("No se encontró la plantilla de email");
             }
 
-            return await SendEmail(usuario.Email, Asunto, Mensaje);
+            return await SendEmail(user.Email, Asunto, Mensaje);
         }
 
 
@@ -48,7 +48,7 @@ namespace API.LocalClass
             Mensaje = Mensaje.Replace("{app}", "MODDY");
             Mensaje = Mensaje.Replace("{Name}", Name);
             Mensaje = Mensaje.Replace("{Surname}", Surname);
-            Mensaje = Mensaje.Replace("{usuario}", Email);
+            Mensaje = Mensaje.Replace("{user}", Email);
             Mensaje = Mensaje.Replace("{contrasena}", Password);
             Mensaje = Mensaje.Replace("{URL}", "https://moddy.cloudnetsolutions.com.ar/");
 

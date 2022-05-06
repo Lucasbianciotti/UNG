@@ -1,14 +1,14 @@
 ﻿@page "/stations"
 
 @inject HttpClient Http
-@inject IAuthenticationService _AuthenticationService
+@inject ILocalStorage_Services _LocalStorage
 @inject IGlobalElements_Services _GlobalElements
 @inject IGlobalConfiguration_Services _GlobalConfiguration
-@inject IToastServices _Toast
+@inject IToast_Services _Toast
 
 @attribute [Authorize]
 
-<Title Value="@_GlobalElements.TituloDePagina"></Title>
+<Title Value="@_Title"></Title>
 
 
 <SfDialog IsModal="false" CloseOnEscape="false"
@@ -24,15 +24,15 @@
                     <div class="card mb-4">
 
                         <div class="card-header pb-0 d-flex justify-content-between">
-                            <h6>Stations</h6>
+                            <h6>@_Title</h6>
 
-                            <div class="e-btn-group p-0">
-                                <button @onclick="(async () => await CargarInformacion())" class="btn btn-icon btn-2 btn-sm btn-outline-info" type="button">
-                                    <span class="btn-inner--icon"><i class="fas fa-redo-alt"></i></span>
+                            <div class="p-0">
+                                <button @onclick="(async () => await LoadInformation())" class="btn btn-sm btn-outline-info mr-1" type="button" title="Reload information">
+                                    <i class="fas fa-redo-alt"></i>
                                 </button>
 
-                                <button @onclick="MostrarVentana_Nuevo" class="btn btn-icon btn-2 btn-sm btn-outline-info" type="button">
-                                    <span class="btn-inner--icon"><i class="fa-solid fa-plus"></i></span>
+                                <button @onclick="(()=>_Card_EditionStation.OpenWindow_CreateStation())" class="btn btn-sm btn-outline-success" type="button" title="Add station">
+                                    <i class="fa-solid fa-plus"></i>
                                 </button>
                             </div>
 
@@ -44,6 +44,195 @@
                             <div class="card-body px-0 pt-0 pb-2">
                                 <div class="table-responsive p-0">
 
+                                    @if (_Loading)
+                                    {
+                                        <div class="mt-3">
+                                            <_Loading />
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        if (_GlobalElements.PermissionForSection.Read)
+                                        {
+                                            if (_Ready)
+                                            {
+                                                if (_GlobalElements.InformationOfStations.ListOfStations == null || _GlobalElements.InformationOfStations.ListOfStations.Count == 0)
+                                                {
+                                                    <div class="justify-content-md-center align-items-center">
+                                                        <div class="alert-pers-info-min mb-2 text-center" role="alert">
+                                                            <strong class="alert-text">Not found stations.</strong>
+                                                            @if (_GlobalElements.PermissionForSection.Read && _GlobalElements.PermissionForSection.Create)
+                                                            {
+                                                                <p class="alert-text">Add station, click <a class="text-primary" @onclick="@(() => _Card_EditionStation.OpenWindow_CreateStation())">here</a></p>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="overflow-scroll">
+                                                        <SfGrid DataSource="@_GlobalElements.InformationOfStations.ListOfStations"
+                                                Toolbar="@(new List<string>() {"Search"})"
+                                                ShowColumnChooser="false"
+                                                AllowResizing="true"
+                                                AllowSorting="true"
+                                                AllowExcelExport="false"
+                                                AllowPdfExport="false"
+                                                AllowPaging="true"
+                                                AllowReordering="false"
+                                                Width="100%"
+                                                Height="100%" @ref="_Grid">
+
+
+                                                            <GridPageSettings PageCount="5" PageSizes="true" />
+
+                                                            <GridColumns>
+
+                                                                <GridColumn HeaderText="Actions"
+                                                            TextAlign="TextAlign.Center"
+                                                            Width="120">
+                                                                    <Template>
+                                                                        @{
+                                                            var data = (context as Station_Request);
+                                                            @if (_GlobalElements.PermissionForSection.Read && _GlobalElements.PermissionForSection.Modify)
+                                                            {
+                                                                <button @onclick="(() => OnCommandClicked(data, CommandButtonType.Edit))" type="button" class="e-btn e-icon-btn btn btn-outline-info btn-min" title="Edit station" style="margin: 5px !important">
+                                                                    <i class="fa-solid fa-pen-to-square"></i>
+                                                                </button>
+                                                            }
+
+                                                            //@if (_GlobalElements.PermissionForSection.Read && _GlobalElements.User.PermissionForDelete)
+                                                            //{
+                                                            //    <button @onclick="(() => OnCommandClicked(data, CommandButtonType.Delete))" type="button" class="e-control e-btn e-lib btn btn-outline-danger btn-min e-edit-delete e-Deletebutton e-icon-btn" style="margin-right: 5px !important"><i class="e-icons e-delete e-btn-icon"></i></button>
+                                                            //}
+                                                        }
+                                                    </Template>
+                                                </GridColumn>
+
+                                                <GridColumn Field=@nameof(Station_Request.ID)
+                                                            HeaderText="ID"
+                                                            Visible="false"
+                                                            TextAlign="TextAlign.Center"
+                                                            IsPrimaryKey="true" />
+
+                                                <GridColumn Field=@nameof(Station_Request.Name)
+                                                            HeaderText="Name"
+                                                            TextAlign="TextAlign.Center" />
+
+
+                                                <GridColumn Field=@nameof(Station_Request.Location)
+                                                            HeaderText="Location"
+                                                            TextAlign="TextAlign.Center">
+                                                    <Template>
+                                                        @{
+                                                            var item = (context as Station_Request);
+                                                            @if (item.Location_GPS_Lat != 0 && item.Location_GPS_Lon != 0)
+                                                            {
+                                                                <span title="Lat: @item.Location_GPS_Lat Lon: @item.Location_GPS_Lon">@item.Location</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span title="Location GPS not found">@item.Location</span>
+                                                            }
+                                                        }
+                                                    </Template>
+                                                </GridColumn>
+
+
+                                                <GridColumn Field=@nameof(Station_Request.IDstatus)
+                                                            HeaderText="Status"
+                                                            TextAlign="TextAlign.Center"
+                                                            AutoFit="true">
+                                                    <Template>
+                                                        @{
+                                                            var data = (context as Station_Request);
+                                                            if (data.IDstatus == StationStatusEnum.Enabled)
+                                                            {
+                                                                <SfButton Content="@data.IDstatus" CssClass="e-outline e-success btn-rounded" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <SfButton Content="@data.IDstatus" CssClass="e-outline e-warning btn-rounded" />
+                                                            }
+                                                        }
+                                                    </Template>
+                                                </GridColumn>
+
+
+                                                <GridColumn Field=@nameof(Station_Request.CountEquipments)
+                                                            HeaderText="Equipments"
+                                                            TextAlign="TextAlign.Center"
+                                                            AutoFit="true">
+                                                    <Template>
+                                                        @{
+                                                            var item = (context as Station_Request);
+                                                            <span>@item.CountEquipments</span>
+                                                        }
+                                                    </Template>
+                                                </GridColumn>
+
+                                                <GridColumn HeaderText="Equipment's actions"
+                                                            TextAlign="TextAlign.Center"
+                                                            AutoFit="true">
+                                                    <Template>
+                                                        @{
+                                                            var item = (context as Station_Request);
+                                                            <button @onclick="(() => _Card_ListOfEquipments.OpenWindows_ViewEquipments(item))" type="button" class="e-btn e-icon-btn btn btn-outline-primary btn-min" title="View equipments" style="margin: 5px !important">
+                                                                <i class="fa-solid fa-magnifying-glass"></i>
+                                                            </button>
+
+                                                            <button @onclick="(() =>_Card_EditionEquipment.OpenWindow_AddEquipment(item, true))" type="button" class="e-btn e-icon-btn btn btn-outline-success btn-min" title="Add equipment" style="margin: 5px !important">
+                                                                <i class="fa-solid fa-plus"></i>
+                                                            </button>
+                                                        }
+                                                    </Template>
+                                                </GridColumn>
+
+
+
+                                            </GridColumns>
+
+                                            <GridTemplates>
+
+                                                <EmptyRecordTemplate>
+                                                    <div class="justify-content-md-center align-items-center">
+                                                        <div class="alert-pers-info-min mb-2 text-center" role="alert">
+                                                            <strong class="alert-text">Not found stations.</strong>
+                                                            @if (_GlobalElements.PermissionForSection.Read && _GlobalElements.PermissionForSection.Create)
+                                                            {
+                                                                <p class="alert-text">Add station, click <a class="text-primary" @onclick="@(() => _Card_EditionStation.OpenWindow_CreateStation())">here</a></p>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </EmptyRecordTemplate>
+
+                                                @*<DetailTemplate>
+                                                    //    @{
+                                                    //        var model = (context as Station_Request);
+                                                    //    }
+
+                                                    //    <div class="col-10 card p-1 mt-1 mb-1 border-shadow">
+                                                    //        <div class="card-content">
+                                                    //        </div>
+                                                    //    </div>
+                                                    //</DetailTemplate>
+                                                    // *@
+                                            </GridTemplates>
+
+                                        </SfGrid>
+                                    </div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <_FailedToLoad />
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <_SinPermisos />
+                                        }
+                                    }
 
                                 </div>
                             </div>
@@ -62,26 +251,28 @@
 </SfDialog>
 
 
-<_Card_EditionStation @ref="_Ventana_Edicion"
+<_Card_ListOfEquipments @ref="_Card_ListOfEquipments"
+                        _Page="this" />
+
+<_Card_EditionStation @ref="_Card_EditionStation"
                       _Page="this" />
+
+<_Card_EditionEquipment @ref="_Card_EditionEquipment"
+                        _Page="this" />
 
 
 @code {
     #region Variables
-    private _Card_EditionStation _Ventana_Edicion = new();
+    public _Card_ListOfEquipments _Card_ListOfEquipments = new();
+    private _Card_EditionStation _Card_EditionStation = new();
+    public _Card_EditionEquipment _Card_EditionEquipment = new();
 
-    private NumberFormatInfo nfi = new NumberFormatInfo { NumberDecimalSeparator = ",", NumberGroupSeparator = "." };
+    private bool _Loading { get; set; } = true;
+    private bool _Ready { get; set; } = true;
+    private string _Title { get; set; } = "Stations";
+    public bool Ventana_Principal_IsVisible { get; set; } = true;
 
-    private bool _Cargando { get; set; } = true;
-    private bool _CargadoConExito { get; set; } = true;
-
-    private bool _PermisoParaCrear { get; set; } = true;
-    private bool _PermisoParaModificar { get; set; } = true;
-    private bool _PermisoParaVer { get; set; } = true;
-    private bool _PermisoParaEliminar { get; set; } = true;
-    private bool _PermisoParaExportar { get; set; } = true;
-
-    private SfGrid<Equipment_Request> _Grid = new();
+    private SfGrid<Station_Request> _Grid = new();
     #endregion
 
     #region Mostrar informacion
@@ -90,61 +281,49 @@
     {
         Ventana_Principal_IsVisible = true;
 
-        _GlobalElements._Usuario = await _AuthenticationService.GetLogin();
-        if (_GlobalElements._Usuario != null)
-        {
-            /*
-            _PermisoParaVer = UsersClass.UsuarioTienePermiso(_Usuario, SeccionesEnum.Ventas_Presupuestos, AccionesEnum.Ver);
-            _PermisoParaCrear = UsersClass.UsuarioTienePermiso(_Usuario, SeccionesEnum.Ventas_Presupuestos, AccionesEnum.Crear);
-            _PermisoParaModificar = UsersClass.UsuarioTienePermiso(_Usuario, SeccionesEnum.Ventas_Presupuestos, AccionesEnum.Modificar);
-            _PermisoParaEliminar = UsersClass.UsuarioTienePermiso(_Usuario, SeccionesEnum.Ventas_Presupuestos, AccionesEnum.Eliminar);
-            _PermisoParaExportar = UsersClass.UsuarioTienePermiso(_Usuario, SeccionesEnum.Ventas_Presupuestos, AccionesEnum.Exportar);
-            */
-
-            if (_PermisoParaVer)
-                await CargarInformacion();
-        }
-
+        _GlobalElements.PermissionForSection = await _LocalStorage.GetPermissionForSection(SystemSectionsEnum.Data);
+        if (_GlobalElements.PermissionForSection.Read)
+            await LoadInformation();
     }
 
-    public async Task CargarInformacion()
+    public async Task LoadInformation()
     {
         try
         {
-            _CargadoConExito = false;
-            _Cargando = true;
+            _Ready = false;
+            _Loading = true;
             StateHasChanged();
 
-            var statusResponse = await HttpClass.GetSet(Http, URLs.Drones, _Toast, _GlobalElements, _GlobalElements.Drones.Filtros);
+            var statusResponse = await HttpClass.GetSet(Http, URLs.Stations, _Toast, _GlobalElements, _GlobalElements.InformationOfStations.Filters);
             if (statusResponse)
             {
-                _CargadoConExito = true;
-                ActualizarVista(_GlobalElements.Drones);
+                _Ready = true;
+                UpdateView(_GlobalElements.InformationOfStations);
             }
         }
         catch (Exception e)
         {
-            _GlobalConfiguration.NuevoLog("No se pudo cargar la información", AccionesDelSistemaEnum.CargaDeInformacionCompleta, e, CodigosDeErrorEnum.Error);
+            _GlobalConfiguration.NuevoLog("The information could not be loaded from stations", SystemActionsEnum.LoadInformation, e, SystemErrorCodesEnum.Error);
             _Toast.ShowError("The information could not be loaded.");
         }
         finally
         {
-            _Cargando = false;
+            _Loading = false;
             StateHasChanged();
         }
     }
 
-    public void ActualizarVista(InformacionDeDrones_Request informacion)
+    public void UpdateView(InformationOfStation_Request informacion)
     {
         try
         {
-            _Cargando = true;
+            _Loading = true;
             StateHasChanged();
 
-            _GlobalElements.Drones.List_Drone = informacion.List_Drone;
+            _GlobalElements.InformationOfStations.ListOfStations = informacion.ListOfStations;
             //_ResumenCVIG_childComponent.ActualizarVista(informacion);
 
-            _Cargando = false;
+            _Loading = false;
             StateHasChanged();
 
             _Grid.Refresh();
@@ -152,43 +331,26 @@
         catch (Exception) { }
     }
 
+    public void UpdateView() => StateHasChanged();
+
     #endregion
 
 
     #region Grilla
 
-    public void ToolbarClick(Syncfusion.Blazor.Navigations.ClickEventArgs args)
-    {
-        if (_PermisoParaExportar)
-        {
-            if (args.Item.Id.Contains("pdfexport"))
-                this._Grid.PdfExport();
-
-            else if (args.Item.Id.Contains("excelexport"))
-                this._Grid.ExcelExport();
-
-            else if (args.Item.Id.Contains("csvexport"))
-                this._Grid.CsvExport();
-        }
-        else
-        {
-            _Toast.ShowWarning("No tiene permiso para exportar.");
-        }
-    }
-
-    public void OnCommandClicked(Equipment_Request args, CommandButtonType comando)
+    public void OnCommandClicked(Station_Request args, CommandButtonType comando)
     {
         if (comando == CommandButtonType.Edit)
         {
-            if (_PermisoParaModificar)
-                MostrarVentana_Modificar(args);
+            if (_GlobalElements.PermissionForSection.Modify)
+                _Card_EditionStation.OpenWindow_ModifyStation(args);
             else
-                _Toast.ShowWarning("No tiene permiso para modificar.");
+                _Toast.ShowWarning("Not found permissions.");
         }
         //else if (comando == CommandButtonType.Delete)
         //{
-        //    if (_PermisoParaEliminar)
-        //        AbrirModal_Eliminar(args);
+        //    if (_GlobalElements.User.PermissionForDelete)
+        //        AbrirModal_Delete(args);
         //    else
         //        _Toast.ShowWarning("No tiene permiso para eliminar.");
         //}
@@ -197,49 +359,5 @@
     #endregion Grilla
 
 
-    #region Modales y ventanas
-
-    private bool Ventana_Principal_IsVisible { get; set; } = true;
-
-    public void MostrarVentana_Principal()
-    {
-        Ventana_Principal_IsVisible = true;
-        StateHasChanged();
-    }
-
-    #endregion
-
-    #region Nuevo
-
-    private void MostrarVentana_Nuevo()
-    {
-        if (_PermisoParaCrear)
-        {
-            Ventana_Principal_IsVisible = false;
-            _Ventana_Edicion.Abrir_CrearVenta();
-        }
-        else
-        {
-            _Toast.ShowWarning("No tiene permiso para crear.");
-        }
-    }
-    #endregion Nuevo
-
-
-    #region Modificar
-    private void MostrarVentana_Modificar(Equipment_Request model)
-    {
-        if (_PermisoParaModificar)
-        {
-            model.Filtros = _GlobalElements.Drones.Filtros;
-            Ventana_Principal_IsVisible = false;
-            _Ventana_Edicion.Abrir_ModificarVenta(model);
-        }
-        else
-        {
-            _Toast.ShowWarning("No tiene permiso para modificar.");
-        }
-    }
-    #endregion Modificar
 
 }

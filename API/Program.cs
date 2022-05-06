@@ -2,13 +2,17 @@ using API.LocalModels;
 using API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 #region Servicios
+
+
 //Para que el navegador no bloquee los metodos post put 
 builder.Services.AddCors(options =>
 {
@@ -22,7 +26,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: "CorsPolicy",
       builder =>
       {
-          builder.WithOrigins("https://localhost:7107")
+          builder.WithOrigins("https://localhost:7107", "https://localhost:7108")
                                 .AllowAnyMethod()
                                 .AllowCredentials()
                                 .AllowAnyHeader();
@@ -76,7 +80,16 @@ builder.Services.AddAuthorization(options =>
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
+
+
+builder.Services.AddSignalR().AddNewtonsoftJsonProtocol(opts =>
+        opts.PayloadSerializerSettings.TypeNameHandling = TypeNameHandling.Auto); ;
+
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+        new[] { "application/octet-stream" });
+});
 #endregion
 
 
@@ -84,6 +97,8 @@ builder.Services.AddEndpointsApiExplorer();
 
 #region APP
 var app = builder.Build();
+
+app.UseResponseCompression();
 
 if (app.Environment.IsDevelopment())
 {
@@ -106,6 +121,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+//app.MapHub<DataService>("/" + URLs.ReportSignal);
+app.MapHub<DataService>("/disparohub");
 
 app.Run();
 #endregion

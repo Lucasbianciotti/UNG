@@ -14,7 +14,7 @@ namespace Web.Services
 
 
         //public void EnviarLogDeError(New_Error_Request model);
-        public void NuevoLog(string comentario, AccionesDelSistemaEnum accion, Exception exception, CodigosDeErrorEnum codigo);
+        public void NuevoLog(string comentario, SystemActionsEnum accion, Exception exception, SystemErrorCodesEnum codigo);
 
 
     }
