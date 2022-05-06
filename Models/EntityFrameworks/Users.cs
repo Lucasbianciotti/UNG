@@ -12,15 +12,18 @@ namespace Models.EntityFrameworks
     {
         public Users()
         {
+            Equipments = new HashSet<Equipments>();
             Logs_Errors = new HashSet<Logs_Errors>();
             Logs_SystemMoves = new HashSet<Logs_SystemMoves>();
+            Stations = new HashSet<Stations>();
         }
 
         [Key]
         public long ID { get; set; }
-        public long IDcompany { get; set; }
         [Required]
         public string IDstatus { get; set; }
+        public int IDrole { get; set; }
+        public long? IDclient { get; set; }
         [Required]
         public string Email { get; set; }
         [Required]
@@ -33,13 +36,20 @@ namespace Models.EntityFrameworks
         public string DateOf_Creation { get; set; }
         public string DateOf_LastLogin { get; set; }
         public string PinRestorePassword { get; set; }
+        public string JSONListOfPermissions { get; set; }
+        [StringLength(150)]
+        public string Aux { get; set; }
 
-        [ForeignKey(nameof(IDcompany))]
-        [InverseProperty(nameof(Companies.Users))]
-        public virtual Companies IDcompanyNavigation { get; set; }
+        [ForeignKey(nameof(IDclient))]
+        [InverseProperty(nameof(Clients.Users))]
+        public virtual Clients IDclientNavigation { get; set; }
+        [InverseProperty("Modify_IDuserNavigation")]
+        public virtual ICollection<Equipments> Equipments { get; set; }
         [InverseProperty("IDuserNavigation")]
         public virtual ICollection<Logs_Errors> Logs_Errors { get; set; }
         [InverseProperty("IDuserNavigation")]
         public virtual ICollection<Logs_SystemMoves> Logs_SystemMoves { get; set; }
+        [InverseProperty("Modify_IDuserNavigation")]
+        public virtual ICollection<Stations> Stations { get; set; }
     }
 }

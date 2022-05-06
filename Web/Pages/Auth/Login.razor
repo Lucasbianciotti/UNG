@@ -1,7 +1,7 @@
 ﻿@page "/login"
-@inject IAuthenticationService _AuthenticationService
+@inject IAuthentication_Services _AuthenticationService
 @inject NavigationManager NavigationManager
-@inject IToastServices _Toast
+@inject IToast_Services _Toast
 @layout EmptyLayout
 
 
@@ -90,7 +90,7 @@
                                                    class="form-control"
                                                    aria-label="Password"
                                                    aria-describedby="password-addon"
-                                                   placeholder="Contrase&ntilde;a"
+                                                   placeholder="Password"
                                                    @bind-Value="_userForAuthentication.Password" />
                                         <ValidationMessage For="@(() => _userForAuthentication.Password)" />
 
@@ -150,18 +150,7 @@
 
     public async Task Execute()
     {
-        var result = await _AuthenticationService.Login(_userForAuthentication);
-        if (!string.IsNullOrEmpty(result))
-        {
-            if (result.Contains("BadRequest"))
-                _Toast.ShowWarning("Usuario o contrase&ntilde;a incorrecta");
-            else
-                _Toast.ShowWarning(result);
-
-        }
-        else
-        {
-            NavigationManager.NavigateTo("/");
-        }
+        var result = await _AuthenticationService.Login(_userForAuthentication, _Toast);
+        if (string.IsNullOrEmpty(result)) NavigationManager.NavigateTo("/");
     }
 }

@@ -1,16 +1,13 @@
 ﻿using Models;
 using Models.Enums;
 using Models.Request;
-using System;
-using System.Net.Http;
 using System.Net.Http.Json;
-using System.Threading.Tasks;
 
 namespace Web.LocalClass
 {
     public static class Logs_ErroresClass
     {
-        public static void NuevoLog(HttpClient Http, string comentario, AccionesDelSistemaEnum accion, TiposDeSistemaEnum sistema, Exception exception, CodigosDeErrorEnum codigo)
+        public static void NuevoLog(HttpClient Http, string comentario, SystemActionsEnum accion, SystemTypesEnum sistema, Exception exception, SystemErrorCodesEnum codigo)
         {
             if (exception != null)
             {

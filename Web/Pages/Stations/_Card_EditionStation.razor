@@ -1,7 +1,7 @@
 ﻿@inject HttpClient Http
 @inject IGlobalConfiguration_Services _GlobalConfiguration
 @inject IGlobalElements_Services _GlobalElements
-@inject IToastServices _Toast
+@inject IToast_Services _Toast
 
 @attribute [Authorize]
 
@@ -9,74 +9,186 @@
 <SfDialog IsModal="false" CloseOnEscape="false"
           Target="#content-body"
           CssClass="dialog-max-content"
-          @bind-Visible="@Ventana_Edicion_IsVisible">
+          @bind-Visible="@_Card_IsVisible">
 
     <DialogTemplates>
         <Content>
-            <div class="row justify-content-md-center">
-                <div class="col col-12 col-md-12">
-                    <SfCard>
-                        <div class="card border-top-blue border-top-3 border-bottom-blue">
-                            <div class="card-header border-bottom-blue">
-                                <div class=" row mbl">
-                                    <i class="fas fa-cash-register mbl"></i>
-                                    <h4 class="card-title title-modal mgn-l-6">
-                                        @Titulo_Ventana_Edicion
-                                    </h4>
-                                </div>
-                                <div class="heading-elements-nvo">
-                                    <ul class="list-inline mb-0">
-                                        <li>
-                                            <div class="e-btn-group col-12 p-0">
-                                                <SfButton @onclick="(async () => await _Page.CargarInformacion())"
-                                                          CssClass="e-outline e-info col-6"
-                                                          IconCss="fas fa-redo-alt" />
-                                                <SfButton @onclick="@(() => Cerrar())"
-                                                          CssClass="e-outline e-warning col-6"
-                                                          IconCss="fas fa-times" />
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
 
-                            <CardContent>
-                                <div class="card-content">
-                                    <div class="card-body">
-                                        <EditForm Model="@_Model" OnInvalidSubmit="(() => StateHasChanged())">
-                                            <DataAnnotationsValidator />
+            <div class="col-12">
+                <SfCard>
 
-                                            <div class="form-row justify-content-between">
-                                            </div>
+                    <div class="card-header pb-0 d-flex justify-content-between">
+                        <h6>@_Title</h6>
 
-                                            <div class="form-actions col-12 text-center">
-                                                @if (_Cargando)
-                                                {
-                                                    <_BotonCargando />
-                                                }
-                                                else
-                                                {
-                                                    <button @onclick="(() => Cerrar())" type="button" class="e-btn e-outline e-danger mx-1">Atrás</button>
-
-                                                    @if (_Creando)
-                                                    {
-                                                        <button type="submit" @onclick="Crear" class="e-btn e-outline e-success mx-1">Guardar</button>
-                                                    }
-                                                    else
-                                                    {
-                                                        <button type="submit" @onclick="Modificar" class="e-btn e-outline e-success mx-1">Guardar</button>
-                                                    }
-                                                }
-                                            </div>
-
-                                        </EditForm>
-                                    </div>
-                                </div>
-                            </CardContent>
+                        <div class="p-0">
+                            <button @onclick="Close" class="btn btn-sm btn-outline-info mr-1" type="button" title="Back">
+                                <i class="fa-solid fa-arrow-left"></i>
+                            </button>
                         </div>
-                    </SfCard>
-                </div>
+
+                    </div>
+
+
+                    <CardContent>
+
+                        <div class="card-body px-0 pt-0 pb-2">
+
+                            <EditForm Model="@_Model" OnInvalidSubmit="(() => StateHasChanged())">
+                                <DataAnnotationsValidator />
+
+                                <div class="row m-1">
+
+                                    <div class="card-form-items col-12">
+                                        <div class="card-header-min">
+                                            <label>Station</label>
+                                        </div>
+
+                                        <div class="row card-body-min">
+                                            <div class="col-md-6 col-sm-12">
+                                                <label>Name<label class="text-danger">*</label></label>
+                                                <div class="mb-2">
+                                                    <InputText class="form-control"
+                                                               placeholder="ID"
+                                                               aria-label="ID"
+                                                               @bind-Value="_Model.Name" />
+                                                    <ValidationMessage For="@(() => _Model.Name)" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-12">
+                                                <label>Location<label class="text-danger">*</label></label>
+                                                <div class="mb-2">
+                                                    <InputText class="form-control"
+                                                               placeholder="Location"
+                                                               aria-label="Location"
+                                                               @bind-Value="_Model.Location" />
+                                                    <ValidationMessage For="@(() => _Model.Location)" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-form-items col-12">
+                                        <div class="card-header-min">
+                                            <label>Private network</label>
+                                        </div>
+
+                                        <div class="row card-body-min">
+                                            <div class="col-md-5 col-sm-12">
+                                                <label>SSID<label class="text-danger">*</label></label>
+                                                <div class="mb-2">
+                                                    <InputText type="text"
+                                                               class="form-control"
+                                                               aria-label="SSID"
+                                                               placeholder="SSID"
+                                                               @bind-Value="_Model.SSID_Int" />
+                                                    <ValidationMessage For="@(() => _Model.SSID_Int)" />
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-5 col-sm-12">
+                                                <label>Password<label class="text-danger">*</label></label>
+                                                <div class="mb-2">
+                                                    <InputText type="password"
+                                                               class="form-control"
+                                                               aria-label="Password"
+                                                               placeholder="Password"
+                                                               @bind-Value="_Model.PASS_Int" />
+                                                    <ValidationMessage For="@(() => _Model.PASS_Int)" />
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-2 col-sm-12">
+                                                <label>Security Type<label class="text-danger">*</label></label>
+                                                <div class="mb-2">
+                                                    <SfDropDownList TValue="int?"
+                                                                    TItem="xEditableItem"
+                                                                    PopupHeight="auto"
+                                                                    Placeholder="Select type"
+                                                                    @bind-Value="@_Model.PASS_Int_SecurityType"
+                                                                    AllowFiltering="true" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                                                    DataSource="@SecurityWIFITypesEnum.ListEditableItem_Types()">
+                                                        <DropDownListTemplates TItem="xEditableItem">
+                                                            <NoRecordsTemplate>
+                                                                <span class='norecord'> Not found types</span>
+                                                            </NoRecordsTemplate>
+                                                        </DropDownListTemplates>
+                                                        <DropDownListFieldSettings Text="Text" Value="Value"></DropDownListFieldSettings>
+                                                    </SfDropDownList>
+                                                    <ValidationMessage For="@(() => _Model.PASS_Int_SecurityType)" />
+                                                </div>
+                                            </div>
+
+                                            <div class="col-auto">
+                                                <label>IP<label class="text-danger">*</label></label>
+                                                <div class="mb-2">
+                                                    <SfMaskedTextBox type="text"
+                                                                     class="form-control"
+                                                                     aria-label="IP"
+                                                                     placeholder="IP"
+                                                                     @bind-Value="_Model.IP_Private"
+                                                                     Mask="000.000.000.000" />
+                                                    <ValidationMessage For="@(() => _Model.IP_Private)" />
+                                                </div>
+                                            </div>
+
+                                            <div class="col-auto">
+                                                <label>Port<label class="text-danger">*</label></label>
+                                                <div class="mb-2">
+                                                    <SfNumericTextBox type="text"
+                                                                      class="form-control"
+                                                                      aria-label="Port"
+                                                                      placeholder="Port"
+                                                                      Min="1"
+                                                                      Decimals="0"
+                                                                      Step="1"
+                                                                      ShowSpinButton="false"
+                                                                      @bind-Value="_Model.Port" />
+                                                    <ValidationMessage For="@(() => _Model.Port)" />
+                                                </div>
+                                            </div>
+
+                                            <div class="col-auto">
+                                                <label>Host<label class="text-danger">*</label></label>
+                                                <div class="mb-2">
+                                                    <InputText type="text"
+                                                               class="form-control"
+                                                               aria-label="Host"
+                                                               placeholder="Host"
+                                                               @bind-Value="_Model.Host" />
+                                                    <ValidationMessage For="@(() => _Model.Host)" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="mt-4 col-12 text-center">
+                                    @if (_Loading)
+                                    {
+                                        <_LoadingButton />
+                                    }
+                                    else
+                                    {
+                                        <button @onclick="Close" class="btn btn-sm btn-outline-info mr-1" type="button" title="Back">
+                                            <i class="fa-solid fa-arrow-left"></i>
+                                        </button>
+
+                                        <button @onclick="Save" class="btn btn-sm btn-outline-success" type="submit" title="Save">
+                                            <i class="fa-solid fa-floppy-disk"></i> Save
+                                        </button>
+                                    }
+                                </div>
+
+                            </EditForm>
+
+                        </div>
+
+                    </CardContent>
+
+                </SfCard>
             </div>
+
         </Content>
     </DialogTemplates>
 
@@ -90,66 +202,65 @@
     [Parameter]
     public Stations _Page { get; set; }
 
-    private Equipment_Request _Model { get; set; } = new();
+    private Station_Request _Model { get; set; } = new();
 
-    private bool _Cargando { get; set; }
-    private bool _CargadoConExito { get; set; } = true;
-    private bool _Creando { get; set; }
+    private bool _Loading { get; set; }
+    private bool _Ready { get; set; } = true;
+    private bool _Creating { get; set; }
     private NumberFormatInfo nfi = new NumberFormatInfo { NumberDecimalSeparator = ",", NumberGroupSeparator = "." };
 
 
-    private bool Ventana_Edicion_IsVisible { get; set; } = false;
-    private string Titulo_Ventana_Edicion { get; set; }
+    private bool _Card_IsVisible { get; set; } = false;
+    private string _Title { get; set; }
 
 
-    private async Task Crear()
+    private async Task Save()
     {
         if (Validar())
         {
-            try
+            if (_Creating)
             {
-                _Cargando = true;
-                StateHasChanged();
+                try
+                {
+                    _Loading = true;
+                    StateHasChanged();
 
-                var statusResponse = await HttpClass.PostSet(Http, URLs.Crear_Dron, _Model, _Toast, _GlobalElements);
-                if (statusResponse)
-                    Cerrar();
+                    var statusResponse = await HttpClass.PostSet(Http, URLs.Create_Station, _Model, _Toast, _GlobalElements);
+                    if (statusResponse)
+                        Close();
+                }
+                catch (Exception e)
+                {
+                    _GlobalConfiguration.NuevoLog("Could not create station", SystemActionsEnum.Create, e, SystemErrorCodesEnum.Error);
+                    _Toast.ShowError("Could not create.");
+                }
+                finally
+                {
+                    _Loading = false;
+                    StateHasChanged();
+                }
             }
-            catch (Exception e)
+            else
             {
-                _GlobalConfiguration.NuevoLog("No se pudo crear", AccionesDelSistemaEnum.Crear, e, CodigosDeErrorEnum.Error);
-                _Toast.ShowError("No se pudo crear. Verifique su conexión a internet y reintente.");
-            }
-            finally
-            {
-                _Cargando = false;
-                StateHasChanged();
-            }
-        }
-    }
+                try
+                {
+                    _Loading = true;
+                    StateHasChanged();
 
-    private async Task Modificar()
-    {
-        if (Validar())
-        {
-            try
-            {
-                _Cargando = true;
-                StateHasChanged();
-
-                var statusResponse = await HttpClass.PostSet(Http, URLs.Modificar_Dron, _Model, _Toast, _GlobalElements);
-                if (statusResponse)
-                    Cerrar();
-            }
-            catch (Exception e)
-            {
-                _GlobalConfiguration.NuevoLog("No se pudo modificar", AccionesDelSistemaEnum.Modificar, e, CodigosDeErrorEnum.Error);
-                _Toast.ShowError("No se pudo modificar. Verifique su conexión a internet y reintente.");
-            }
-            finally
-            {
-                _Cargando = false;
-                StateHasChanged();
+                    var statusResponse = await HttpClass.PostSet(Http, URLs.Modify_Station, _Model, _Toast, _GlobalElements);
+                    if (statusResponse)
+                        Close();
+                }
+                catch (Exception e)
+                {
+                    _GlobalConfiguration.NuevoLog("Could not modify station", SystemActionsEnum.Modify, e, SystemErrorCodesEnum.Error);
+                    _Toast.ShowError("Could not modify.");
+                }
+                finally
+                {
+                    _Loading = false;
+                    StateHasChanged();
+                }
             }
         }
     }
@@ -158,11 +269,21 @@
     #region Metodos
     private bool Validar()
     {
-        //if (_Model.IDunidadDeNegocio == 0)
-        //{
-        //    _Toast.ShowWarning("Seleccione una unidad de negocio.");
-        //    return false;
-        //}
+        if (string.IsNullOrEmpty(_Model.Name)) return false;
+
+        if (string.IsNullOrEmpty(_Model.Location)) return false;
+
+        if (string.IsNullOrEmpty(_Model.SSID_Int)) return false;
+
+        if (string.IsNullOrEmpty(_Model.PASS_Int)) return false;
+
+        if (_Model.PASS_Int_SecurityType == null) return false;
+
+        if (string.IsNullOrEmpty(_Model.IP_Private)) return false;
+
+        //if (!string.IsNullOrEmpty(_Model.IP_Private) && _Model.IP_Private.Length != 9) { _Toast.ShowWarning("The IP has invalid length."); return false; }
+
+        if (_Model.Port <= 0) return false;
 
         return true;
     }
@@ -172,32 +293,56 @@
 
     #region Abrir Cerrar
 
-    public void Abrir_CrearVenta()
+    public void OpenWindow_CreateStation()
     {
-        _Creando = true;
+        if (_GlobalElements.PermissionForSection.Create)
+        {
+            _Page.Ventana_Principal_IsVisible = false;
 
-        _Model = new();
-        _Model.Filtros = _GlobalElements.Drones.Filtros;
+            _Model = new();
 
-        Ventana_Edicion_IsVisible = true;
-        Titulo_Ventana_Edicion = "Añadir un equipo";
-        StateHasChanged();
+            if (_GlobalElements.User.IDclient != null)
+                _Model.IDclient = _GlobalElements.User.IDclient.Value;
+
+            _Model.IDstatus = StationStatusEnum.Enabled;
+            _Model.Filters = _GlobalElements.InformationOfStations.Filters;
+
+            _Creating = true;
+            _Card_IsVisible = true;
+            _Title = "Add station";
+            StateHasChanged();
+        }
+        else
+        {
+            _Toast.ShowWarning("Not found permissions.");
+        }
     }
 
-    public void Abrir_ModificarVenta(Equipment_Request model)
+    public void OpenWindow_ModifyStation(Station_Request model)
     {
-        _Model = model;
-        _Creando = false;
-        Ventana_Edicion_IsVisible = true;
-        Titulo_Ventana_Edicion = "Modificando el equipo";
-        StateHasChanged();
+        if (_GlobalElements.PermissionForSection.Modify)
+        {
+            _Page.Ventana_Principal_IsVisible = false;
+
+            _Model = model;
+
+            _Creating = false;
+            _Card_IsVisible = true;
+            _Title = "Modify station";
+            StateHasChanged();
+        }
+        else
+        {
+            _Toast.ShowWarning("Not found permissions.");
+        }
     }
 
-    public void Cerrar()
+    private void Close()
     {
-        Ventana_Edicion_IsVisible = false;
+        _Card_IsVisible = false;
+        _Page.Ventana_Principal_IsVisible = true;
         StateHasChanged();
-        _Page.MostrarVentana_Principal();
+        _Page.UpdateView();
     }
 
     #endregion

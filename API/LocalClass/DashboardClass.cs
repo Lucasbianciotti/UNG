@@ -7,7 +7,7 @@ namespace API.LocalClass
     public class DashboardClass
     {
 
-        public static Dashboard_Request InformacionCompleta(ClaimsPrincipal user, FilterDashboard_Request Filtro)
+        public static Dashboard_Request InformacionCompleta(ClaimsPrincipal _user, FilterDashboard_Request Filtro)
         {
             Filtro.Date_Start = GlobalClass.FechaInicialDeFiltro(Filtro.Date_Start);
             Filtro.Date_End = GlobalClass.FechaFinalDeFiltro(Filtro.Date_End);
@@ -27,9 +27,9 @@ namespace API.LocalClass
             }
             catch (Exception e)
             {
-                Logs_ErroresClass.NuevoLog(user, "No se pudo buscar la información del dashboard", AccionesDelSistemaEnum.CargaDeInformacionCompleta, TiposDeSistemaEnum.API, e, CodigosDeErrorEnum.Error);
+                Logs_ErroresClass.NuevoLog(_user, "Could not load information for dashboard", SystemActionsEnum.LoadInformation, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
 
-                throw new Exception("No se pudo buscar la información.");
+                throw new Exception("Could not load information.");
             }
         }
 
@@ -37,7 +37,7 @@ namespace API.LocalClass
 
 
         #region Get
-        //private static List<LineData> DatosCVIG(ClaimsPrincipal user, FilterDashboard_Request filterModel, List<Compra_Request> Compras, List<Venta_Request> Ventas)
+        //private static List<LineData> DatosCVIG(ClaimsPrincipal _user, FilterDashboard_Request filterModel, List<Compra_Request> Compras, List<Venta_Request> Ventas)
         //{
         //    using var db = new UNG_Context();
 
@@ -84,7 +84,7 @@ namespace API.LocalClass
         //    }
         //    catch (Exception e)
         //    {
-        //        Logs_ErroresClass.NuevoLog(user, "No se pudo buscar los datos del gráfico por período", AccionesDelSistemaEnum.CargaDeInformacionCompleta, TiposDeSistemaEnum.API, e, CodigosDeErrorEnum.Error);
+        //        Logs_ErroresClass.NuevoLog(_user, "No se pudo buscar los datos del gráfico por período", SystemActionsEnum.LoadInformation, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
 
         //        throw new Exception("No se pudo buscar los datos del gráfico.");
         //    }

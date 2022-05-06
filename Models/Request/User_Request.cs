@@ -2,38 +2,45 @@
 
 namespace Models.Request
 {
-    public class PermisosDeUsuario_Request
+    public class Permissions_Request
     {
+        public Permissions_Request()
+        {
+            Read = false;
+            Create = false;
+            Modify = false;
+            Delete = false;
+            Export = false;
+        }
+
         [Key]
-        public long ID { get; set; }
+        public int IDsection { get; set; }
 
-        public long IDuser { get; set; }
-
-        public long IDunidadDeNegocio { get; set; }
-
-        public long IDseccion { get; set; }
-
-        public string Seccion { get; set; }
-
-        public bool Ver { get; set; }
-        public bool Crear { get; set; }
-        public bool Modificar { get; set; }
-        public bool Eliminar { get; set; }
-        public bool Exportar { get; set; }
-        public bool Todos { get; set; }
+        public bool Read { get; set; }
+        public bool Create { get; set; }
+        public bool Modify { get; set; }
+        public bool Delete { get; set; }
+        public bool Export { get; set; }
     }
 
     public class User_Request
     {
         public User_Request()
         {
-            PermisosDeUsuario = new List<PermisosDeUsuario_Request>();
+
         }
 
         [Key]
         public long ID { get; set; }
 
-        //public string IDstatus { get; set; }
+
+        public string IDstatus { get; set; }
+
+
+        [Required(ErrorMessage = "The rol is required.")]
+        public int IDrole { get; set; }
+
+
         public string CompleteName { get; set; }
 
         [Required(ErrorMessage = "The name is required.")]
@@ -49,23 +56,29 @@ namespace Models.Request
         public string Password { get; set; }
 
 
-        public long IDcompany { get; set; }
-        public string Company { get; set; }
+        public long? IDclient { get; set; }
+        public string Client { get; set; }
 
 
-        public string URL_ImagenDePerfil { get; set; }
-
-        public List<PermisosDeUsuario_Request> PermisosDeUsuario { get; set; }
+        //public Permissions_Request PermissionsForSection { get; set; }
+        public string JSONListOfPermissions { get; set; }
 
         public string Aux { get; set; }
     }
 
-    public class EliminarUsuario_Request
+    public class DeleteUser_Request
     {
+        public DeleteUser_Request()
+        {
+            Filters = new();
+        }
+
         [Required]
         public long ID { get; set; }
+        public Filter_Request Filters { get; set; }
+
     }
-    
+
     public class ChangePasswordUser_Request
     {
 

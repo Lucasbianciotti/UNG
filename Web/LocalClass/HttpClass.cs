@@ -12,7 +12,7 @@ namespace Web.LocalClass
     public static class HttpClass
     {
 
-        public static async Task<Dashboard_Request> Get_Dashboard(HttpClient Http, FilterDashboard_Request filtros, IToastServices _Toast, IGlobalElements_Services _GlobalElements)
+        public static async Task<Dashboard_Request> Get_Dashboard(HttpClient Http, FilterDashboard_Request filtros, IToast_Services _Toast)
         {
             try
             {
@@ -33,7 +33,7 @@ namespace Web.LocalClass
             }
             catch (Exception e)
             {
-                Logs_ErroresClass.NuevoLog(Http, "No se pudo deserializar.", AccionesDelSistemaEnum.GET, TiposDeSistemaEnum.WEB, e, CodigosDeErrorEnum.Error);
+                Logs_ErroresClass.NuevoLog(Http, "Could not deserialize.", SystemActionsEnum.GET, SystemTypesEnum.WEB, e, SystemErrorCodesEnum.Error);
 
                 _Toast.ShowError("The information could not be loaded.");
             }
@@ -43,7 +43,7 @@ namespace Web.LocalClass
 
 
         #region Get
-        public static async Task<bool> GetSet(HttpClient Http, string URL, IToastServices _Toast, IGlobalElements_Services _GlobalElements, Filter_Request filtros = null)
+        public static async Task<bool> GetSet(HttpClient Http, string URL, IToast_Services _Toast, IGlobalElements_Services _GlobalElements, Filter_Request filtros = null)
         {
             try
             {
@@ -62,14 +62,14 @@ namespace Web.LocalClass
             }
             catch (Exception e)
             {
-                Logs_ErroresClass.NuevoLog(Http, "No se pudo deserializar.", AccionesDelSistemaEnum.GET, TiposDeSistemaEnum.WEB, e, CodigosDeErrorEnum.Error);
+                Logs_ErroresClass.NuevoLog(Http, "Could not deserialize.", SystemActionsEnum.GET, SystemTypesEnum.WEB, e, SystemErrorCodesEnum.Error);
                 _Toast.ShowError("The information could not be loaded.");
             }
 
             return false;
         }
 
-        public static async Task<GlobalResponse_Request> GetOnly(HttpClient Http, string URL, IToastServices _Toast, Filter_Request filtros = null, long? ID = null)
+        public static async Task<GlobalResponse_Request> GetOnly(HttpClient Http, string URL, IToast_Services _Toast, Filter_Request filtros = null, long? ID = null)
         {
             try
             {
@@ -94,7 +94,7 @@ namespace Web.LocalClass
             }
             catch (Exception e)
             {
-                Logs_ErroresClass.NuevoLog(Http, "No se pudo deserializar.", AccionesDelSistemaEnum.GET, TiposDeSistemaEnum.WEB, e, CodigosDeErrorEnum.Error);
+                Logs_ErroresClass.NuevoLog(Http, "Could not deserialize.", SystemActionsEnum.GET, SystemTypesEnum.WEB, e, SystemErrorCodesEnum.Error);
                 _Toast.ShowError("The information could not be loaded.");
             }
 
@@ -104,7 +104,7 @@ namespace Web.LocalClass
 
 
         #region Post
-        public static async Task<bool> PostSet(HttpClient Http, string URL, object model, IToastServices _Toast, IGlobalElements_Services _GlobalElements)
+        public static async Task<bool> PostSet(HttpClient Http, string URL, object model, IToast_Services _Toast, IGlobalElements_Services _GlobalElements)
         {
             try
             {
@@ -117,14 +117,14 @@ namespace Web.LocalClass
             }
             catch (Exception e)
             {
-                Logs_ErroresClass.NuevoLog(Http, "No se pudo deserializar.", AccionesDelSistemaEnum.POST, TiposDeSistemaEnum.WEB, e, CodigosDeErrorEnum.Error);
+                Logs_ErroresClass.NuevoLog(Http, "Could not deserialize.", SystemActionsEnum.POST, SystemTypesEnum.WEB, e, SystemErrorCodesEnum.Error);
                 _Toast.ShowError("The information could not be loaded.");
             }
 
             return false;
         }
 
-        public static async Task<GlobalResponse_Request> PostOnly(HttpClient Http, string URL, object model, IToastServices _Toast)
+        public static async Task<GlobalResponse_Request> PostOnly(HttpClient Http, string URL, object model, IToast_Services _Toast)
         {
             try
             {
@@ -135,8 +135,8 @@ namespace Web.LocalClass
                     var cadena = await post.Content.ReadAsStringAsync();
                     var temp = JsonConvert.DeserializeObject<GlobalResponse_Request>(cadena);
 
-                    if (!string.IsNullOrEmpty(temp._Message))
-                        _Toast.ShowSuccess(temp._Message, "Atención");
+                    if (!string.IsNullOrEmpty(temp.Message))
+                        _Toast.ShowSuccess(temp.Message, "Atention");
 
                     return temp;
                 }
@@ -145,7 +145,7 @@ namespace Web.LocalClass
             }
             catch (Exception e)
             {
-                Logs_ErroresClass.NuevoLog(Http, "No se pudo deserializar.", AccionesDelSistemaEnum.POST, TiposDeSistemaEnum.WEB, e, CodigosDeErrorEnum.Error);
+                Logs_ErroresClass.NuevoLog(Http, "Could not deserialize.", SystemActionsEnum.POST, SystemTypesEnum.WEB, e, SystemErrorCodesEnum.Error);
                 _Toast.ShowError("The information could not be loaded.");
             }
 
@@ -156,154 +156,10 @@ namespace Web.LocalClass
 
 
 
-        public static string TypeError(HttpResponseMessage post)
-        {
-            if (string.IsNullOrEmpty(post.RequestMessage.ToString()))
-            {
-                switch (post.StatusCode)
-                {
-                    case HttpStatusCode.Unauthorized:
-                        return "Por favor inicie sesión.";
-
-                    case HttpStatusCode.Forbidden:
-                        return "No tiene los permisos necesarios.";
-
-                    case HttpStatusCode.BadRequest:
-                        return "No se pudo conectar con el servidor.";
-
-                    case HttpStatusCode.NotFound:
-                        return "The URL was not found.";
-
-                    case HttpStatusCode.InternalServerError:
-                        return "Error en el servidor.";
-                    case HttpStatusCode.Continue:
-                        break;
-                    case HttpStatusCode.SwitchingProtocols:
-                        break;
-                    case HttpStatusCode.Processing:
-                        break;
-                    case HttpStatusCode.EarlyHints:
-                        break;
-                    case HttpStatusCode.OK:
-                        break;
-                    case HttpStatusCode.Created:
-                        break;
-                    case HttpStatusCode.Accepted:
-                        break;
-                    case HttpStatusCode.NonAuthoritativeInformation:
-                        break;
-                    case HttpStatusCode.NoContent:
-                        break;
-                    case HttpStatusCode.ResetContent:
-                        break;
-                    case HttpStatusCode.PartialContent:
-                        break;
-                    case HttpStatusCode.MultiStatus:
-                        break;
-                    case HttpStatusCode.AlreadyReported:
-                        break;
-                    case HttpStatusCode.IMUsed:
-                        break;
-                    case HttpStatusCode.Ambiguous:
-                        break;
-                    case HttpStatusCode.Moved:
-                        break;
-                    case HttpStatusCode.Found:
-                        break;
-                    case HttpStatusCode.RedirectMethod:
-                        break;
-                    case HttpStatusCode.NotModified:
-                        break;
-                    case HttpStatusCode.UseProxy:
-                        break;
-                    case HttpStatusCode.Unused:
-                        break;
-                    case HttpStatusCode.RedirectKeepVerb:
-                        break;
-                    case HttpStatusCode.PermanentRedirect:
-                        break;
-                    case HttpStatusCode.PaymentRequired:
-                        break;
-                    case HttpStatusCode.MethodNotAllowed:
-                        break;
-                    case HttpStatusCode.NotAcceptable:
-                        break;
-                    case HttpStatusCode.ProxyAuthenticationRequired:
-                        break;
-                    case HttpStatusCode.RequestTimeout:
-                        break;
-                    case HttpStatusCode.Conflict:
-                        break;
-                    case HttpStatusCode.Gone:
-                        break;
-                    case HttpStatusCode.LengthRequired:
-                        break;
-                    case HttpStatusCode.PreconditionFailed:
-                        break;
-                    case HttpStatusCode.RequestEntityTooLarge:
-                        break;
-                    case HttpStatusCode.RequestUriTooLong:
-                        break;
-                    case HttpStatusCode.UnsupportedMediaType:
-                        break;
-                    case HttpStatusCode.RequestedRangeNotSatisfiable:
-                        break;
-                    case HttpStatusCode.ExpectationFailed:
-                        break;
-                    case HttpStatusCode.MisdirectedRequest:
-                        break;
-                    case HttpStatusCode.UnprocessableEntity:
-                        break;
-                    case HttpStatusCode.Locked:
-                        break;
-                    case HttpStatusCode.FailedDependency:
-                        break;
-                    case HttpStatusCode.UpgradeRequired:
-                        break;
-                    case HttpStatusCode.PreconditionRequired:
-                        break;
-                    case HttpStatusCode.TooManyRequests:
-                        break;
-                    case HttpStatusCode.RequestHeaderFieldsTooLarge:
-                        break;
-                    case HttpStatusCode.UnavailableForLegalReasons:
-                        break;
-                    case HttpStatusCode.NotImplemented:
-                        break;
-                    case HttpStatusCode.BadGateway:
-                        break;
-                    case HttpStatusCode.ServiceUnavailable:
-                        break;
-                    case HttpStatusCode.GatewayTimeout:
-                        break;
-                    case HttpStatusCode.HttpVersionNotSupported:
-                        break;
-                    case HttpStatusCode.VariantAlsoNegotiates:
-                        break;
-                    case HttpStatusCode.InsufficientStorage:
-                        break;
-                    case HttpStatusCode.LoopDetected:
-                        break;
-                    case HttpStatusCode.NotExtended:
-                        break;
-                    case HttpStatusCode.NetworkAuthenticationRequired:
-                        break;
-                    default:
-                        return "Error " + post.StatusCode;
-                }
-
-                return "Error " + post.StatusCode;
-            }
-            else
-            {
-                return "Error " + post.StatusCode + ".\n" + post.RequestMessage;
-            }
-        }
-
 
 
         #region Private methods
-        private static async Task<HttpResponseMessage> Post(HttpClient Http, string URL, object model, IToastServices _Toast)
+        private static async Task<HttpResponseMessage> Post(HttpClient Http, string URL, object model, IToast_Services _Toast)
         {
             try
             {
@@ -316,12 +172,12 @@ namespace Web.LocalClass
             }
             catch (Exception e)
             {
-                Logs_ErroresClass.NuevoLog(Http, "No se pudo conectar con el servidor.", AccionesDelSistemaEnum.POST, TiposDeSistemaEnum.WEB, e, CodigosDeErrorEnum.Error);
+                Logs_ErroresClass.NuevoLog(Http, "No se pudo conectar con el servidor.", SystemActionsEnum.POST, SystemTypesEnum.WEB, e, SystemErrorCodesEnum.Error);
                 _Toast.ShowError("No se pudo conectar con el servidor. Verifique su conexión a internet.");
                 return null;
             }
         }
-        private static async Task<HttpResponseMessage> Get(HttpClient Http, string URL, IToastServices _Toast)
+        private static async Task<HttpResponseMessage> Get(HttpClient Http, string URL, IToast_Services _Toast)
         {
             try
             {
@@ -329,42 +185,160 @@ namespace Web.LocalClass
             }
             catch (Exception e)
             {
-                Logs_ErroresClass.NuevoLog(Http, "No se pudo conectar con el servidor.", AccionesDelSistemaEnum.GET, TiposDeSistemaEnum.WEB, e, CodigosDeErrorEnum.Error);
+                Logs_ErroresClass.NuevoLog(Http, "No se pudo conectar con el servidor.", SystemActionsEnum.GET, SystemTypesEnum.WEB, e, SystemErrorCodesEnum.Error);
                 _Toast.ShowError("No se pudo conectar con el servidor. Verifique su conexión a internet.");
                 return null;
             }
         }
 
-        private static void TypeError(IToastServices _Toast, HttpResponseMessage post)
+
+        public static void TypeError(IToast_Services _Toast, HttpResponseMessage post)
         {
-            Stream receiveStream = post.Content.ReadAsStream();
-            StreamReader readStream = new(receiveStream, Encoding.UTF8);
-            var mensaje = readStream.ReadToEnd();
 
             switch (post.StatusCode)
             {
                 case HttpStatusCode.Unauthorized:
-                    _Toast.ShowWarning("Por favor inicie sesión.");
+                    _Toast.ShowWarning("Login, please.");
                     break;
+                //return "Login, please.";
 
                 case HttpStatusCode.Forbidden:
-                    _Toast.ShowWarning("No tiene los permisos necesarios.");
+                    _Toast.ShowWarning("The user does not have the necessary permissions.");
                     break;
+                //return "The user does not have the necessary permissions.";
 
                 case HttpStatusCode.BadRequest:
-                    _Toast.ShowError("No se pudo conectar con el servidor.");
+                    _Toast.ShowError("Could not connect to server.");
                     break;
+                //return "Could not connect to server.";
 
                 case HttpStatusCode.NotFound:
-                    _Toast.ShowError("No se encontró la URL.");
+                    _Toast.ShowError("The URL was not found.");
                     break;
+                //return "The URL was not found.";
 
-                //case HttpStatusCode.InternalServerError:
-                //    _Toast.ShowError("Error en el servidor. Contacte al proveedor.");
-                //    break;
+                case HttpStatusCode.InternalServerError:
+                    _Toast.ShowError("Server error.");
+                    break;
+                //return "Server error.";
 
+                case HttpStatusCode.Continue:
+                    break;
+                case HttpStatusCode.SwitchingProtocols:
+                    break;
+                case HttpStatusCode.Processing:
+                    break;
+                case HttpStatusCode.EarlyHints:
+                    break;
+                case HttpStatusCode.OK:
+                    break;
+                case HttpStatusCode.Created:
+                    break;
+                case HttpStatusCode.Accepted:
+                    break;
+                case HttpStatusCode.NonAuthoritativeInformation:
+                    break;
+                case HttpStatusCode.NoContent:
+                    break;
+                case HttpStatusCode.ResetContent:
+                    break;
+                case HttpStatusCode.PartialContent:
+                    break;
+                case HttpStatusCode.MultiStatus:
+                    break;
+                case HttpStatusCode.AlreadyReported:
+                    break;
+                case HttpStatusCode.IMUsed:
+                    break;
+                case HttpStatusCode.Ambiguous:
+                    break;
+                case HttpStatusCode.Moved:
+                    break;
+                case HttpStatusCode.Found:
+                    break;
+                case HttpStatusCode.RedirectMethod:
+                    break;
+                case HttpStatusCode.NotModified:
+                    break;
+                case HttpStatusCode.UseProxy:
+                    break;
+                case HttpStatusCode.Unused:
+                    break;
+                case HttpStatusCode.RedirectKeepVerb:
+                    break;
+                case HttpStatusCode.PermanentRedirect:
+                    break;
+                case HttpStatusCode.PaymentRequired:
+                    break;
+                case HttpStatusCode.MethodNotAllowed:
+                    break;
+                case HttpStatusCode.NotAcceptable:
+                    break;
+                case HttpStatusCode.ProxyAuthenticationRequired:
+                    break;
+                case HttpStatusCode.RequestTimeout:
+                    break;
+                case HttpStatusCode.Conflict:
+                    break;
+                case HttpStatusCode.Gone:
+                    break;
+                case HttpStatusCode.LengthRequired:
+                    break;
+                case HttpStatusCode.PreconditionFailed:
+                    break;
+                case HttpStatusCode.RequestEntityTooLarge:
+                    break;
+                case HttpStatusCode.RequestUriTooLong:
+                    break;
+                case HttpStatusCode.UnsupportedMediaType:
+                    break;
+                case HttpStatusCode.RequestedRangeNotSatisfiable:
+                    break;
+                case HttpStatusCode.ExpectationFailed:
+                    break;
+                case HttpStatusCode.MisdirectedRequest:
+                    break;
+                case HttpStatusCode.UnprocessableEntity:
+                    break;
+                case HttpStatusCode.Locked:
+                    break;
+                case HttpStatusCode.FailedDependency:
+                    break;
+                case HttpStatusCode.UpgradeRequired:
+                    break;
+                case HttpStatusCode.PreconditionRequired:
+                    break;
+                case HttpStatusCode.TooManyRequests:
+                    break;
+                case HttpStatusCode.RequestHeaderFieldsTooLarge:
+                    break;
+                case HttpStatusCode.UnavailableForLegalReasons:
+                    break;
+                case HttpStatusCode.NotImplemented:
+                    break;
+                case HttpStatusCode.BadGateway:
+                    break;
+                case HttpStatusCode.ServiceUnavailable:
+                    break;
+                case HttpStatusCode.GatewayTimeout:
+                    break;
+                case HttpStatusCode.HttpVersionNotSupported:
+                    break;
+                case HttpStatusCode.VariantAlsoNegotiates:
+                    break;
+                case HttpStatusCode.InsufficientStorage:
+                    break;
+                case HttpStatusCode.LoopDetected:
+                    break;
+                case HttpStatusCode.NotExtended:
+                    break;
+                case HttpStatusCode.NetworkAuthenticationRequired:
+                    break;
                 default:
-                    _Toast.ShowWarning(mensaje);
+                    Stream receiveStream = post.Content.ReadAsStream();
+                    StreamReader readStream = new(receiveStream, Encoding.UTF8);
+                    var mensaje = readStream.ReadToEnd();
+                    _Toast.ShowWarning("Error " + post.StatusCode + ". " + mensaje);
                     break;
             }
         }

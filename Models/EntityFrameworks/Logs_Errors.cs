@@ -12,8 +12,8 @@ namespace Models.EntityFrameworks
     {
         [Key]
         public long ID { get; set; }
+        public long IDclient { get; set; }
         public long IDuser { get; set; }
-        public long IDcompany { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime Date { get; set; }
         [StringLength(150)]
@@ -33,9 +33,9 @@ namespace Models.EntityFrameworks
         public string Exception_Source { get; set; }
         public string Exception_Message { get; set; }
 
-        [ForeignKey(nameof(IDcompany))]
-        [InverseProperty(nameof(Companies.Logs_Errors))]
-        public virtual Companies IDcompanyNavigation { get; set; }
+        [ForeignKey(nameof(IDclient))]
+        [InverseProperty(nameof(Clients.Logs_Errors))]
+        public virtual Clients IDclientNavigation { get; set; }
         [ForeignKey(nameof(IDuser))]
         [InverseProperty(nameof(Users.Logs_Errors))]
         public virtual Users IDuserNavigation { get; set; }

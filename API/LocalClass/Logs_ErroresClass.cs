@@ -9,8 +9,8 @@ namespace API.LocalClass
     public static class Logs_ErroresClass
     {
 
-        public static void NuevoLog(ClaimsPrincipal user, string comentario,
-            AccionesDelSistemaEnum accion, TiposDeSistemaEnum sistema, Exception exception, CodigosDeErrorEnum codigo)
+        public static void NuevoLog(ClaimsPrincipal _user, string comentario,
+            SystemActionsEnum accion, SystemTypesEnum sistema, Exception exception, SystemErrorCodesEnum codigo)
         {
             Task.Run(async () =>
             {
@@ -20,8 +20,8 @@ namespace API.LocalClass
                 {
                     var error = new Logs_Errors
                     {
-                        IDuser = UsersClass.GetID_User(user),
-                        IDcompany = UsersClass.GetID_Company(user),
+                        IDuser = UsersClass.GetID_User(_user),
+                        IDclient = UsersClass.GetID_Client(_user),
                         Date = DateTime.Now,
                         System = sistema.ToString(),
                         Code = codigo.ToString(),
@@ -51,7 +51,7 @@ namespace API.LocalClass
                             error.Exception_NumberOfLine = frame.LineNumber.ToString();
                             error.Exception_Source = exception.Source;
                             if (exception.InnerException != null)
-                                error.Exception_Message = exception.InnerException.ToString();
+                                error.Exception_Message = exception.InnerException.Message.ToString();
                         }
                         catch (Exception)
                         {
@@ -71,9 +71,9 @@ namespace API.LocalClass
         }
 
 
-        public static void NuevoLog(ClaimsPrincipal user, New_Error_Request new_Error_Request)
+        public static void NuevoLog(ClaimsPrincipal _user, New_Error_Request new_Error_Request)
         {
-            NuevoLog(user, new_Error_Request.Comentario, new_Error_Request.Accion, new_Error_Request.Sistema, new_Error_Request.Excepcion, new_Error_Request.Codigo);
+            NuevoLog(_user, new_Error_Request.Comentario, new_Error_Request.Accion, new_Error_Request.Sistema, new_Error_Request.Excepcion, new_Error_Request.Codigo);
         }
     }
 }

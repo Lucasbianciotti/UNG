@@ -1,3 +1,4 @@
+using Models.EntityFrameworks;
 using System.ComponentModel.DataAnnotations;
 
 namespace Models.Request
@@ -43,25 +44,11 @@ namespace Models.Request
 
     public class Response_Login_Request
     {
-
-        [Key]
-        public long ID { get; set; }
-        public string Token { get; set; }
-
-        public string Email { get; set; }
-        public string Name { get; set; }
-        public string Surname { get; set; }
-
-        public string URL_ImagenDePerfil { get; set; }
-
-        public long IDcompany { get; set; }
-        public string Company { get; set; }
-
-
-        public List<PermisosDeUsuario_Request> PermisosDeUsuario { get; set; }
-
+        public User_Request User { get; set; }
 
         public bool IsAuthSuccessful { get; set; }
+        public string Token { get; set; }
+
     }
 
 }

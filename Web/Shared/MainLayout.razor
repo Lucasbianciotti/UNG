@@ -1,19 +1,21 @@
 ﻿@inherits LayoutComponentBase
-@inject IGlobalConfiguration_Services _GlobalConfiguration
 @inject NavigationManager NavigationManager
+
+@inject IAuthentication_Services _AuthenticationService
+@inject ILocalStorage_Services _LocalStorage
 @inject IGlobalElements_Services _GlobalElements
-@inject IAuthenticationService _AuthenticationService
+@inject IGlobalConfiguration_Services _GlobalConfiguration
 
 
 <AuthorizeView>
     <Authorized>
         <NavMenu />
 
-        <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+        <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
             <TopMenu _Page="this"
                      _GlobalElements="_GlobalElements" />
 
-            <div class="container-fluid py-4">@Body</div>
+            <div class="container-fluid py-4" id="content-body">@Body</div>
         </main>
 
         <_ToastComponent />
@@ -27,47 +29,32 @@
 
 
 @code {
-    public string styleHidden = "";
-
-    public string NameDeUsuario { get; set; } = "Usuario";
-    public string URL_ImagenDePerfil { get; set; } = ImagenesHelpers.User_Default;
-    public string Company { get; set; } = "UNG system";
-
     protected override async Task OnInitializedAsync()
     {
         try
         {
-
-            if (_GlobalElements._Usuario == null)
+            if (_GlobalElements.User == null)
             {
-                _GlobalElements._Usuario = await _AuthenticationService.GetLogin();
-                if (_GlobalElements._Usuario != null)
-                {
-                    NameDeUsuario = _GlobalElements._Usuario.Name;
-                    URL_ImagenDePerfil = _GlobalElements._Usuario.URL_ImagenDePerfil;
-                    Company = _GlobalElements._Usuario.Company;
-                }
-                else
-                {
-                    NavigationManager.NavigateTo("/");
+                _GlobalElements.User = await _LocalStorage.GetDecodified_Login();
 
-                }
+                if (_GlobalElements.User == null)
+                    NavigationManager.NavigateTo("/");
             }
         }
         catch (Exception) { }
 
-        _GlobalElements.OnChange += _GlobalElements_Changed;
-        _GlobalConfiguration.OnChange += _GlobalConfiguration_Changed;
+        //_GlobalElements.OnChange += _GlobalElements_Changed;
+        //_GlobalConfiguration.OnChange += _GlobalConfiguration_Changed;
     }
 
-    private void _GlobalElements_Changed()
-    {
-        StateHasChanged();
-    }
+    //private void _GlobalElements_Changed()
+    //{
+    //    StateHasChanged();
+    //}
 
-    private void _GlobalConfiguration_Changed()
-    {
-        StateHasChanged();
-    }
+    //private void _GlobalConfiguration_Changed()
+    //{
+    //    StateHasChanged();
+    //}
 
 }

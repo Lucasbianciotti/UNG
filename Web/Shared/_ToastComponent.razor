@@ -1,18 +1,18 @@
 ﻿
 
-@*<SfToast @ref="_sfToast"
+<SfToast @ref="_sfToast"
          Timeout="1500"
          ShowCloseButton="true"
          ShowProgressBar="true">
     <ToastPosition X="Right"></ToastPosition>
-</SfToast>*@
+</SfToast>
 
 @code
 {
     [Inject]
-    private IToastServices ToastService { get; set; }
+    private IToast_Services ToastService { get; set; }
 
-    private SfToast _sfToast;
+    private SfToast _sfToast = new();
 
     protected override void OnAfterRender(bool firstRender)
     {
