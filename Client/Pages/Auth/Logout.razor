@@ -1,0 +1,19 @@
+@page "/logout"
+
+@using Microsoft.AspNetCore.Components;
+@using System.Threading.Tasks;
+
+@code {
+
+    [Inject]
+    public IAuthentication_Services AuthenticationService { get; set; }
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthenticationService.Logout();
+        NavigationManager.NavigateTo("/login");
+    }
+
+}

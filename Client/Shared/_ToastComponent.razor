@@ -1,0 +1,22 @@
+﻿
+
+<SfToast @ref="_sfToast"
+         Timeout="1000">
+    <ToastPosition X="Right"></ToastPosition>
+</SfToast>
+
+@code
+{
+    [Inject]
+    private IToast_Services ToastService { get; set; }
+
+    private SfToast _sfToast = new();
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            ToastService.Toast = _sfToast;
+        }
+    }
+}

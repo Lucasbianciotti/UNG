@@ -1,0 +1,23 @@
+﻿
+<div class="justify-content-md-center align-items-center">
+    <div class="alert-pers-info mb-2 text-center" role="alert" style="grid-template-rows:1fr;">
+
+        @if (string.IsNullOrEmpty(_Message))
+        {
+            <span class="alert-icon">
+                <i class="fas fa-times"></i>
+            </span>
+            <strong>Could not load data.</strong>
+        }
+        else
+        {
+            <strong>@_Message</strong>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string _Message { get; set; } = string.Empty;
+
+}

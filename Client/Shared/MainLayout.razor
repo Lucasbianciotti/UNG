@@ -1,17 +1,62 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+@inject ILocalStorage_Services _LocalStorage
+@inject IGlobalElements_Services _GlobalElements
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+
+<AuthorizeView>
+    <Authorized>
+
+        <div class="container-fluid py-4">
+            <NavMenu />
+
+            <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+                <TopMenu _Page="this"
+                         _GlobalElements="_GlobalElements" />
+
+                <div class="container-fluid py-4" id="content-body">@Body</div>
+            </main>
+
+            <_ToastComponent />
         </div>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+    </Authorized>
+
+    <NotAuthorized>
+        <_WithoutLogin />
+    </NotAuthorized>
+
+</AuthorizeView>
+
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            if (_GlobalElements.User == null)
+            {
+                _GlobalElements.User = await _LocalStorage.GetDecodified_Login();
+
+                //if (_GlobalElements.User == null)
+                //    NavigationManager.NavigateTo("/");
+            }
+        }
+        catch (Exception) { }
+
+        //_GlobalElements.OnChange += _GlobalElements_Changed;
+        //_GlobalConfiguration.OnChange += _GlobalConfiguration_Changed;
+    }
+
+    //private void _GlobalElements_Changed()
+    //{
+    //    StateHasChanged();
+    //}
+
+    //private void _GlobalConfiguration_Changed()
+    //{
+    //    StateHasChanged();
+    //}
+
+}

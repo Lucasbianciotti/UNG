@@ -1,0 +1,455 @@
+﻿@page "/equipments"
+
+@inject HttpClient Http
+@inject ILocalStorage_Services _LocalStorage
+@inject IURLs_Services _URLs
+@inject IGlobalElements_Services _GlobalElements
+@inject IGlobalConfiguration_Services _GlobalConfiguration
+@inject IToast_Services _Toast
+
+@attribute [Authorize]
+
+<Title Value="@_Title"></Title>
+
+
+
+<SfDialog IsModal="false" CloseOnEscape="false"
+          Target="#content-body"
+          CssClass="dialog-max-content"
+          @bind-Visible="@PrincipalCard_IsVisible">
+
+    <DialogTemplates>
+        <Content>
+
+            <SfCard>
+
+                <div class="card-header justify-content-between d-flex-center">
+                    <h6><i class="fa-solid fa-list mr-1"></i>@_Title</h6>
+
+                    <div class="p-0 d-flex-center">
+                        <button @onclick="(async () => await LoadInformation())" class="btn btn-rounded btn-outline-info mr-1" type="button" title="Reload information">
+                            <i class="fas fa-redo-alt"></i>
+                        </button>
+
+                        <button @onclick="(()=>_Card_EditionEquipment.OpenWindow_AddEquipment())" class="btn btn-rounded btn-outline-success" type="button" title="Add station">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+
+                </div>
+
+
+                <CardContent>
+
+                    @if (_Loading)
+                    {
+                        <div class="mt-3">
+                            <_Loading />
+                        </div>
+                    }
+                    else
+                    {
+                        if (_GlobalElements.PermissionForSection.Read)
+                        {
+                            if (_Ready)
+                            {
+                                if (_GlobalElements.Station == null)
+                                {
+                                    <_FailedToLoad _Message="Could not load equipment's information." />
+                                }
+                                else
+                                {
+                                    <SfGrid DataSource="@_GlobalElements.Station.ListOfEquipments"
+                            Toolbar="@(new List<string>() {"Search"})"
+                            ShowColumnChooser="false"
+                            AllowResizing="true"
+                            AllowSorting="true"
+                            AllowExcelExport="false"
+                            AllowPdfExport="false"
+                            AllowPaging="true"
+                            AllowReordering="false"
+                            Width="100%"
+                            Height="100%" @ref="_Grid">
+
+
+                                        <GridPageSettings PageCount="5" PageSizes="true" />
+
+                                        <GridColumns>
+
+                                            <GridColumn HeaderText="Actions"
+                                        TextAlign="TextAlign.Center"
+                                        Width="120">
+                                                <Template>
+                                                    @{
+                                                        var data = (context as Equipment_Request);
+                                        @if (_GlobalElements.PermissionForSection.Read && _GlobalElements.PermissionForSection.Modify)
+                                                        {
+                                            <div class="d-flex-center">
+                                                <button @onclick="(() => OnCommandClicked(data, CommandButtonType.Edit))" class="btn btn-rounded btn-outline-info" title="Modify equipment">
+                                                    <i class="fa-solid fa-pen-to-square"></i>
+                                                </button>
+                                            </div>
+                                                        }
+
+                                        //@if (_GlobalElements.PermissionForSection.Read && _GlobalElements.User.PermissionForDelete)
+                                        //{
+                                        //    <button @onclick="(() => OnCommandClicked(data, CommandButtonType.Delete))" type="button" class="e-control e-btn e-lib btn btn-outline-danger btn-min e-edit-delete e-Deletebutton e-icon-btn" style="margin-right: 5px !important"><i class="e-icons e-delete e-btn-icon"></i></button>
+                                        //}
+                                    }
+                                </Template>
+                            </GridColumn>
+
+                            <GridColumn Field=@nameof(Equipment_Request.ID)
+                                        HeaderText="ID"
+                                        Visible="false"
+                                        TextAlign="TextAlign.Center"
+                                        IsPrimaryKey="true" />
+
+                            <GridColumn Field=@nameof(Equipment_Request.Name)
+                                        HeaderText="Name"
+                                        TextAlign="TextAlign.Center">
+                                <Template>
+                                    @{
+                                                        var data = (context as Equipment_Request);
+
+                                        <span title="ID: @data.ID">@data.Name</span>
+                                    }
+                                </Template>
+                            </GridColumn>
+
+                            <GridColumn Field=@nameof(Equipment_Request.Type)
+                                        HeaderText="Type"
+                                        TextAlign="TextAlign.Center">
+                                <Template>
+                                    @{
+                                                        var data = (context as Equipment_Request);
+
+                                                        if (data.Type == EquipmentsTypesEnum.Drone)
+                                                        {
+                                            <div class="icon-table">
+                                                <i>
+                                                    <_SVG_Drone />
+                                                </i>
+                                                @EquipmentsTypesEnum.GetType(data.Type)
+                                            </div>
+                                                        }
+                                                        else if (data.Type == EquipmentsTypesEnum.HandHel)
+                                                        {
+                                            <div class="icon-table">
+                                                <i>
+                                                    <_SVG_Handheld />
+                                                </i>
+                                                @EquipmentsTypesEnum.GetType(data.Type)
+                                            </div>
+                                                        }
+                                                        else if (data.Type == EquipmentsTypesEnum.Notebook)
+                                                        {
+                                            <div class="icon-table" title="ID: @data.ID">
+                                                <i>
+                                                    <_SVG_Notebook />
+                                                </i>
+                                                @EquipmentsTypesEnum.GetType(data.Type)
+                                            </div>
+                                                        }
+                                                        else if (data.Type == EquipmentsTypesEnum.Tablet)
+                                                        {
+                                            <div class="icon-table" title="ID: @data.ID">
+                                                <i>
+                                                    <_SVG_Tablet />
+                                                </i>
+                                                @EquipmentsTypesEnum.GetType(data.Type)
+                                            </div>
+                                                        }
+
+                                    }
+                                </Template>
+                            </GridColumn>
+
+                            <GridColumn Field=@nameof(Equipment_Request.IDstatus)
+                                        HeaderText="Status"
+                                        TextAlign="TextAlign.Center">
+                                <Template>
+                                    @{
+                                                        var data = (context as Equipment_Request);
+
+                                        <div class="d-flex-center">
+                                            @if (data.IDstatus == EquipmentStatusEnum.Active)
+                                                            {
+                                                <div class="badge badge-pill badge-success">
+                                                    <span>@data.IDstatus</span>
+                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                <div class="badge badge-pill badge-danger">
+                                                    <span>@data.IDstatus</span>
+                                                </div>
+                                                            }
+                                        </div>
+                                    }
+                                </Template>
+                            </GridColumn>
+
+                            <GridColumn HeaderText="QR code"
+                                        TextAlign="TextAlign.Center">
+                                <Template>
+                                    @{
+                                                        var data = (context as Equipment_Request);
+                                        <div class="d-flex-center">
+                                            <button @onclick="(() => ViewQR(data))" class="btn btn-rounded btn-rounded btn-outline-info" title="View QR code">
+                                                <i class="fa-solid fa-qrcode"></i>
+                                            </button>
+                                        </div>
+                                    }
+                                </Template>
+                            </GridColumn>
+
+                        </GridColumns>
+
+                        <GridTemplates>
+
+                            <EmptyRecordTemplate>
+                                <_FailedToLoad _Message="Not found equipments." />
+                            </EmptyRecordTemplate>
+
+                            @*<DetailTemplate>
+                            //    @{
+                            //        var model = (context as Station_Request);
+                            //    }
+
+                            //    <div class="col-10 card p-1 mt-1 mb-1 border-shadow">
+                            //        <div class="card-content">
+                            //        </div>
+                            //    </div>
+                            //</DetailTemplate>
+                            // *@
+                        </GridTemplates>
+
+                    </SfGrid>
+
+                                }
+                            }
+                            else
+                            {
+                                <_FailedToLoad />
+                            }
+                        }
+                        else
+                        {
+                            <_WithoutPermission />
+                        }
+                    }
+
+                </CardContent>
+
+            </SfCard>
+
+        </Content>
+    </DialogTemplates>
+
+    <DialogAnimationSettings Effect="@_GlobalConfiguration.AnimationEffect" Duration=@_GlobalConfiguration.AnimationTime />
+    <DialogPositionData X="center" Y="start"></DialogPositionData>
+</SfDialog>
+
+@if (_Modal_Model != null)
+{
+    <div class="modal @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    @if (_Modal_Model.Type == EquipmentsTypesEnum.Drone)
+                    {
+                        <div class="icon-table text-center">
+                            <i>
+                                <_SVG_Drone />
+                            </i>
+                            @_Modal_Model.Name
+                        </div>
+                    }
+                    else if (_Modal_Model.Type == EquipmentsTypesEnum.HandHel)
+                    {
+                        <div class="icon-table text-center">
+                            <i>
+                                <_SVG_Handheld />
+                            </i>
+                            @_Modal_Model.Name
+                        </div>
+                    }
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+
+
+                        @{
+                            if (_QRCodeCreated)
+                            {
+                                <div class="d-flex-center">
+                                    <img title="@QRCodeClass.ShowQRCode(_GlobalElements.Station, _Modal_Model.QRcode)" src="@_Modal_Model.QRcodeSRC" class="img-qr" />
+                                </div>
+                            }
+                            else
+                            {
+                                CreateCodeQR();
+                                <_Loading />
+                            }
+                        }
+                    </div>
+                    <div class="d-flex-center">
+
+                        <button @onclick="CloseModal" class="btn btn-rounded btn-rounded-text btn-outline-default" type="button" title="Back">
+                            <i class="fa-solid fa-arrow-left mr-1"></i> Back
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @if (ShowBackdrop)
+    {
+        <div class="modal-backdrop fade show"></div>
+    }
+}
+
+<_Card_EditionEquipment @ref="_Card_EditionEquipment"
+                        _Page="this" />
+
+
+@code {
+    #region Variables
+    public _Card_EditionEquipment _Card_EditionEquipment = new();
+
+    private bool _Loading { get; set; } = true;
+    private bool _Ready { get; set; } = true;
+    private string _Title { get; set; } = "Equipment's list";
+    public bool PrincipalCard_IsVisible { get; set; } = true;
+
+    private SfGrid<Equipment_Request> _Grid = new();
+    #endregion
+
+
+    #region Mostrar informacion
+
+    protected override async Task OnInitializedAsync()
+    {
+        PrincipalCard_IsVisible = true;
+
+        _GlobalElements.PermissionForSection = await _LocalStorage.GetPermissionForSection(SystemSectionsEnum.Equipments);
+
+        if (!_GlobalElements.PermissionForSection.Read) StateHasChanged();
+        else await LoadInformation();
+    }
+
+    public async Task LoadInformation()
+    {
+        try
+        {
+            _Ready = false;
+            _Loading = true;
+            StateHasChanged();
+
+            var statusResponse = await HttpClass.GetSet(Http,await _URLs.SearchStation(), _Toast, _GlobalElements);
+            if (statusResponse)
+            {
+                _Ready = true;
+                UpdateView(_GlobalElements.Station);
+            }
+        }
+        catch (Exception e)
+        {
+            _GlobalConfiguration.NuevoLog("The information could not be loaded from equipments", SystemActionsEnum.LoadInformation, e, SystemErrorCodesEnum.Error);
+            //_Toast.ShowError("The information could not be loaded.");
+        }
+        finally
+        {
+            _Loading = false;
+            StateHasChanged();
+        }
+    }
+
+    public void UpdateView(Station_Request informacion)
+    {
+        try
+        {
+            _Loading = true;
+            StateHasChanged();
+
+            _GlobalElements.Station = informacion;
+
+            _Loading = false;
+            StateHasChanged();
+        }
+        catch (Exception) { }
+    }
+
+    //public void UpdateView() => StateHasChanged();
+
+    #endregion
+
+
+    #region Grilla
+
+    public void OnCommandClicked(Equipment_Request args, CommandButtonType comando)
+    {
+        if (comando == CommandButtonType.Edit)
+        {
+            if (_GlobalElements.PermissionForSection.Modify)
+                _Card_EditionEquipment.OpenWindows_ModifyEquipment(_GlobalElements.Station, args);
+            else
+                _Toast.ShowWarning("Not found permissions.");
+        }
+        //else if (comando == CommandButtonType.Delete)
+        //{
+        //    if (_GlobalElements.User.PermissionForDelete)
+        //        AbrirModal_Delete(args);
+        //    else
+        //        _Toast.ShowWarning("No tiene permiso para eliminar.");
+        //}
+    }
+
+    #endregion Grilla
+
+
+    #region Abrir Cerrar Modal
+    private Equipment_Request _Modal_Model { get; set; } = null;
+    private bool _Modal_IsVisible { get; set; } = false;
+    private bool _QRCodeCreated { get; set; } = false;
+
+    private void CreateCodeQR()
+    {
+        Task.Run(async () =>
+        {
+            _Modal_Model = await QRCodeClass.GenerateCodeQR(_GlobalElements.Station, _Modal_Model);
+            _QRCodeCreated = true;
+            StateHasChanged();
+        });
+    }
+
+    public void ViewQR(Equipment_Request model)
+    {
+        ModalDisplay = "block;";
+        ModalClass = "Show scale-in-center";
+        ShowBackdrop = true;
+        _QRCodeCreated = false;
+        _Modal_Model = model;
+
+        _Modal_IsVisible = true;
+        StateHasChanged();
+    }
+
+    private string ModalDisplay = "none;";
+    private string ModalClass = "";
+    private bool ShowBackdrop = false;
+
+    public void CloseModal()
+    {
+        ModalClass = "slit-out-vertical";
+        StateHasChanged();
+        ShowBackdrop = false;
+        ModalDisplay = "none";
+        StateHasChanged();
+    }
+    #endregion
+
+}

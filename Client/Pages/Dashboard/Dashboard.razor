@@ -1,0 +1,245 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.SignalR.Client
+@inject HubConnection _HubConnection
+
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject ILocalStorage_Services _LocalStorage
+@inject IURLs_Services _URLs
+@inject IGlobalElements_Services _GlobalElements
+@inject IGlobalConfiguration_Services _GlobalConfiguration
+@inject IToast_Services _Toast
+
+@attribute [Authorize]
+
+<Title Value="@_Title"></Title>
+
+<SfDialog IsModal="false" CloseOnEscape="false"
+          Target="#content-body"
+          CssClass="dialog-max-content"
+          @bind-Visible="@PrincipalCard_IsVisible">
+
+    <DialogTemplates>
+        <Content>
+            <div class="row">
+                <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+                    @{
+                        string classVolt = string.Empty;
+                        if (_GlobalElements.Station.Station_Voltage <= _GlobalElements.Station.Station_MinVoltage)
+                        {
+                            classVolt = "bg-gradient-danger";
+                        }
+                    }
+
+                    <div class="card transparent-card @classVolt" @onclick="(()=>RedirectTo(SystemSectionsEnum.Configuration))">
+                        <div class="text">
+                            <p class="text-sm mb-2 text-capitalize font-weight-bold">Station's Battery</p>
+
+                            @if (_GlobalElements.Station.Station_Charging && (_GlobalElements.Station.Station_Voltage > (decimal)12.5))
+                            {
+                                <h6 class="font-weight-bolder mb-0" title="Connected and charging">
+                                    Connected
+                                </h6>
+                                <span class="text-sm font-weight-bolder">@_GlobalElements.Station.Station_Voltage v</span>
+                            }
+                            else if (_GlobalElements.Station.Station_Charging && (_GlobalElements.Station.Station_Voltage > _GlobalElements.Station.Station_MinVoltage))
+                            {
+                                <h6 class="text-success font-weight-bolder mb-0" title="Charging">
+                                    Charging
+                                </h6>
+                                <span class="text-success text-sm font-weight-bolder">@_GlobalElements.Station.Station_Voltage v</span>
+                            }
+                            else if (_GlobalElements.Station.Station_Charging && (_GlobalElements.Station.Station_Voltage < _GlobalElements.Station.Station_MinVoltage))
+                            {
+                                <h6 class="text-success font-weight-bolder mb-0" title="Charging">
+                                    Charging
+                                </h6>
+                                <span class="text-danger text-sm font-weight-bolder">@_GlobalElements.Station.Station_Voltage v</span>
+                            }
+                            else
+                            {
+                                <h6 class="text-danger font-weight-bolder mb-0" title="Charging">
+                                    Not connected
+                                </h6>
+                                <span class="text-danger text-sm font-weight-bolder">@_GlobalElements.Station.Station_Voltage v</span>
+                            }
+                        </div>
+                        @if (_GlobalElements.Station.Station_Voltage > _GlobalElements.Station.Station_MinVoltage)
+                        {
+                            <div class="icon icon-shape bg-gradient-info shadow text-center border-radius-md" title="Station's voltage is correct.">
+                                <i class="fa-solid fa-charging-station text-lg opacity-10" aria-hidden="true"></i>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="icon icon-shape bg-gradient-danger shadow text-center border-radius-md parpadear" title="Station's voltage is below of minimum.">
+                                <i class="fa-solid fa-charging-station text-lg opacity-10" aria-hidden="true"></i>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+                    <div class="card transparent-card" @onclick="(()=>RedirectTo(SystemSectionsEnum.Equipments))">
+                        <div class="text">
+                            <p class="text-sm mb-1 text-capitalize font-weight-bold">Drone OnHome</p>
+                            @if (_GlobalElements.Station.Drone_Charging)
+                            {
+                                <h6 class="text-success font-weight-bolder mb-0">
+                                    Charging
+                                </h6>
+                                <span class="text-success text-sm font-weight-bolder">@_GlobalElements.Station.Drone_Voltage v</span>
+                            }
+                            else
+                            {
+                                <h6 class="font-weight-bolder mb-0">
+                                    Not present
+                                </h6>
+                            }
+                        </div>
+
+                        @if (_GlobalElements.Station.Drone_Charging)
+                        {
+                            <div class="icon icon-shape bg-gradient-info shadow text-center border-radius-md" title="Charging drone">
+                                <_SVG_Drone />
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="icon icon-shape bg-gradient-info shadow text-center border-radius-md" title="Not present">
+                                <_SVG_Drone />
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+                    <div class="card transparent-card" @onclick="(()=>RedirectTo(SystemSectionsEnum.Equipments))">
+                        <div class="text">
+                            <p class="text-sm mb-1 text-capitalize font-weight-bold">Equipments</p>
+                            <h4 class="font-weight-bolder mb-0">
+                                @_GlobalElements.Station.CountEquipmentsActives
+                                <span class="text-sm font-weight-bolder" title="Total equipments: @_GlobalElements.Station.CountEquipments">@_GlobalElements.Station.CountEquipments</span>
+                            </h4>
+                        </div>
+                        <div class="icon icon-shape bg-gradient-info shadow text-center border-radius-md" title="Total equipments: @_GlobalElements.Station.CountEquipments">
+                            <i class="fa-solid fa-satellite-dish text-lg opacity-10" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-sm-6">
+                    <div class="card transparent-card" @onclick="(()=>RedirectTo(SystemSectionsEnum.Configuration))">
+                        <div class="text">
+                            <p class="text-sm mb-1 text-capitalize font-weight-bold">Remote Server</p>
+                            @if (_GlobalElements.Station.InternetConnected)
+                            {
+                                <h6 class="text-success font-weight-bolder mb-0">
+                                    Connected
+                                </h6>
+                            }
+                            else
+                            {
+                                <h6 class="text-danger font-weight-bolder mb-0">
+                                    Disconnected
+                                </h6>
+                            }
+                        </div>
+                        @if (_GlobalElements.Station.InternetConnected)
+                        {
+                            <div class="icon icon-shape bg-gradient-info shadow text-center border-radius-md" title="Internet connection is okey.">
+                                <i class="fa-solid fa-wifi text-lg opacity-10" aria-hidden="true"></i>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="icon icon-shape bg-gradient-danger shadow text-center border-radius-md parpadear" title="Could not connect to internet.">
+                                <i class="fa-solid fa-wifi text-lg opacity-10" aria-hidden="true"></i>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+        </Content>
+    </DialogTemplates>
+
+    <DialogAnimationSettings Effect="@_GlobalConfiguration.AnimationEffect" Duration=@_GlobalConfiguration.AnimationTime />
+    <DialogPositionData X="center" Y="start"></DialogPositionData>
+</SfDialog>
+
+
+
+@code {
+    #region Variables
+    private bool _Loading { get; set; } = true;
+    private bool _Ready { get; set; } = true;
+    private string _Title { get; set; } = "Equipment's list";
+    public bool PrincipalCard_IsVisible { get; set; } = true;
+    #endregion
+
+
+    #region Mostrar informacion
+
+    protected override async Task OnInitializedAsync()
+    {
+        PrincipalCard_IsVisible = true;
+
+        _GlobalElements.PermissionForSection = await _LocalStorage.GetPermissionForSection(SystemSectionsEnum.Data);
+        if (!_GlobalElements.PermissionForSection.Read) StateHasChanged();
+
+        await LoadInformation();
+    }
+
+    public async Task LoadInformation()
+    {
+        try
+        {
+            _Ready = false;
+            _Loading = true;
+            StateHasChanged();
+
+            var statusResponse = await HttpClass.GetSet(Http, await _URLs.Dashboard(), _Toast, _GlobalElements);
+            if (statusResponse)
+            {
+                _Ready = true;
+                UpdateView(_GlobalElements.Station);
+            }
+        }
+        catch (Exception e)
+        {
+            _GlobalConfiguration.NuevoLog("The information could not be loaded from stations", SystemActionsEnum.LoadInformation, e, SystemErrorCodesEnum.Error);
+            //_Toast.ShowError("The information could not be loaded.");
+        }
+        finally
+        {
+            _Loading = false;
+            StateHasChanged();
+        }
+    }
+
+    public void UpdateView(Station_Request informacion)
+    {
+        try
+        {
+            _Loading = true;
+            StateHasChanged();
+
+            _GlobalElements.Station = informacion;
+
+            _Loading = false;
+            StateHasChanged();
+        }
+        catch (Exception) { }
+    }
+
+    //public void UpdateView() => StateHasChanged();
+
+    #endregion
+
+
+    public void RedirectTo(SystemSectionsEnum URL)
+    {
+        NavigationManager.NavigateTo("/" + URL.ToString());
+    }
+}

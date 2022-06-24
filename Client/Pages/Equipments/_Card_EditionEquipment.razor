@@ -1,0 +1,452 @@
+﻿@inject HttpClient Http
+@inject IURLs_Services _URLs
+@inject IGlobalConfiguration_Services _GlobalConfiguration
+@inject IGlobalElements_Services _GlobalElements
+@inject IToast_Services _Toast
+
+@attribute [Authorize]
+
+
+<SfDialog IsModal="false" CloseOnEscape="false"
+          Target="#content-body"
+          CssClass="dialog-max-content"
+          @bind-Visible="@_Card_IsVisible">
+
+    <DialogTemplates>
+        <Content>
+
+            <SfCard>
+                <div class="card-header justify-content-between d-flex-center">
+                    @if (_Creating)
+                    {
+                        <h6><i class="fa-solid fa-circle-plus mr-1"></i>@_Title</h6>
+
+                        <div class="p-0 d-flex-center">
+                            <button @onclick="Close" class="btn btn-rounded btn-outline-default mr-1" type="button" title="Back">
+                                <i class="fa-solid fa-arrow-left"></i>
+                            </button>
+                        </div>
+                    }
+                    else
+                    {
+                        <h6><i class="fa-solid fa-pen-to-square mr-1"></i>@_Title</h6>
+
+                        <div class="p-0 d-flex-center">
+                            <button @onclick="Close" class="btn btn-rounded btn-outline-default mr-1" type="button" title="Back">
+                                <i class="fa-solid fa-arrow-left"></i>
+                            </button>
+
+                            <button @onclick="QuestionRemove" class="btn btn-rounded btn-rounded-text btn-outline-danger" type="button" title="Remove equipment">
+                                <i class="fa-solid fa-trash-can mr-1"></i>Remove
+                            </button>
+                        </div>
+                    }
+
+                </div>
+
+                <CardContent>
+
+                    <EditForm Model="@_Model" OnInvalidSubmit="(() => StateHasChanged())" OnValidSubmit="(() => Save())">
+                        <DataAnnotationsValidator />
+
+                        <div class="row m-1">
+
+                            <div class="card-form-items col-md-5 col-sm-12">
+                                <div class="card-header-min">
+                                    <label><i class="fa-solid fa-satellite-dish mr-1"></i>Equipment</label>
+                                </div>
+
+                                <div class="row card-body-min">
+                                    <div class="col-md-8 col-sm-12">
+                                        <label>Name<label class="text-danger">*</label></label>
+                                        <div class="mb-2">
+                                            <InputText class="form-control"
+                                                       placeholder="ID"
+                                                       aria-label="ID"
+                                                       @bind-Value="_Model.Name" />
+                                            <ValidationMessage For="@(() => _Model.Name)" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <label>Type<label class="text-danger">*</label></label>
+                                        <div class="mb-2">
+                                            <SfDropDownList TValue="int"
+                                                            TItem="xEditableItem"
+                                                            PopupHeight="auto"
+                                                            Placeholder="Select type"
+                                                            @bind-Value="@_Model.Type"
+                                                            AllowFiltering="true" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                                            DataSource="@EquipmentsTypesEnum.ListEditableItem_Types()">
+                                                <DropDownListTemplates TItem="xEditableItem">
+                                                    <NoRecordsTemplate>
+                                                        <span class='norecord'> Not found types</span>
+                                                    </NoRecordsTemplate>
+                                                </DropDownListTemplates>
+                                                <DropDownListFieldSettings Text="Text" Value="Value" />
+                                            </SfDropDownList>
+                                            <ValidationMessage For="@(() => _Model.Type)" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-form-items col-md-6 col-sm-12 offset-md-1">
+                                <div class="card-header-min d-flex justify-content-between">
+                                    <label><i class="fa-solid fa-qrcode mr-1"></i>QR Code</label>
+                                    @if (_Model != null && !string.IsNullOrEmpty(_Model.Name) && _Model.ID != 0)
+                                    {
+                                        <div class="p-0">
+                                            <button @onclick="(()=>{ _QRCodeCreated=false; _QRCodeCreating=false; CreateCodeQR();})" class="btn btn-rounded btn-outline-info mr-1" type="button" title="Reload code">
+                                                <i class="fas fa-redo-alt"></i>
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
+
+                                <div class="card-body-min">
+                                    @if (_Model != null && !string.IsNullOrEmpty(_Model.Name) && _Model.ID != 0)
+                                    {
+                                        if (_QRCodeCreated)
+                                        {
+                                            <div class="d-flex-center">
+                                                <img title="@QRCodeClass.ShowQRCode(_GlobalElements.Station, _Model.QRcode)" src="@_Model.QRcodeSRC" class="img-qr" />
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <_Loading />
+
+                                            if (!_QRCodeCreating)
+                                            {
+                                                CreateCodeQR();
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <_FailedToLoad _Message="Add the equipment to generate the QR code." />
+                                    }
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="mt-4 col-12 d-flex-center">
+                            @if (_Loading)
+                            {
+                                <_LoadingButton />
+                            }
+                            else
+                            {
+                                <div class="row">
+
+                                    @if (!_NewEquipmentAdded)
+                                    {
+                                        <button @onclick="Close" class="btn btn-rounded btn-outline-default mr-1" type="button" title="Back">
+                                            <i class="fa-solid fa-arrow-left"></i>
+                                        </button>
+
+                                        <button class="btn btn-rounded btn-rounded-text btn-outline-success" type="submit" title="Save">
+                                            <i class="fa-solid fa-floppy-disk mr-1"></i> Save
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button @onclick="Close" class="btn btn-rounded btn-rounded-text btn-outline-default" type="button" title="Back">
+                                            <i class="fa-solid fa-arrow-left mr-1"></i> Back
+                                        </button>
+                                    }
+                                </div>
+                            }
+                        </div>
+
+                    </EditForm>
+
+                </CardContent>
+
+            </SfCard>
+
+        </Content>
+    </DialogTemplates>
+
+    <DialogAnimationSettings Effect="@_GlobalConfiguration.AnimationEffect" Duration=@_GlobalConfiguration.AnimationTime />
+    <DialogPositionData X="center" Y="start"></DialogPositionData>
+</SfDialog>
+
+
+@if (!_Creating)
+{
+    <div class="modal @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    @if (_Model.Type == EquipmentsTypesEnum.Drone)
+                    {
+                        <div class="icon-table text-center">
+                            <i>
+                                <_SVG_Drone />
+                            </i>
+                            @_Model.Name
+                        </div>
+                    }
+                    else if (_Model.Type == EquipmentsTypesEnum.HandHel)
+                    {
+                        <div class="icon-table text-center">
+                            <i>
+                                <_SVG_Handheld />
+                            </i>
+                            @_Model.Name
+                        </div>
+                    }
+                </div>
+                <div class="modal-body">
+
+                    <div class="text-center py-5">
+                        <p>Do you want to remove the equipment?</p>
+                    </div>
+
+                    <div class="d-flex-center">
+
+                        <div class="row">
+                            <button @onclick="CloseModal" class="btn btn-rounded btn-outline-default mr-1" type="button" title="Close">
+                                <i class="fa-solid fa-arrow-left"></i>
+                            </button>
+
+                            <button @onclick="(() => Remove())" class="btn btn-rounded btn-rounded-text btn-outline-danger" type="submit" title="Remove">
+                                <i class="fa-solid fa-trash-can mr-1"></i> Remove
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @if (ShowBackdrop)
+    {
+        <div class="modal-backdrop fade show"></div>
+    }
+}
+
+
+@code {
+
+
+    [Parameter]
+    public Equipments _Page { get; set; }
+
+    private Equipment_Request _Model { get; set; } = new();
+
+    private bool _Loading { get; set; }
+    private bool _Ready { get; set; } = true;
+    private bool _Creating { get; set; }
+    private bool _NewEquipmentAdded { get; set; }
+
+    private bool _QRCodeCreated { get; set; } = false;
+    private bool _QRCodeCreating { get; set; } = false;
+
+    private bool _Card_IsVisible { get; set; } = false;
+    private string _Title { get; set; }
+
+
+    private async Task Save()
+    {
+        if (_Creating)
+        {
+            try
+            {
+                _Loading = true;
+                StateHasChanged();
+
+                var response = await HttpClass.PostOnly(Http,await _URLs.Create_Equipment(), _Model, _Toast);
+                if (response != null && !string.IsNullOrEmpty(response.ObjetoJson))
+                {
+                    _NewEquipmentAdded = true;
+                    _Model = JsonConvert.DeserializeObject<Equipment_Request>(response.ObjetoJson);
+                    _GlobalElements.Station.ListOfEquipments.Add(_Model);
+                }
+            }
+            catch (Exception e)
+            {
+                _GlobalConfiguration.NuevoLog("Could not create equipment", SystemActionsEnum.Create, e, SystemErrorCodesEnum.Error);
+                _Toast.ShowError("Could not create.");
+            }
+            finally
+            {
+                _Loading = false;
+                StateHasChanged();
+            }
+        }
+        else
+        {
+            try
+            {
+                _Loading = true;
+                StateHasChanged();
+
+                var response = await HttpClass.PostOnly(Http,await _URLs.Modify_Equipment(), _Model, _Toast);
+                if (response != null && !string.IsNullOrEmpty(response.ObjetoJson))
+                {
+                    _NewEquipmentAdded = true;
+                    _Model = JsonConvert.DeserializeObject<Equipment_Request>(response.ObjetoJson);
+
+                    var tempModel = _GlobalElements.Station.ListOfEquipments.Where(x => x.ID == _Model.ID).First();
+                    _GlobalElements.Station.ListOfEquipments.Remove(tempModel);
+                    _GlobalElements.Station.ListOfEquipments.Add(_Model);
+
+                    _QRCodeCreated = false;
+                }
+            }
+            catch (Exception e)
+            {
+                _GlobalConfiguration.NuevoLog("Could not modify equipment", SystemActionsEnum.Modify, e, SystemErrorCodesEnum.Error);
+                _Toast.ShowError("Could not modify.");
+            }
+            finally
+            {
+                _Loading = false;
+                StateHasChanged();
+            }
+        }
+    }
+
+    private async Task Remove()
+    {
+        try
+        {
+            _Loading = true;
+            StateHasChanged();
+
+            var response = await HttpClass.PostOnly(Http,await _URLs.Delete_Equipment(), _Model, _Toast);
+            if (response != null && !string.IsNullOrEmpty(response.ObjetoJson))
+            {
+                var list = JsonConvert.DeserializeObject<List<Equipment_Request>>(response.ObjetoJson);
+                _GlobalElements.Station.ListOfEquipments = new List<Equipment_Request>();
+                _GlobalElements.Station.ListOfEquipments = list;
+                CloseModal();
+                Close();
+            }
+        }
+        catch (Exception e)
+        {
+            _GlobalConfiguration.NuevoLog("Could not remove equipment", SystemActionsEnum.Delete, e, SystemErrorCodesEnum.Error);
+            _Toast.ShowError("Could not remove.");
+        }
+        finally
+        {
+            _Loading = false;
+            StateHasChanged();
+        }
+    }
+
+
+    #region Metodos
+    private void CreateCodeQR()
+    {
+        Task.Run(async () =>
+        {
+            if (!_QRCodeCreated && !_QRCodeCreating)
+            {
+                _QRCodeCreating = true;
+                _Model = await QRCodeClass.GenerateCodeQR(_GlobalElements.Station, _Model);
+                _QRCodeCreated = true;
+            }
+
+            StateHasChanged();
+        });
+    }
+    #endregion Metodos
+
+
+    #region Abrir Cerrar Modal
+    private bool _Modal_IsVisible { get; set; } = false;
+
+    public void QuestionRemove()
+    {
+        ModalDisplay = "block;";
+        ModalClass = "Show scale-in-center";
+        ShowBackdrop = true;
+
+        _Modal_IsVisible = true;
+        StateHasChanged();
+    }
+
+    private string ModalDisplay = "none;";
+    private string ModalClass = "";
+    private bool ShowBackdrop = false;
+
+    public void CloseModal()
+    {
+        ModalClass = "slit-out-vertical";
+        StateHasChanged();
+        ShowBackdrop = false;
+        ModalDisplay = "none";
+        StateHasChanged();
+    }
+    #endregion
+
+
+
+    #region Abrir Cerrar
+
+    public void OpenWindow_AddEquipment()
+    {
+        if (_GlobalElements.PermissionForSection.Create)
+        {
+            _Page.PrincipalCard_IsVisible = false;
+            _Card_IsVisible = true;
+
+            _Model = new();
+            _Model.IDstation = _GlobalElements.Station.ID;
+            _Model.IDstatus = EquipmentStatusEnum.Active;
+
+            _Creating = true;
+            _QRCodeCreated = false;
+            _NewEquipmentAdded = false;
+
+            _Title = "Add equipment";
+            StateHasChanged();
+        }
+        else
+        {
+            _Toast.ShowWarning("Not found permissions.");
+        }
+    }
+
+    public void OpenWindows_ModifyEquipment(Station_Request station, Equipment_Request model)
+    {
+        if (_GlobalElements.PermissionForSection.Create)
+        {
+            _Page.PrincipalCard_IsVisible = false;
+            _Card_IsVisible = true;
+
+            _Model = model;
+            _Model.IDstation = station.ID;
+
+            _Creating = false;
+            _QRCodeCreated = false;
+            _NewEquipmentAdded = false;
+
+            _Title = "Modify equipment";
+            StateHasChanged();
+        }
+        else
+        {
+            _Toast.ShowWarning("Not found permissions.");
+        }
+    }
+
+    private void Close()
+    {
+        _Card_IsVisible = false;
+        _Page.PrincipalCard_IsVisible = true;
+
+        StateHasChanged();
+
+        _Page.UpdateView(_GlobalElements.Station);
+    }
+
+    #endregion
+}

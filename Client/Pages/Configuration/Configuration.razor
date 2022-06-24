@@ -1,0 +1,829 @@
+﻿@page "/configuration"
+@inject HttpClient Http
+@inject ILocalStorage_Services _LocalStorage
+@inject IURLs_Services _URLs
+@inject IGlobalElements_Services _GlobalElements
+@inject IGlobalConfiguration_Services _GlobalConfiguration
+@inject IToast_Services _Toast
+
+@attribute [Authorize]
+
+
+<Title Value="@_Title"></Title>
+
+<SfDialog IsModal="false" CloseOnEscape="false"
+          Target="#content-body"
+          CssClass="dialog-max-content"
+          @bind-Visible="@PrincipalCard_IsVisible">
+
+    <DialogTemplates>
+        <Content>
+            <SfCard>
+
+                <div class="card-header justify-content-between d-flex-center">
+                    <h6><i class="fa-solid fa-screwdriver-wrench mr-1"></i>@_Title</h6>
+                </div>
+
+                <CardContent>
+
+                    @if (_Loading)
+                    {
+                        <div class="mt-3">
+                            <_Loading />
+                        </div>
+                    }
+                    else
+                    {
+                        if (_GlobalElements.PermissionForSection.Read)
+                        {
+                            if (_Ready)
+                            {
+                                if (_GlobalElements.Station == null)
+                                {
+                                    <_FailedToLoad _Message="Could not load station's information." />
+                                }
+                                else
+                                {
+                                    <div class="row">
+                                        <div class="configuration">
+
+                                            <div class="menu-configuration col-lg-3 col-md-6 col-sm-12">
+
+                                                <ul class="navbar-menu-configuration">
+
+                                                    <li class="nav-item-menu-configuration @_Station_IsVisible" @onclick="(()=>ChangeMenu(1))">
+                                                        <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+
+                                                            <i title="Station" class="fa-solid fa-box"></i>
+
+                                                        </div>
+                                                        <span class="nav-link-text ms-1" title="Station">Station</span>
+                                                    </li>
+
+                                                    <li class="nav-item-menu-configuration @_Map_IsVisible" @onclick="(()=>ChangeMenu(2))">
+                                                        <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+
+                                                            <i title="Map" class="fa-solid fa-map"></i>
+
+                                                        </div>
+                                                        <span class="nav-link-text ms-1" title="Map">Map</span>
+                                                    </li>
+
+                                                    <li class="nav-item-menu-configuration @_LocalNetwork_IsVisible" @onclick="(()=>ChangeMenu(3))">
+                                                        <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+
+                                                            <i title="Local network" class="fa-solid fa-network-wired"></i>
+
+                                                        </div>
+
+                                                        <span class="nav-link-text ms-1" title="Local network">Local network</span>
+                                                    </li>
+
+                                                    <li class="nav-item-menu-configuration @_ExternalNetwork_IsVisible" @onclick="(()=>ChangeMenu(4))">
+                                                        <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+
+                                                            <i title="External network" class="fa-solid fa-globe"></i>
+
+                                                        </div>
+
+                                                        <span class="nav-link-text ms-1" title="External network">External network</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+
+
+
+                                            <div class="body-configuration" id="body-configuration">
+
+                                                <div class="item-body">
+
+                                                    <EditForm Model="@_Model" OnInvalidSubmit="(() => StateHasChanged())" OnValidSubmit="(() => Save())">
+                                                        <DataAnnotationsValidator />
+
+                                                        <div class="card-form-items col-12 p-1 @_Station_IsVisible">
+                                                            <div class="card-header-min">
+                                                                <label><i class="fa-solid fa-box mr-1"></i>Station</label>
+                                                            </div>
+
+                                                            <div class="row card-body-min">
+                                                                <div class="col-lg-6 col-md-6 col-sm-6 mb-4">
+                                                                    <label>Name<label class="text-danger">*</label></label>
+                                                                    <div class="mb-2">
+                                                                        <InputText class="form-control"
+                                                                   disabled="@_IsEnabled"
+                                                                   placeholder="ID"
+                                                                   aria-label="ID"
+                                                                   @bind-Value="_Model.Name" />
+                                                                        <ValidationMessage For="@(() => _Model.Name)" />
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-lg-6 col-md-6 col-sm-6 mb-4">
+                                                                    <label>Location<label class="text-danger">*</label></label>
+                                                                    <div class="mb-2">
+                                                                        <InputText class="form-control"
+                                                                   disabled="@_IsEnabled"
+                                                                   placeholder="Location"
+                                                                   aria-label="Location"
+                                                                   @bind-Value="_Model.Location" />
+                                                                        <ValidationMessage For="@(() => _Model.Location)" />
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
+                                                                    <label>Minimum voltage<label class="text-danger">*</label></label>
+                                                                    <div class="form-control-label mb-2">
+                                                                        <InputNumber class="form-control"
+                                                                     disabled="@_IsEnabled"
+                                                                     TValue="decimal"
+                                                                     step="0.1"
+                                                                     min="5"
+                                                                     max="13.8"
+                                                                     placeholder="Volt"
+                                                                     aria-label="Volt"
+                                                                     @bind-Value="_Model.Station_MinVoltage" />
+
+                                                                        <span>Volts</span>
+
+                                                                        <ValidationMessage For="@(() => _Model.Station_MinVoltage)" />
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
+                                                                    <label>Shutdown screen<label class="text-danger">*</label></label>
+                                                                    <div class="form-control-label mb-2">
+                                                                        <InputNumber class="form-control"
+                                                                     disabled="@_IsEnabled"
+                                                                     TValue="int"
+                                                                     step="5"
+                                                                     min="5"
+                                                                     max="500"
+                                                                     placeholder="Seconds"
+                                                                     aria-label="Seconds"
+                                                                     @bind-Value="_Model.Station_ShutdownScreen" />
+
+                                                                        <span>Seconds</span>
+
+                                                                        <ValidationMessage For="@(() => _Model.Station_ShutdownScreen)" />
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-lg-6 col-md-12 col-sm-12 mb-4">
+                                                                    <label>API<label class="text-danger">*</label></label>
+                                                                    <div class="mb-2">
+                                                                        <InputText class="form-control"
+                                                                   disabled="@_IsEnabled"
+                                                                   placeholder="ID"
+                                                                   aria-label="ID"
+                                                                   @bind-Value="_APIURL" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="card-form-items col-12 p-1 @_Map_IsVisible">
+                                                            <div class="card-header-min">
+                                                                <label><i class="fa-solid fa-map mr-1"></i>Map</label>
+                                                            </div>
+
+                                                            <div class="row card-body-min">
+                                                                <div class="col-12" style="display: flex; flex-direction: column; align-items: flex-end; align-content: flex-end;">
+                                                                    <div class="col-auto" title="Latitude top right">
+                                                                        <label>Latitude<label class="text-danger">*</label></label>
+                                                                        <div class="mb-2">
+                                                                            <InputNumber class="form-control"
+                                                                         disabled="@_IsEnabled"
+                                                                         TValue="double"
+                                                                         placeholder="Latitude"
+                                                                         aria-label="Latitude"
+                                                                         @bind-Value="_Model.Map.Map_TopRight_Lat" />
+
+                                                                            <ValidationMessage For="@(() => _Model.Map.Map_TopRight_Lat)" />
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="col-auto" title="Longitude top right">
+                                                                        <label>Longitude<label class="text-danger">*</label></label>
+                                                                        <div class="mb-2">
+                                                                            <InputNumber class="form-control"
+                                                                         disabled="@_IsEnabled"
+                                                                         TValue="double"
+                                                                         placeholder="Longitude"
+                                                                         aria-label="Longitude"
+                                                                         @bind-Value="_Model.Map.Map_TopRight_Lon" />
+
+                                                                            <ValidationMessage For="@(() => _Model.Map.Map_TopRight_Lon)" />
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-12 mb-2 mx-2" style="display: flex; flex-direction: column; align-items: center;">
+                                                                    <img src="@_SRC" class="img-fluid mb-3" style="border: 2px solid #61678c; border-radius: 0.3rem; max-height: 25rem;" />
+                                                                    @if (_Editing)
+                                                                    {
+                                                                        <InputFile OnChange="ResizeAndDisplayImageUsingStreaming" />
+                                                                    }
+                                                                </div>
+
+                                                                <div class="col-12" style="display: flex !important; align-items: flex-start; justify-content: flex-start; flex-direction: column;">
+                                                                    <div class="col-auto" title="Latitude bottom left">
+                                                                        <label>Latitude<label class="text-danger">*</label></label>
+                                                                        <div class="mb-2">
+                                                                            <InputNumber class="form-control"
+                                                                         disabled="@_IsEnabled"
+                                                                         TValue="double"
+                                                                         placeholder="Latitude"
+                                                                         aria-label="Latitude"
+                                                                         @bind-Value="_Model.Map.Map_BottomLeft_Lat" />
+
+                                                                            <ValidationMessage For="@(() => _Model.Map.Map_BottomLeft_Lat)" />
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="col-auto" title="Longitude bottom left">
+                                                                        <label>Longitude<label class="text-danger">*</label></label>
+                                                                        <div class="mb-2">
+                                                                            <InputNumber class="form-control"
+                                                                         disabled="@_IsEnabled"
+                                                                         TValue="double"
+                                                                         placeholder="Longitude"
+                                                                         aria-label="Longitude"
+                                                                         @bind-Value="_Model.Map.Map_BottomLeft_Lon" />
+
+                                                                            <ValidationMessage For="@(() => _Model.Map.Map_BottomLeft_Lon)" />
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+
+
+
+                                                            </div>
+
+                                                        </div>
+
+                                                        <div class="card-form-items col-12 p-1 @_LocalNetwork_IsVisible">
+                                                            <div class="card-header-min">
+                                                                <label><i class="fa-solid fa-network-wired mr-1"></i>Local network</label>
+                                                            </div>
+
+                                                            <div class="row card-body-min">
+                                                                <div class="col-lg-5 col-md-6 col-sm-6 mb-4">
+                                                                    <label>SSID<label class="text-danger">*</label></label>
+                                                                    <div class="mb-2">
+                                                                        <InputText type="text"
+                                                                   disabled="@_IsEnabled"
+                                                                   class="form-control"
+                                                                   aria-label="SSID"
+                                                                   placeholder="SSID"
+                                                                   @bind-Value="_Model.SSID_Int" />
+                                                                        <ValidationMessage For="@(() => _Model.SSID_Int)" />
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-lg-5 col-md-6 col-sm-6 mb-4">
+                                                                    <label>Password<label class="text-danger">*</label></label>
+                                                                    <div class="form-control-label mb-2">
+                                                                        @{
+                                                                            if (_ShowPassword_PrivateNetwork)
+                                                                            {
+                                                                                <InputText type="text"
+                                                                   disabled="@_IsEnabled"
+                                                                   class="form-control"
+                                                                   aria-label="Password"
+                                                                   placeholder="Password"
+                                                                       @bind-Value="_Model.PASS_Int" />
+                                                                                @if (!_IsEnabled)
+                                                                                {
+                                                                                    <span style="cursor:pointer" @onclick="(()=> { _ShowPassword_PrivateNetwork=false; StateHasChanged(); })"><i class="fa-solid fa-eye-slash"></i></span>
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <InputText type="password"
+                                                                   disabled="@_IsEnabled"
+                                                                   class="form-control"
+                                                                   aria-label="Password"
+                                                                   placeholder="Password"
+                                                                       @bind-Value="_Model.PASS_Int" />
+
+                                                                                @if (!_IsEnabled)
+                                                                                {
+                                                                                    <span style="cursor:pointer" @onclick="(()=> { _ShowPassword_PrivateNetwork=true; StateHasChanged();})"><i class="fa-solid fa-eye"></i></span>
+                                                                                }
+                                                                            }
+                                                                        }
+
+                                                                        <ValidationMessage For="@(() => _Model.PASS_Int)" />
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-lg-2 col-md-6 col-sm-6 mb-4">
+                                                                    <label>Security Type<label class="text-danger">*</label></label>
+                                                                    <div class="mb-2">
+                                                                        @if (_Editing)
+                                                                        {
+                                                                            <SfDropDownList TValue="int?"
+                                                                        TItem="xEditableItem"
+                                                                        PopupHeight="auto"
+                                                                        Placeholder="Select type"
+                                                                        @bind-Value="@_Model.PASS_Int_SecurityType"
+                                                                        AllowFiltering="true" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                                                        DataSource="@SecurityWIFITypesEnum.ListEditableItem_Types()">
+                                                                                <DropDownListTemplates TItem="xEditableItem">
+                                                                                    <NoRecordsTemplate>
+                                                                                        <span class='norecord'> Not found types</span>
+                                                                                    </NoRecordsTemplate>
+                                                                                </DropDownListTemplates>
+                                                                                <DropDownListFieldSettings Text="Text" Value="Value" />
+                                                                            </SfDropDownList>
+                                                                            <ValidationMessage For="@(() => _Model.PASS_Int_SecurityType)" />
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <input type="text"
+                                                               disabled="@_IsEnabled"
+                                                               class="form-control"
+                                                               aria-label="Type"
+                                                               placeholder="Type"
+                                                               value="@SecurityWIFITypesEnum.GetType(_Model.PASS_Int_SecurityType)" />
+                                                                        }
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
+                                                                    <label>IP<label class="text-danger">*</label></label>
+                                                                    <div class="mb-2">
+                                                                        <SfMaskedTextBox type="text"
+                                                                         disabled="@_IsEnabled"
+                                                                         class="form-control"
+                                                                         aria-label="IP"
+                                                                         placeholder="IP"
+                                                                         @bind-Value="_Model.IP_Private"
+                                                                         Mask="##0.##0.##0.##0" />
+                                                                        <ValidationMessage For="@(() => _Model.IP_Private)" />
+                                                                    </div>
+                                                                </div>
+
+
+                                                                <div class="col-auto mb-4">
+                                                                    <label>Port<label class="text-danger">*</label></label>
+                                                                    <div class="mb-2">
+                                                                        <SfNumericTextBox type="text"
+                                                                          disabled="@_IsEnabled"
+                                                                          class="form-control"
+                                                                          aria-label="Port"
+                                                                          placeholder="Port"
+                                                                          Min="1"
+                                                                          Decimals="0"
+                                                                          Step="1"
+                                                                          ShowSpinButton="false"
+                                                                          @bind-Value="_Model.Port" />
+                                                                        <ValidationMessage For="@(() => _Model.Port)" />
+                                                                    </div>
+                                                                </div>
+
+
+                                                                <div class="col mb-4">
+                                                                    <label>Host<label class="text-danger">*</label></label>
+                                                                    <div class="mb-2">
+                                                                        <InputText type="text"
+                                                                   disabled="@_IsEnabled"
+                                                                   class="form-control"
+                                                                   aria-label="Host"
+                                                                   placeholder="Host"
+                                                                   @bind-Value="_Model.Host" />
+                                                                        <ValidationMessage For="@(() => _Model.Host)" />
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="card-form-items col-12 p-1 @_ExternalNetwork_IsVisible">
+                                                            <div class="card-header-min">
+                                                                <label><i class="fa-solid fa-globe mr-1"></i>External network</label>
+                                                            </div>
+
+                                                            <div class="row card-body-min">
+                                                                <div class="col-lg-5 col-md-6 col-sm-6 mb-4">
+                                                                    <label>SSID<label class="text-danger">*</label></label>
+                                                                    <div class="mb-2">
+                                                                        <InputText type="text"
+                                                                   disabled="@_IsEnabled"
+                                                                   class="form-control"
+                                                                   aria-label="SSID"
+                                                                   placeholder="SSID"
+                                                                   @bind-Value="_Model.SSID_Ext" />
+                                                                        <ValidationMessage For="@(() => _Model.SSID_Ext)" />
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-lg-5 col-md-6 col-sm-6 mb-4">
+                                                                    <label>Password<label class="text-danger">*</label></label>
+                                                                    <div class="form-control-label mb-2">
+                                                                        @{
+                                                                            if (_ShowPassword_PublicNetwork)
+                                                                            {
+                                                                                <InputText type="text"
+                                                                   disabled="@_IsEnabled"
+                                                                   class="form-control"
+                                                                   aria-label="Password"
+                                                                   placeholder="Password"
+                                                                       @bind-Value="_Model.PASS_Ext" />
+                                                                                @if (_Editing)
+                                                                                {
+                                                                                    <span style="cursor:pointer" @onclick="(()=> { _ShowPassword_PublicNetwork=false; StateHasChanged(); })"><i class="fa-solid fa-eye-slash"></i></span>
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <InputText type="password"
+                                                                   disabled="@_IsEnabled"
+                                                                   class="form-control"
+                                                                   aria-label="Password"
+                                                                   placeholder="Password"
+                                                                       @bind-Value="_Model.PASS_Ext" />
+                                                                                @if (_Editing)
+                                                                                {
+                                                                                    <span style="cursor:pointer" @onclick="(()=> { _ShowPassword_PublicNetwork=true; StateHasChanged();})"><i class="fa-solid fa-eye"></i></span>
+                                                                                }
+                                                                            }
+                                                                        }
+
+                                                                        <ValidationMessage For="@(() => _Model.PASS_Ext)" />
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-lg-2 col-md-6 col-sm-6 mb-4">
+                                                                    <label>Security Type<label class="text-danger">*</label></label>
+                                                                    <div class="mb-2">
+                                                                        @if (_Editing)
+                                                                        {
+                                                                            <SfDropDownList TValue="int?"
+                                                                        TItem="xEditableItem"
+                                                                        PopupHeight="auto"
+                                                                        Placeholder="Select type"
+                                                                        @bind-Value="@_Model.PASS_Ext_SecurityType"
+                                                                        AllowFiltering="true" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                                                        DataSource="@SecurityWIFITypesEnum.ListEditableItem_Types()">
+                                                                                <DropDownListTemplates TItem="xEditableItem">
+                                                                                    <NoRecordsTemplate>
+                                                                                        <span class='norecord'> Not found types</span>
+                                                                                    </NoRecordsTemplate>
+                                                                                </DropDownListTemplates>
+                                                                                <DropDownListFieldSettings Text="Text" Value="Value" />
+                                                                            </SfDropDownList>
+                                                                            <ValidationMessage For="@(() => _Model.PASS_Ext_SecurityType)" />
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <input type="text"
+                                                               disabled="@_IsEnabled"
+                                                               class="form-control"
+                                                               aria-label="Type"
+                                                               placeholder="Type"
+                                                               value="@SecurityWIFITypesEnum.GetType(_Model.PASS_Ext_SecurityType)" />
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="mt-2 col-12 text-center">
+                                                            @if (_Loading)
+                                                            {
+                                                                <_LoadingButton />
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="d-flex-center mb-4">
+
+                                                                    @if (!_Editing)
+                                                                    {
+                                                                        <button @onclick="(()=> Edit())" class="btn btn-rounded btn-rounded-text btn-outline-info" type="button" title="Edit">
+                                                                            <i class="fa-solid fa-pen-to-square mr-1"></i> Edit
+                                                                        </button>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <button @onclick="(()=>CancelEdit())" class="btn btn-rounded btn-outline-default mr-1" type="button" title="Back">
+                                                                            <i class="fa-solid fa-arrow-left"></i>
+                                                                        </button>
+
+                                                                        <button class="btn btn-rounded btn-rounded-text btn-outline-success" type="submit" title="Save">
+                                                                            <i class="fa-solid fa-floppy-disk mr-1"></i> Save
+                                                                        </button>
+                                                                    }
+                                                                </div>
+
+                                                            }
+                                                        </div>
+
+                                                    </EditForm>
+
+                                                </div>
+
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                @* <_FailedToLoad />*@
+
+                                <EditForm Model="@_Model" OnInvalidSubmit="(() => StateHasChanged())" OnValidSubmit="(() => SaveURL())">
+                                    <div class="card-form-items col-12 p-1">
+                                        <div class="card-header-min">
+                                            <label><i class="fa-solid fa-box mr-1"></i>Configuration</label>
+                                        </div>
+
+                                        <div class="row card-body-min">
+
+                                            <div class="col mb-4">
+                                                <label>API<label class="text-danger">*</label></label>
+                                                <div class="mb-2">
+                                                    <InputText class="form-control"
+                                                   disabled="@_IsEnabled"
+                                                   placeholder="ID"
+                                                   aria-label="ID"
+                                                   @bind-Value="_APIURL" />
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-2 col-12 text-center">
+                                        @if (_Loading)
+                                        {
+                                            <_LoadingButton />
+                                        }
+                                        else
+                                        {
+                                            <div class="d-flex-center mb-4">
+
+                                                @if (!_Editing)
+                                                {
+                                                    <button @onclick="(()=> Edit())" class="btn btn-rounded btn-rounded-text btn-outline-info" type="button" title="Edit">
+                                                        <i class="fa-solid fa-pen-to-square mr-1"></i> Edit
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    <button @onclick="(()=>CancelEdit())" class="btn btn-rounded btn-outline-default mr-1" type="button" title="Back">
+                                                        <i class="fa-solid fa-arrow-left"></i>
+                                                    </button>
+
+                                                    <button class="btn btn-rounded btn-rounded-text btn-outline-success" type="submit" title="Save">
+                                                        <i class="fa-solid fa-floppy-disk mr-1"></i> Save
+                                                    </button>
+                                                }
+                                            </div>
+
+                                        }
+                                    </div>
+                                </EditForm>
+
+                            }
+                        }
+                        else
+                        {
+                            <_WithoutPermission />
+                        }
+                    }
+
+                </CardContent>
+
+            </SfCard>
+        </Content>
+    </DialogTemplates>
+
+    <DialogAnimationSettings Effect="@_GlobalConfiguration.AnimationEffect" Duration=@_GlobalConfiguration.AnimationTime />
+    <DialogPositionData X="center" Y="start" />
+</SfDialog>
+
+@code {
+
+    private async Task ResizeAndDisplayImageUsingStreaming(InputFileChangeEventArgs e)
+    {
+        var maxAllowedFiles = 1;
+
+        foreach (var imageFile in e.GetMultipleFiles(maxAllowedFiles))
+        {
+            var resizedImageFile = await imageFile.RequestImageFileAsync(imageFile.ContentType, 1920, 964);
+            var buffer = new byte[resizedImageFile.Size];
+
+            if (imageFile.Size <= 10485760)
+            {
+                await resizedImageFile.OpenReadStream(5000000).ReadAsync(buffer);
+                var imageDataUrl = $"data:{imageFile.ContentType};base64,{Convert.ToBase64String(buffer)}";
+
+                _Model.Map.File_ContentType = imageFile.ContentType;
+                _Model.Map.File_Content = buffer;
+                _Model.Map.File_Name = imageFile.Name;
+                _SRC = imageDataUrl;
+            }
+            else
+            {
+                //_Model.ImagenFrente.SRC_Imagen = "/images/App/default-picture.png";
+                _Toast.ShowWarning("La imagen no puede superar los 10mb.");
+            }
+        }
+    }
+
+
+    #region Variables
+    private bool _Loading { get; set; } = true;
+    private bool _Ready { get; set; } = true;
+
+    private bool _Editing { get; set; } = false;
+    private bool _IsEnabled { get; set; } = true;
+
+    private string _SRC { get; set; } = "";
+
+    private string _Title { get; set; } = "Configuration";
+    public bool PrincipalCard_IsVisible { get; set; } = true;
+
+
+    public bool _ShowPassword_PrivateNetwork { get; set; } = false;
+    public bool _ShowPassword_PublicNetwork { get; set; } = false;
+
+
+    public string _APIURL { get; set; }
+
+
+    public string _Station_IsVisible { get; set; } = "active";
+    public string _Map_IsVisible { get; set; }
+    public string _LocalNetwork_IsVisible { get; set; }
+    public string _ExternalNetwork_IsVisible { get; set; }
+
+
+    private Station_Request _Model { get; set; } = new();
+    private Station_Request _TempEditingModel { get; set; } = new();
+
+    #endregion
+
+
+    #region Mostrar informacion
+
+    protected override async Task OnInitializedAsync()
+    {
+        PrincipalCard_IsVisible = true;
+
+        _GlobalElements.PermissionForSection = await _LocalStorage.GetPermissionForSection(SystemSectionsEnum.Configuration);
+
+        if (!_GlobalElements.PermissionForSection.Read) StateHasChanged();
+        else await LoadInformation();
+    }
+
+    public async Task LoadInformation()
+    {
+        try
+        {
+            _Ready = true;
+            _Loading = true;
+            StateHasChanged();
+
+            _APIURL = await _URLs.GetURLAPI();
+
+            var statusResponse = await HttpClass.GetSet(Http, await _URLs.SearchStation(), _Toast, _GlobalElements);
+            if (statusResponse)
+            {
+                if (_GlobalElements.Station.Map != null && _GlobalElements.Station.Map.File_ContentType != null)
+                    _SRC = $"data:{_GlobalElements.Station.Map.File_ContentType};base64,{Convert.ToBase64String(_GlobalElements.Station.Map.File_Content)}";
+
+                UpdateView(_GlobalElements.Station);
+            }
+            else
+            {
+                _Ready = false;
+            }
+        }
+        catch (Exception e)
+        {
+            _GlobalConfiguration.NuevoLog("The information could not be loaded from station", SystemActionsEnum.LoadInformation, e, SystemErrorCodesEnum.Error);
+        }
+        finally
+        {
+            _Loading = false;
+            StateHasChanged();
+        }
+    }
+
+    public void UpdateView(Station_Request informacion)
+    {
+        try
+        {
+            _Loading = true;
+            StateHasChanged();
+
+            _GlobalElements.Station = informacion;
+            _Model = _GlobalElements.Station;
+
+            _Loading = false;
+            StateHasChanged();
+        }
+        catch (Exception) { }
+    }
+
+    #endregion
+
+
+    private async Task SaveURL()
+    {
+        await _URLs.SetURLAPI(_APIURL);
+
+        CancelEdit();
+    }
+
+    private async Task Save()
+    {
+        try
+        {
+            _Loading = true;
+            StateHasChanged();
+
+            await _URLs.SetURLAPI(_APIURL);
+
+            var response = await HttpClass.PostOnly(Http, await _URLs.Modify_Station(), _Model, _Toast);
+
+            if (response != null)
+            {
+                _Model = response.Station;
+                _GlobalElements.Station = _Model;
+                CancelEdit();
+            }
+        }
+        catch (Exception e)
+        {
+            _GlobalConfiguration.NuevoLog("Could not modify station", SystemActionsEnum.Modify, e, SystemErrorCodesEnum.Error);
+            _Toast.ShowError("Could not modify.");
+        }
+        finally
+        {
+            _Loading = false;
+            StateHasChanged();
+        }
+    }
+
+    private void Edit()
+    {
+        _IsEnabled = false;
+        _Editing = true;
+        _TempEditingModel = _GlobalElements.Station;
+        StateHasChanged();
+    }
+
+    private async Task CancelEdit()
+    {
+        _IsEnabled = true;
+        _Editing = false;
+
+        await LoadInformation();
+
+        StateHasChanged();
+    }
+
+    private void ChangeMenu(int menu)
+    {
+        if (!_Loading)
+        {
+            if (menu == 1)
+            {
+                _Station_IsVisible = "active";
+                _Map_IsVisible = "";
+                _LocalNetwork_IsVisible = "";
+                _ExternalNetwork_IsVisible = "";
+            }
+
+            if (menu == 2)
+            {
+                _Station_IsVisible = "";
+                _Map_IsVisible = "active";
+                _LocalNetwork_IsVisible = "";
+                _ExternalNetwork_IsVisible = "";
+            }
+
+            if (menu == 3)
+            {
+                _Station_IsVisible = "";
+                _Map_IsVisible = "";
+                _LocalNetwork_IsVisible = "active";
+                _ExternalNetwork_IsVisible = "";
+            }
+
+            if (menu == 4)
+            {
+
+                _Station_IsVisible = "";
+                _Map_IsVisible = "";
+                _LocalNetwork_IsVisible = "";
+                _ExternalNetwork_IsVisible = "active";
+            }
+        }
+    }
+}

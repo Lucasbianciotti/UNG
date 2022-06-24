@@ -1,0 +1,200 @@
+﻿@page "/apiconfiguration"
+@inject HttpClient Http
+@inject IURLs_Services _URLs
+@inject ILocalStorage_Services _LocalStorage
+@inject IGlobalElements_Services _GlobalElements
+@inject IGlobalConfiguration_Services _GlobalConfiguration
+@inject NavigationManager _NavigationManager
+@inject IToast_Services _Toast
+@layout EmptyLayout
+
+
+<Title Value="@_Title"></Title>
+
+
+<div class="d-flex-center h-100 p-4" style="padding-top: 6rem !important;">
+
+    <EditForm Model="@_Model" OnInvalidSubmit="(() => StateHasChanged())" OnValidSubmit="(() => SaveURL())">
+        <div class="card-form-items col-12 p-1">
+            <div class="card-header-min">
+                <label><i class="fa-solid fa-box mr-1"></i>Configuration</label>
+            </div>
+
+            <div class="row card-body-min">
+
+                <div class="col mb-4">
+                    <label>API<label class="text-danger">*</label></label>
+                    <div class="mb-2">
+                        <InputText class="form-control"
+                                   disabled="@_IsEnabled"
+                                   placeholder="ID"
+                                   aria-label="ID"
+                                   @bind-Value="_APIURL" />
+                    </div>
+                </div>
+
+                <div class="mt-2 d-flex-center">
+                    @if (_Loading)
+                    {
+                        <_LoadingButton />
+                    }
+                    else
+                    {
+                        <div class="d-flex-center mb-4">
+
+                            @if (!_Editing)
+                            {
+                                @if (_IsOK)
+                                {
+                                    <button @onclick="(()=>RedirecToHome())" class="btn btn-rounded btn-rounded-text btn-outline-info mr-1" type="button">
+                                        <i class="fa-solid fa-arrow-rotate-back mr-1"></i> Home
+                                    </button>
+
+                                    <button @onclick="(()=>Test())" class="btn btn-rounded btn-rounded-text btn-outline-info mr-1" type="button">
+                                        <i class="fa-solid fa-wifi mr-1"></i> Test
+                                    </button>
+                                }
+
+                                <button @onclick="(()=> Edit())" class="btn btn-rounded btn-rounded-text btn-outline-info" type="button" title="Edit">
+                                    <i class="fa-solid fa-pen-to-square mr-1"></i> Edit
+                                </button>
+                            }
+                            else
+                            {
+                                <button @onclick="(()=>CancelEdit())" class="btn btn-rounded btn-outline-default mr-1" type="button" title="Back">
+                                    <i class="fa-solid fa-arrow-left"></i>
+                                </button>
+
+                                <button class="btn btn-rounded btn-rounded-text btn-outline-success" type="submit" title="Save">
+                                    <i class="fa-solid fa-floppy-disk mr-1"></i> Save
+                                </button>
+                            }
+                        </div>
+
+                    }
+                </div>
+
+
+            </div>
+        </div>
+
+    </EditForm>
+</div>
+
+
+@code {
+
+    #region Variables
+    private bool _Loading { get; set; } = true;
+    private bool _Ready { get; set; } = true;
+
+    private bool _Editing { get; set; } = false;
+    private bool _IsEnabled { get; set; } = true;
+
+    private bool _IsOK { get; set; } = false;
+
+    private string _Title { get; set; } = "Configuration";
+
+
+    public string _APIURL { get; set; }
+
+
+    private Station_Request _Model { get; set; } = new();
+    #endregion
+
+
+    #region Mostrar informacion
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadInformation();
+    }
+
+    public async Task LoadInformation()
+    {
+        try
+        {
+            _Ready = false;
+            _Loading = true;
+            StateHasChanged();
+
+            _APIURL = await _URLs.GetURLAPI();
+
+            var post = await Http.GetAsync(await _URLs.Test());
+
+            if (post != null && post.IsSuccessStatusCode)
+            {
+                _Ready = true;
+                _IsOK = true;
+                CancelEdit();
+                _Toast.ShowSuccess("Connected.");
+            }
+        }
+        catch (Exception e)
+        {
+            _Toast.ShowError("Could not connect with server.");
+        }
+        finally
+        {
+            _Loading = false;
+            StateHasChanged();
+        }
+    }
+
+    #endregion
+
+    private async Task SaveURL()
+    {
+        await _URLs.SetURLAPI(_APIURL);
+
+        await LoadInformation();
+    }
+
+
+    private async Task Test()
+    {
+        try
+        {
+            _Ready = false;
+            _Loading = true;
+            StateHasChanged();
+            var post = await Http.GetAsync(await _URLs.Test());
+
+            if (post != null && post.IsSuccessStatusCode)
+            {
+                _Ready = true;
+                _IsOK = true;
+                CancelEdit();
+                _Toast.ShowSuccess("Connected.");
+            }
+        }
+        catch (Exception e)
+        {
+            _Toast.ShowError("Could not connect with server.");
+        }
+        finally
+        {
+            _Loading = false;
+            StateHasChanged();
+        }
+    }
+
+    private void Edit()
+    {
+        _IsEnabled = false;
+        _Editing = true;
+        StateHasChanged();
+    }
+    private void CancelEdit()
+    {
+        _IsEnabled = true;
+        _Editing = false;
+        StateHasChanged();
+    }
+
+
+    public void RedirecToHome()
+    {
+        _NavigationManager.NavigateTo("/");
+    }
+}

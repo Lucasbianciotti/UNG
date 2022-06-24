@@ -1,0 +1,262 @@
+﻿using APIClient.LocalModels.SQLite;
+using Class;
+using Models.Enums;
+using Models.Global;
+using Models.Request;
+using Newtonsoft.Json;
+using System.Security.Claims;
+
+namespace APIClient.LocalClass
+{
+    public static class EquipmentsClass
+    {
+        #region Get
+        //public static LocalResponse_Request CompleteInformation(ClaimsPrincipal _user, long IDstation)
+        //{
+        //    var data = new LocalResponse_Request(ClientsClass.SearchClient(_user), StationsClass.SearchStation(_user), UsersClass.SearchUser(_user))
+        //    {
+        //        ListOfEquipments = new()
+        //    };
+
+        //    data.ListOfEquipments = ListOfEquipments(_user, IDstation);
+
+        //    if (data.ListOfEquipments != null && data.ListOfEquipments.Count != 0)
+        //    {
+        //        //    var nfi = new NumberFormatInfo { NumberDecimalSeparator = ",", NumberGroupSeparator = "." };
+
+        //        //    data.Cantidad = data.ListaDeIngresos.Count.ToString();
+
+        //        //    decimal Cobrado = data.ListaDeIngresos.Where(x => x.IDestado_Ingreso == EstadosDeIngresosEnum.Cobrado).Sum(x => x.Monto);
+        //        //    data.Cobrado_Pagado = Cobrado.ToString("#,##0.00", nfi);
+
+        //        //    decimal ACobrar = data.ListaDeIngresos.Where(x => x.IDestado_Ingreso == EstadosDeIngresosEnum.ACobrar).Sum(x => x.Monto);
+        //        //    data.ACobrar_APagar = ACobrar.ToString("#,##0.00", nfi);
+
+        //        //    decimal total = Cobrado + ACobrar;
+        //        //    data.Total = total.ToString("#,##0.00", nfi);
+        //    }
+
+
+        //    return data;
+        //}
+        //public static LocalResponse_Request PartialInformation(ClaimsPrincipal _user, long IDstation)
+        //{
+
+        //    var data = new LocalResponse_Request(ClientsClass.SearchClient(_user), StationsClass.SearchStation(_user), UsersClass.SearchUser(_user))
+        //    {
+        //        ListOfEquipments = new()
+        //    };
+
+        //    data.ListOfEquipments = ListOfEquipments(_user, IDstation);
+
+        //    return data;
+        //}
+
+        public static List<Equipment_Request> ListOfEquipments(ClaimsPrincipal _user, long IDstation)
+        {
+            using var db = new Local_Context();
+
+            try
+            {
+                var lista = (from Equipment in db.Equipments
+
+                             where Equipment.IDstatus != EquipmentStatusEnum.Deleted
+                             && Equipment.IDstation == IDstation
+
+                             select new Equipment_Request
+                             {
+                                 ID = Equipment.ID,
+                                 IDstatus = Equipment.IDstatus,
+                                 Name = Equipment.Name,
+
+                                 Modify_Date = Equipment.Modify_Date,
+                                 Modify_IDuser = Equipment.Modify_IDuser,
+
+                                 IDstation = Equipment.IDstation,
+                                 MAC = Equipment.MAC,
+
+                                 Type = Equipment.Type,
+
+                             }).OrderByDescending(x => x.Name).ToList();
+
+                #region Filtro
+
+                //if (filterModel.ID != null && filterModel.IDestado_Ingreso.Count != 0)
+                //{
+                //    try
+                //    {
+                //        var temp = lista.Where(y => filterModel.IDestado_Ingreso.Any(z => z == y.IDestado_Ingreso)).ToList();
+                //        lista = temp;
+                //    }
+                //    catch (Exception)
+                //    { }
+                //}
+                #endregion Filtro
+
+                return lista;
+            }
+            catch (Exception e)
+            {
+                Logs_ErrorsClass.NuevoLog(_user, "Could not load list of equipments", SystemActionsEnum.SearchList, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
+
+                throw new Exception("Could not load list of equipments.");
+            }
+        }
+
+        private static Equipment_Request SearchEquipment(ClaimsPrincipal _user, long IDequipment)
+        {
+            using var db = new Local_Context();
+
+            try
+            {
+                var lista = (from Equipment in db.Equipments
+
+                             where Equipment.IDstatus != EquipmentStatusEnum.Deleted
+                             && Equipment.ID == IDequipment
+
+                             select new Equipment_Request
+                             {
+                                 ID = Equipment.ID,
+                                 IDstatus = Equipment.IDstatus,
+                                 Name = Equipment.Name,
+
+                                 Modify_Date = Equipment.Modify_Date,
+                                 Modify_IDuser = Equipment.Modify_IDuser,
+
+                                 IDstation = Equipment.IDstation,
+                                 MAC = Equipment.MAC,
+                                 Type = Equipment.Type,
+                             }).FirstOrDefault();
+
+                return lista;
+            }
+            catch (Exception e)
+            {
+                Logs_ErrorsClass.NuevoLog(_user, "Could not search equipment", SystemActionsEnum.SearchList, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
+
+                throw new Exception("Could not search equipment.");
+            }
+        }
+        #endregion Get
+
+
+        public static GlobalResponse Create(ClaimsPrincipal _user, Equipment_Request model)
+        {
+            using var db = new Local_Context();
+
+            try
+            {
+                var Equipment = new Equipments
+                {
+                    Modify_Date = DateTime.Now,
+                    Modify_IDuser = GlobalClass.GetID_User(_user),
+                    Name = model.Name,
+                    IDstatus = model.IDstatus,
+                    IDstation = StationsClass.SearchIDStation(_user),
+                    Type = model.Type,
+                    MAC = string.IsNullOrEmpty(model.MAC) ? "" : model.MAC,
+                };
+
+
+                db.Equipments.Add(Equipment);
+                db.SaveChanges();
+
+
+                #region Save move
+                Task.Run(async () =>
+                {
+                    await Logs_SystemMovesClass.Create_Equipment(_user, Equipment);
+                });
+                #endregion Guardado de movimientos
+
+
+                return new GlobalResponse(StatusCodes.Status201Created, JsonConvert.SerializeObject(Equipment));
+            }
+            catch (Exception e)
+            {
+                Logs_ErrorsClass.NuevoLog(_user, "Could not create the equipment", SystemActionsEnum.Create, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
+
+                return new GlobalResponse(StatusCodes.Status500InternalServerError, "Could not create. " + e.Message.ToString());
+            }
+        }
+
+        public static GlobalResponse Modify(ClaimsPrincipal _user, Equipment_Request model)
+        {
+            using var db = new Local_Context();
+
+            try
+            {
+                var Equipment = db.Equipments.Find(model.ID);
+                if (Equipment == null)
+                    throw new Exception("Not found equipment");
+
+                #region Modify
+                Equipment.Modify_Date = DateTime.Now;
+                Equipment.Modify_IDuser = GlobalClass.GetID_User(_user);
+                Equipment.Name = model.Name;
+                Equipment.IDstatus = model.IDstatus;
+                Equipment.IDstation = StationsClass.SearchIDStation(_user);
+                Equipment.Type = model.Type;
+                db.Entry(Equipment).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                db.SaveChanges();
+                #endregion Modify
+
+
+                #region Guardado de movimientos
+                Task.Run(async () =>
+                {
+                    await Logs_SystemMovesClass.Modify_Equipment(_user, Equipment);
+                });
+                #endregion Guardado de movimientos
+
+
+                return new GlobalResponse(StatusCodes.Status201Created, JsonConvert.SerializeObject(Equipment));
+            }
+            catch (Exception e)
+            {
+                Logs_ErrorsClass.NuevoLog(_user, "Could not modify equipment", SystemActionsEnum.Modify, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
+
+                return new GlobalResponse(StatusCodes.Status500InternalServerError, "Could not modify. " + e.Message.ToString());
+            }
+        }
+
+        public static GlobalResponse Delete(ClaimsPrincipal _user, DeleteEquipment_Request model)
+        {
+            using var db = new Local_Context();
+
+            try
+            {
+                var Equipment = db.Equipments.Find(model.ID);
+                if (Equipment == null)
+                    throw new Exception("Not found Equipment");
+
+
+                #region Modify Equipment
+                Equipment.Modify_Date = DateTime.Now;
+                Equipment.Modify_IDuser = GlobalClass.GetID_User(_user);
+                Equipment.IDstatus = EquipmentStatusEnum.Deleted;
+                db.Entry(Equipment).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                db.SaveChanges();
+                #endregion Modify Equipment
+
+                #region Guardado de movimientos
+                Task.Run(async () =>
+                {
+                    await Logs_SystemMovesClass.Delete_Equipment(_user, Equipment);
+                });
+                #endregion Guardado de movimientos
+
+
+                return new GlobalResponse(StatusCodes.Status201Created, JsonConvert.SerializeObject(ListOfEquipments(_user, model.IDstation)));
+
+            }
+            catch (Exception e)
+            {
+                Logs_ErrorsClass.NuevoLog(_user, "Could not delete equipment", SystemActionsEnum.Delete, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
+
+                return new GlobalResponse(StatusCodes.Status500InternalServerError, "Could not delete. " + e.Message.ToString());
+            }
+        }
+
+    }
+}
