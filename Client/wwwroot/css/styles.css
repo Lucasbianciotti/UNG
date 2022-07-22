@@ -10,6 +10,10 @@ body {
     background-size: cover;
 }
 
+html, body {
+    height: 100%;
+}
+
 .table-responsive {
     border-radius: 10px;
 }
@@ -572,6 +576,9 @@ svg text {
     min-height: 2.2rem;
 }
 
+.bg-gradient-info {
+    background-image: linear-gradient(310deg, #2152ff 0%, #21d4fd 100%);
+}
 
 /*#region Alertas*/
 
@@ -1385,4 +1392,14 @@ strong.alert-text {
         flex-basis: auto;
         justify-content: flex-end;
     }
+}
+
+
+.leaflet-popup-close-button{
+    display:none;
+}
+
+.leaflet-container {
+    width: 100vh;
+    height: 50vh;
 }

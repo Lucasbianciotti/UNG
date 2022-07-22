@@ -1,4 +1,4 @@
-﻿namespace CommonModels.Request
+﻿namespace CommonCommonModels.Request
 {
     public class ImageFile_Request
     {

@@ -1,4 +1,4 @@
-﻿using Models.Enums;
+﻿using CommonModels.Enums;
 using Syncfusion.Blazor.Popups;
 
 namespace Client.Services

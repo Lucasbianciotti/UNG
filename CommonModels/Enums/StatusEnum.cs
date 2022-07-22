@@ -1,6 +1,6 @@
-using Models.Global;
+using CommonModels.Global;
 
-namespace Models.Enums
+namespace CommonModels.Enums
 {
     public static class DataStatusEnum
     {

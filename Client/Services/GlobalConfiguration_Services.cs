@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
-using Models.Enums;
-using Models.Request;
+using CommonModels.Enums;
+using CommonModels.Request;
 using Syncfusion.Blazor.Popups;
 
 namespace Client.Services
@@ -24,6 +24,8 @@ namespace Client.Services
         {
             OnChange?.Invoke();
         }
+
+
 
 
         public void NuevoLog(string comentario, SystemActionsEnum accion, Exception exception, SystemErrorCodesEnum codigo)

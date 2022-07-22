@@ -281,7 +281,7 @@
                                                                     </div>
                                                                 </div>
 
-                                                                <div class="col-lg-5 col-md-6 col-sm-6 mb-4">
+                                                                <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
                                                                     <label>Password<label class="text-danger">*</label></label>
                                                                     <div class="form-control-label mb-2">
                                                                         @{
@@ -318,7 +318,7 @@
                                                                     </div>
                                                                 </div>
 
-                                                                <div class="col-lg-2 col-md-6 col-sm-6 mb-4">
+                                                                <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
                                                                     <label>Security Type<label class="text-danger">*</label></label>
                                                                     <div class="mb-2">
                                                                         @if (_Editing)
@@ -354,13 +354,21 @@
                                                                 <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
                                                                     <label>IP<label class="text-danger">*</label></label>
                                                                     <div class="mb-2">
-                                                                        <SfMaskedTextBox type="text"
-                                                                         disabled="@_IsEnabled"
-                                                                         class="form-control"
-                                                                         aria-label="IP"
-                                                                         placeholder="IP"
-                                                                         @bind-Value="_Model.IP_Private"
-                                                                         Mask="##0.##0.##0.##0" />
+                                                                        @*                                                                       <SfMaskedTextBox type="text"
+                                                        disabled="@_IsEnabled"
+                                                        class="form-control"
+                                                        aria-label="IP"
+                                                        placeholder="IP"
+                                                        @bind-Value="_Model.IP_Private"
+                                                        Mask="##0.##0.##0.##0" />
+                                                        <ValidationMessage For="@(() => _Model.IP_Private)" />*@
+
+                                                                        <InputText type="text"
+                                                                   disabled="@_IsEnabled"
+                                                                   class="form-control"
+                                                                   aria-label="IP"
+                                                                   placeholder="IP"
+                                                                   @bind-Value="_Model.IP_Private" />
                                                                         <ValidationMessage For="@(() => _Model.IP_Private)" />
                                                                     </div>
                                                                 </div>
@@ -419,7 +427,7 @@
                                                                     </div>
                                                                 </div>
 
-                                                                <div class="col-lg-5 col-md-6 col-sm-6 mb-4">
+                                                                <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
                                                                     <label>Password<label class="text-danger">*</label></label>
                                                                     <div class="form-control-label mb-2">
                                                                         @{
@@ -455,7 +463,7 @@
                                                                     </div>
                                                                 </div>
 
-                                                                <div class="col-lg-2 col-md-6 col-sm-6 mb-4">
+                                                                <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
                                                                     <label>Security Type<label class="text-danger">*</label></label>
                                                                     <div class="mb-2">
                                                                         @if (_Editing)
@@ -617,8 +625,8 @@
             var resizedImageFile = await imageFile.RequestImageFileAsync(imageFile.ContentType, 1920, 964);
             var buffer = new byte[resizedImageFile.Size];
 
-            if (imageFile.Size <= 10485760)
-            {
+            //if (imageFile.Size <= 10485760)
+            //{
                 await resizedImageFile.OpenReadStream(5000000).ReadAsync(buffer);
                 var imageDataUrl = $"data:{imageFile.ContentType};base64,{Convert.ToBase64String(buffer)}";
 
@@ -626,12 +634,12 @@
                 _Model.Map.File_Content = buffer;
                 _Model.Map.File_Name = imageFile.Name;
                 _SRC = imageDataUrl;
-            }
-            else
-            {
-                //_Model.ImagenFrente.SRC_Imagen = "/images/App/default-picture.png";
-                _Toast.ShowWarning("La imagen no puede superar los 10mb.");
-            }
+            //}
+            //else
+            //{
+            //    //_Model.ImagenFrente.SRC_Imagen = "/images/App/default-picture.png";
+            //    _Toast.ShowWarning("La imagen no puede superar los 10mb.");
+            //}
         }
     }
 
@@ -742,33 +750,51 @@
 
     private async Task Save()
     {
-        try
-        {
-            _Loading = true;
-            StateHasChanged();
-
-            await _URLs.SetURLAPI(_APIURL);
-
-            var response = await HttpClass.PostOnly(Http, await _URLs.Modify_Station(), _Model, _Toast);
-
-            if (response != null)
+        //if (ValidateModel())
+        //{
+            try
             {
-                _Model = response.Station;
-                _GlobalElements.Station = _Model;
-                CancelEdit();
+                _Loading = true;
+                StateHasChanged();
+
+                await _URLs.SetURLAPI(_APIURL);
+
+                var response = await HttpClass.PostOnly(Http, await _URLs.Modify_Station(), _Model, _Toast);
+
+                if (response != null)
+                {
+                    _Model = response.Station;
+                    _GlobalElements.Station = _Model;
+                    CancelEdit();
+                }
             }
-        }
-        catch (Exception e)
-        {
-            _GlobalConfiguration.NuevoLog("Could not modify station", SystemActionsEnum.Modify, e, SystemErrorCodesEnum.Error);
-            _Toast.ShowError("Could not modify.");
-        }
-        finally
-        {
-            _Loading = false;
-            StateHasChanged();
-        }
+            catch (Exception e)
+            {
+                _GlobalConfiguration.NuevoLog("Could not modify station", SystemActionsEnum.Modify, e, SystemErrorCodesEnum.Error);
+                _Toast.ShowError("Could not modify.");
+            }
+            finally
+            {
+                _Loading = false;
+                StateHasChanged();
+            }
+        //}
     }
+
+    //private bool ValidateModel()
+    //{
+    //    if (string.IsNullOrEmpty(_Model.IP_Private))
+    //        return false;
+
+    //    var _ip = _Model.IP_Private.Split('.');
+
+    //    if (_ip.Length != 4)
+    //        return false;
+
+    //    return true;
+    //}
+
+
 
     private void Edit()
     {

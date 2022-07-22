@@ -56,7 +56,7 @@ namespace Client.Services
 
         #region Data
         public async Task<string> Data() { return await GetURLAPI() + "api/Data/index"; }
-        public async Task<string> Delete_Data() { return await GetURLAPI() + "api/Data/Delete"; }
+        public async Task<string> Delete_AllData() { return await GetURLAPI() + "api/Data/DeleteAllData"; }
         public async Task<string> Recreate_Tables() { return await GetURLAPI() + "api/Data/RecreateTables"; }
         #endregion
 
@@ -78,6 +78,10 @@ namespace Client.Services
         public async Task<string> Login() { return await GetURLAPI() + "api/Users/Login"; }
         public async Task<string> Login_RestorePassword() { return await GetURLAPI() + "api/Users/Login_RestorePassword"; }
         public async Task<string> Login_UpdatePassword() { return await GetURLAPI() + "api/Users/Login_UpdatePassword"; }
+        #endregion
+
+        #region Logs
+        public async Task<string> Logs() { return await GetURLAPI() + "api/Logs/index"; }
         #endregion
 
         #region Errores

@@ -1,7 +1,7 @@
-﻿using CommonModels.Request;
+﻿using CommonCommonModels.Request;
 using System.ComponentModel.DataAnnotations;
 
-namespace Models.Request
+namespace CommonModels.Request
 {
 
     public class InformationOfStation_Request
@@ -37,7 +37,7 @@ namespace Models.Request
 
             ShowQR = true;
 
-            IP_Private = "192.168.120.001";
+            IP_Private = "192.168.30.10";
 
 
             Map = new Map_Request();
@@ -97,7 +97,6 @@ namespace Models.Request
         [Range(1, 9999, ErrorMessage = "The port is invalid.")]
         public int Port { get; set; }
 
-        [StringLength(maximumLength: 12, ErrorMessage = "The IP has invalid length.", MinimumLength = 12)]
         [Required(ErrorMessage = "The IP is required.")]
         public string IP_Private { get; set; }
 

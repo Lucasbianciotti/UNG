@@ -29,7 +29,7 @@
 
         #region Data
         public Task<string> Data();
-        public Task<string> Delete_Data();
+        public Task<string> Delete_AllData();
         public Task<string> Recreate_Tables();
         #endregion
 
@@ -51,6 +51,10 @@
         public Task<string> Login();
         public Task<string> Login_RestorePassword();
         public Task<string> Login_UpdatePassword();
+        #endregion
+
+        #region Logs
+        public Task<string> Logs();
         #endregion
 
         #region Errores

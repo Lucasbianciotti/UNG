@@ -1,25 +1,62 @@
-using APIClient.LocalClass;
+﻿using APIClient.LocalClass;
 using APIClient.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using CommonModels.Enums;
 using CommonModels.Request;
 
 namespace APIClient.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class DisparosController : ControllerBase
+    public class LogsController : ControllerBase
     {
         private readonly IHubContext<SignalRService> hubContext;
 
-        public DisparosController(IHubContext<SignalRService> surveyHub)
+        public LogsController(IHubContext<SignalRService> surveyHub)
         {
             this.hubContext = surveyHub;
         }
 
 
-        [HttpPost("Disparo")]
-        public async Task<IActionResult> Disparo([FromBody] Disparo_Request model)
+
+        [HttpPost("Index")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public IActionResult Index([FromBody] Filter_Request Filters)
+        {
+            #region Authorized
+            if (User == null)
+                return Unauthorized();
+            if (!UsersClass.UserHasPermission(User, SystemSectionsEnum.Data, SystemActionsEnum.Read))
+                return Forbid();
+            #endregion Authorized
+
+            try
+            {
+                string URL;
+
+                if (HttpContext.Request.IsHttps)
+                    URL = "https://" + HttpContext.Request.Host.Value + "/";
+                else
+                    URL = "http://" + HttpContext.Request.Host.Value + "/";
+
+
+                return Ok(LogsClass.CompleteInformation(User, Filters, URL));
+            }
+            catch (Exception ex)
+            {
+                var result = StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return result;
+            }
+        }
+
+
+
+
+        [HttpPost("Create")]
+        public async Task<IActionResult> Create([FromBody] Disparo_Request model)
         {
             try
             {
@@ -46,7 +83,7 @@ namespace APIClient.Controllers
                 var _Respuesta = DataClass.Create(User, data);
                 if (_Respuesta.StatusCode == StatusCodes.Status200OK || _Respuesta.StatusCode == StatusCodes.Status201Created)
                 {
-                    await hubContext.Clients.All.SendAsync("DataReceived", _Respuesta.Mensaje);
+                    await hubContext.Clients.All.SendAsync("LogReceived", _Respuesta.Mensaje);
 
                     return Ok();
 
@@ -59,11 +96,6 @@ namespace APIClient.Controllers
             }
         }
 
-
-
-
-
-
-
     }
+
 }

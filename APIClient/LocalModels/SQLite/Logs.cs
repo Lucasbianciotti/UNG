@@ -3,18 +3,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace APIClient.LocalModels.SQLite
 {
-    [Table("Logs_SystemMoves")]
-    public partial class Logs_SystemMoves
+    [Table("Logs")]
+    public partial class Logs
     {
         [Key]
         public long ID { get; set; }
 
         public long IDuser { get; set; }
 
-
-        [Required]
-        [StringLength(50)]
-        public string IDstatus { get; set; }
 
 
         [Column(TypeName = "datetime")]
@@ -24,6 +20,9 @@ namespace APIClient.LocalModels.SQLite
         [Required]
         [StringLength(500)]
         public string Detail { get; set; }
+
+        [Required]
+        public string Type { get; set; }
 
     }
 

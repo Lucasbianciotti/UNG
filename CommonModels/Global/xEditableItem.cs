@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Models.Global
+namespace CommonModels.Global
 {
     public class xEditableItem
     {

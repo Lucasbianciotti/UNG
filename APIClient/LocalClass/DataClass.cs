@@ -1,7 +1,7 @@
 ﻿using APIClient.LocalModels.SQLite;
-using Models.Enums;
-using Models.Global;
-using Models.Request;
+using CommonModels.Enums;
+using CommonModels.Global;
+using CommonModels.Request;
 using Newtonsoft.Json;
 using System.Security.Claims;
 
@@ -20,7 +20,7 @@ namespace APIClient.LocalClass
             return data;
         }
 
-        private static List<Data_Request> ListOfData(ClaimsPrincipal _user, FilterData_Request filterModel)
+        public static List<Data_Request> ListOfData(ClaimsPrincipal _user, FilterData_Request filterModel)
         {
             using var db = new Local_Context();
 
@@ -108,7 +108,7 @@ namespace APIClient.LocalClass
             }
             catch (Exception e)
             {
-                Logs_ErrorsClass.NuevoLog(_user, "Could not load list of data", SystemActionsEnum.SearchList, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
+                LogsClass.NewError(_user, "Could not load list of data", SystemActionsEnum.SearchList, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
 
                 throw new Exception("Could not load list of data.");
             }
@@ -164,11 +164,19 @@ namespace APIClient.LocalClass
 
                 model.Ubication = data.Lat + "\" " + data.Lon + "\"";
 
+
+                #region Save move
+                Task.Run(async () =>
+                {
+                    await LogsClass.Create_Data(_user, data);
+                });
+                #endregion Guardado de movimientos
+
                 return new GlobalResponse(StatusCodes.Status201Created, JsonConvert.SerializeObject(model));
             }
             catch (Exception e)
             {
-                Logs_ErrorsClass.NuevoLog(_user, "Could not create the data", SystemActionsEnum.Create, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
+                LogsClass.NewError(_user, "Could not create the data", SystemActionsEnum.Create, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
 
                 return new GlobalResponse(StatusCodes.Status500InternalServerError, "Could not create. " + e.Message.ToString() + " DBCreated: " + db.Database.EnsureCreated());
             }
@@ -188,7 +196,7 @@ namespace APIClient.LocalClass
             }
             catch (Exception e)
             {
-                Logs_ErrorsClass.NuevoLog(_user, "Could not delete data", SystemActionsEnum.Delete, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
+                LogsClass.NewError(_user, "Could not delete data", SystemActionsEnum.Delete, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
 
                 return new GlobalResponse(StatusCodes.Status500InternalServerError, "Could not delete. " + e.Message.ToString() + " DBCreated: " + db.Database.EnsureCreated());
             }
@@ -205,7 +213,7 @@ namespace APIClient.LocalClass
             }
             catch (Exception e)
             {
-                Logs_ErrorsClass.NuevoLog(_user, "Could not recreate tables", SystemActionsEnum.Delete, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
+                LogsClass.NewError(_user, "Could not recreate tables", SystemActionsEnum.Delete, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
 
                 return new GlobalResponse(StatusCodes.Status500InternalServerError, "Could not recreate tables. " + e.Message.ToString());
             }

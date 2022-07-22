@@ -1,9 +1,9 @@
 using APIClient.LocalModels.SQLite;
 using APIClient.Services;
 using Class;
-using Models.Enums;
-using Models.Global;
-using Models.Request;
+using CommonModels.Enums;
+using CommonModels.Global;
+using CommonModels.Request;
 using Newtonsoft.Json;
 using System.Security.Claims;
 
@@ -49,7 +49,7 @@ namespace APIClient.LocalClass
             }
             catch (Exception e)
             {
-                Logs_ErrorsClass.NuevoLog(_user,
+                LogsClass.NewError(_user,
                         new New_Error_Request()
                         {
                             Comentario = "Could not load list of users",
@@ -126,14 +126,14 @@ namespace APIClient.LocalClass
 
                 Task.Run(async () =>
                 {
-                    await Logs_SystemMovesClass.ChangePassword_User(_user, userAdmin);
+                    await LogsClass.ChangePassword_User(_user, userAdmin);
                 });
 
                 return new GlobalResponse(StatusCodes.Status201Created);
             }
             catch (Exception e)
             {
-                Logs_ErrorsClass.NuevoLog(_user, new New_Error_Request()
+                LogsClass.NewError(_user, new New_Error_Request()
                 {
                     Comentario = "Could not change password user",
                     Excepcion = e,
@@ -197,14 +197,14 @@ namespace APIClient.LocalClass
                 Task.Run(async () =>
                 {
                     //await EmailClass.SendPasswordForNewUser(_user, model, model.Password);
-                    await Logs_SystemMovesClass.Create_User(_user, user);
+                    await LogsClass.Create_User(_user, user);
                 });
 
                 return new GlobalResponse(StatusCodes.Status201Created);
             }
             catch (Exception e)
             {
-                Logs_ErrorsClass.NuevoLog(_user, new New_Error_Request()
+                LogsClass.NewError(_user, new New_Error_Request()
                 {
                     Comentario = "Could not create user",
                     Excepcion = e,
@@ -261,14 +261,14 @@ namespace APIClient.LocalClass
 
                 Task.Run(async () =>
                 {
-                    await Logs_SystemMovesClass.Modify_User(_user, user);
+                    await LogsClass.Modify_User(_user, user);
                 });
 
                 return new GlobalResponse(StatusCodes.Status201Created);
             }
             catch (Exception e)
             {
-                Logs_ErrorsClass.NuevoLog(_user, new New_Error_Request()
+                LogsClass.NewError(_user, new New_Error_Request()
                 {
                     Comentario = "Could not modify user",
                     Excepcion = e,
@@ -306,7 +306,7 @@ namespace APIClient.LocalClass
                 #region Guardado de movimientos
                 Task.Run(async () =>
                 {
-                    await Logs_SystemMovesClass.Delete_User(_user, user);
+                    await LogsClass.Delete_User(_user, user);
                 });
                 #endregion Guardado de movimientos
 
@@ -315,7 +315,7 @@ namespace APIClient.LocalClass
             }
             catch (Exception e)
             {
-                Logs_ErrorsClass.NuevoLog(_user, new New_Error_Request()
+                LogsClass.NewError(_user, new New_Error_Request()
                 {
                     Comentario = "Could not delete user",
                     Excepcion = e,
@@ -341,7 +341,7 @@ namespace APIClient.LocalClass
             }
             catch (Exception e)
             {
-                Logs_ErrorsClass.NuevoLog(_user, new New_Error_Request()
+                LogsClass.NewError(_user, new New_Error_Request()
                 {
                     Comentario = "Could not change date",
                     Excepcion = e,

@@ -1,6 +1,6 @@
 ﻿using Blazored.LocalStorage;
-using Models.Enums;
-using Models.Request;
+using CommonModels.Enums;
+using CommonModels.Request;
 using Newtonsoft.Json;
 using Class;
 

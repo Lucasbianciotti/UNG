@@ -3,8 +3,8 @@ using APIClient.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Models.Enums;
-using Models.Request;
+using CommonModels.Enums;
+using CommonModels.Request;
 
 namespace APIClient.Controllers
 {
@@ -21,9 +21,9 @@ namespace APIClient.Controllers
 
 
 
-        [HttpGet("Index")]
+        [HttpPost("Index")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public IActionResult Index()
+        public IActionResult Index([FromBody] FilterDashboard_Request model)
         {
             #region Authorized
             if (User == null)
@@ -41,7 +41,7 @@ namespace APIClient.Controllers
                 else
                     URL = "http://" + HttpContext.Request.Host.Value + "/";
 
-                return Ok(StationsClass.CompleteInformation(User, URL));
+                return Ok(StationsClass.CompleteInformation(User, URL, model));
             }
             catch (Exception ex)
             {

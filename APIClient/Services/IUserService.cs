@@ -1,5 +1,5 @@
 using APIClient.LocalModels.SQLite;
-using Models.Request;
+using CommonModels.Request;
 
 namespace APIClient.Services
 {

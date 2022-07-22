@@ -1,4 +1,4 @@
-namespace Models.Request
+namespace CommonModels.Request
 {
     public static class LapsosParaFiltro_Dashboard
     {
@@ -19,8 +19,10 @@ namespace Models.Request
         public FilterDashboard_Request()
         {
             Lapso = LapsosParaFiltro_Dashboard.Month;
-            Date_Start = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-            Date_End = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month));
+
+            Date_Start = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0);
+
+            Date_End = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 59);
         }
     }
 

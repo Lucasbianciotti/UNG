@@ -90,10 +90,10 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-8 mx-auto text-center mb-4 mt-2">
-                <a href="javascript:;" target="_blank" class="text-secondary mr-2">
-                    <span class="text-lg fab fa-twitter" aria-hidden="true"></span>
+                <a href="https://www.facebook.com/ungsystems" target="_blank" class="text-secondary mr-2">
+                    <span class="text-lg fab fa-facebook" aria-hidden="true"></span>
                 </a>
-                <a href="javascript:;" target="_blank" class="text-secondary mr-2">
+                <a href="https://www.instagram.com/ungsystems/" target="_blank" class="text-secondary mr-2">
                     <span class="text-lg fab fa-instagram" aria-hidden="true"></span>
                 </a>
                 @if (_ShowConfiguration)
@@ -107,7 +107,7 @@
         <div class="row">
             <div class="col mx-auto text-center mt-1">
                 <p class="mb-0 text-secondary">
-                    Copyright ©@DateTime.Now.Year <a @onclick="(()=>RedirecToRecreateTables())">UNG system.</a>
+                    Copyright ©@DateTime.Now.Year UNG system.
                 </p>
             </div>
         </div>
@@ -155,12 +155,12 @@
 
     public void RedirecToConfiguration()
     {
-        _NavigationManager.NavigateTo("/apiconfiguration");
+        _NavigationManager.NavigateTo("/apiconfig");
     }
 
-    public void RedirecToRecreateTables()
+    public void RedirecToRemove()
     {
-        _NavigationManager.NavigateTo("/recreatetables");
+        _NavigationManager.NavigateTo("/remove");
     }
 
     public void ToSignup()

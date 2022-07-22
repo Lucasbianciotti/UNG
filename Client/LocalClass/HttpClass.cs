@@ -1,7 +1,7 @@
 ﻿using Client.Services;
 using Models;
-using Models.Enums;
-using Models.Request;
+using CommonModels.Enums;
+using CommonModels.Request;
 using Newtonsoft.Json;
 using System.Net;
 using System.Net.Http.Json;
@@ -65,6 +65,32 @@ namespace Client.LocalClass
 
 
         #region Get
+
+        public static async Task<bool> GetSet_Dashboard(HttpClient Http, string URL, IToast_Services _Toast, IGlobalElements_Services _GlobalElements, FilterDashboard_Request filtros)
+        {
+            try
+            {
+                LocalResponse_Request response = null;
+                if (filtros != null)
+                    response = await PostOnly(Http, URL, filtros, _Toast);
+                else
+                    response = await GetOnly(Http, URL, _Toast);
+
+
+                if (response == null)
+                    return false;
+
+                _GlobalElements.SetearInformacion(response);
+                return true;
+            }
+            catch (Exception e)
+            {
+                HttpClass.NuevoLog(Http, "Could not deserialize.", SystemActionsEnum.GET, SystemTypesEnum.WEB, e, SystemErrorCodesEnum.Error);
+                //_Toast.ShowError("The information could not be loaded.");
+            }
+
+            return false;
+        }
 
         public static async Task<bool> GetSet(HttpClient Http, string URL, IToast_Services _Toast, IGlobalElements_Services _GlobalElements, Filter_Request filtros = null)
         {

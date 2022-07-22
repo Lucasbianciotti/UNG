@@ -5,8 +5,8 @@ using Class;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Models.Enums;
-using Models.Request;
+using CommonModels.Enums;
+using CommonModels.Request;
 using Newtonsoft.Json;
 
 namespace APIClient.Controllers

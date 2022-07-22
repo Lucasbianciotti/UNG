@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Models.Request
+namespace CommonModels.Request
 {
     public class Client_Request
     {

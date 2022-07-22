@@ -2,10 +2,8 @@
 using Class;
 using CommonClass;
 using CommonModels.Request;
-using Models.Enums;
-using Models.Global;
-using Models.Request;
-using Newtonsoft.Json;
+using CommonModels.Enums;
+using CommonModels.Global;
 using System.Security.Claims;
 
 namespace APIClient.LocalClass
@@ -17,7 +15,24 @@ namespace APIClient.LocalClass
         {
             var data = new LocalResponse_Request(ClientsClass.SearchClient(_user), StationsClass.SearchStation(_user, IP), UsersClass.SearchUser(_user))
             {
+                ListOfData = DataClass.ListOfData(_user, new FilterData_Request()
+                {
+                    Date_Start = DateTime.Now - TimeSpan.FromDays(7),
+                    Date_End = DateTime.Now
+                })
+            };
 
+            return data;
+        }
+        public static LocalResponse_Request CompleteInformation(ClaimsPrincipal _user, string IP, FilterDashboard_Request _filters)
+        {
+            var data = new LocalResponse_Request(ClientsClass.SearchClient(_user), StationsClass.SearchStation(_user, IP), UsersClass.SearchUser(_user))
+            {
+                ListOfData = DataClass.ListOfData(_user, new FilterData_Request()
+                {
+                    Date_Start = _filters.Date_Start.Value,
+                    Date_End = _filters.Date_End.Value
+                })
             };
 
             return data;
@@ -116,7 +131,7 @@ namespace APIClient.LocalClass
             }
             catch (Exception e)
             {
-                Logs_ErrorsClass.NuevoLog(_user, "Could not load information's stations", SystemActionsEnum.SearchList, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
+                LogsClass.NewError(_user, "Could not load information's stations", SystemActionsEnum.SearchList, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
 
                 throw new Exception("Could not load information's stations.");
             }
@@ -135,7 +150,7 @@ namespace APIClient.LocalClass
             }
             catch (Exception e)
             {
-                Logs_ErrorsClass.NuevoLog(_user, "Could not load information's stations", SystemActionsEnum.SearchList, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
+                LogsClass.NewError(_user, "Could not load information's stations", SystemActionsEnum.SearchList, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
 
                 throw new Exception("Could not load information's stations.");
             }
@@ -158,7 +173,7 @@ namespace APIClient.LocalClass
                     Name = model.Name,
                     Host = model.Host,
                     IDstatus = model.IDstatus,
-                    IP_Private = ConvertToIPClass.AddDots(model.IP_Private),
+                    IP_Private = model.IP_Private, //ConvertToIPClass.AddDots(model.IP_Private),
                     Port = model.Port,
                     SSID_Int = model.SSID_Int,
                     PASS_Int = model.PASS_Int,
@@ -166,7 +181,7 @@ namespace APIClient.LocalClass
                     Location = model.Location,
                     Location_GPS_Lat = model.Location_GPS_Lat,
                     Location_GPS_Lon = model.Location_GPS_Lon,
-                    IP_Public = ConvertToIPClass.AddDots(model.IP_Public),
+                    IP_Public = model.IP_Public, //ConvertToIPClass.AddDots(model.IP_Public),
                     SSID_Ext = model.SSID_Ext,
                     PASS_Ext = model.PASS_Ext,
                     PASS_Ext_SecurityType = model.PASS_Ext_SecurityType,
@@ -209,7 +224,7 @@ namespace APIClient.LocalClass
                 #region Save move
                 Task.Run(async () =>
                 {
-                    await Logs_SystemMovesClass.Create_Station(_user, station);
+                    await LogsClass.Create_Station(_user, station);
                 });
                 #endregion Guardado de movimientos
 
@@ -218,7 +233,7 @@ namespace APIClient.LocalClass
             }
             catch (Exception e)
             {
-                Logs_ErrorsClass.NuevoLog(_user, "Could not create the station", SystemActionsEnum.Create, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
+                LogsClass.NewError(_user, "Could not create the station", SystemActionsEnum.Create, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
 
                 return new GlobalResponse(StatusCodes.Status500InternalServerError, "Could not create. " + e.Message.ToString());
             }
@@ -254,10 +269,10 @@ namespace APIClient.LocalClass
 
                 station.IDstatus = model.IDstatus;
                 station.IDclient = model.IDclient;
-                station.IP_Private = ConvertToIPClass.AddDots(model.IP_Private);
+                station.IP_Private = model.IP_Private;// ConvertToIPClass.AddDots(model.IP_Private);
                 station.Port = model.Port;
                 station.Host = model.Host;
-                station.IP_Public = ConvertToIPClass.AddDots(model.IP_Public);
+                station.IP_Public = model.IP_Public;// ConvertToIPClass.AddDots(model.IP_Public);
                 station.Location = model.Location;
                 station.Location_GPS_Lat = model.Location_GPS_Lat;
                 station.Location_GPS_Lon = model.Location_GPS_Lon;
@@ -298,7 +313,7 @@ namespace APIClient.LocalClass
                 #region Guardado de movimientos
                 Task.Run(async () =>
                 {
-                    await Logs_SystemMovesClass.Modify_Station(_user, station);
+                    await LogsClass.Modify_Station(_user, station);
                 });
                 #endregion Guardado de movimientos
 
@@ -306,7 +321,7 @@ namespace APIClient.LocalClass
             }
             catch (Exception e)
             {
-                Logs_ErrorsClass.NuevoLog(_user, "Could not modify station", SystemActionsEnum.Modify, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
+                LogsClass.NewError(_user, "Could not modify station", SystemActionsEnum.Modify, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
 
                 return new GlobalResponse(StatusCodes.Status500InternalServerError, "Could not modify. " + e.Message.ToString());
             }
@@ -338,7 +353,7 @@ namespace APIClient.LocalClass
         //        #region Guardado de movimientos
         //        Task.Run(async () =>
         //        {
-        //            await Logs_SystemMovesClass.Delete_Station(_user, station);
+        //            await LogsClass.Delete_Station(_user, station);
         //        });
         //        #endregion Guardado de movimientos
 
@@ -349,7 +364,7 @@ namespace APIClient.LocalClass
         //    {
         //        transaction.Rollback();
 
-        //        Logs_ErrorsClass.NuevoLog(_user, "Could not delete station", SystemActionsEnum.Delete, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
+        //        LogsClass.NewError(_user, "Could not delete station", SystemActionsEnum.Delete, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
 
         //        return new GlobalResponse(StatusCodes.Status500InternalServerError, "Could not delete. " + e.Message.ToString());
         //    }

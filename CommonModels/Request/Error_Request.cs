@@ -1,6 +1,6 @@
-﻿using Models.Enums;
+﻿using CommonModels.Enums;
 
-namespace Models.Request
+namespace CommonModels.Request
 {
     public class New_Error_Request
     {

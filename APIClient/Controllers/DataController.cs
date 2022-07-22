@@ -3,8 +3,8 @@ using APIClient.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Models.Enums;
-using Models.Request;
+using CommonModels.Enums;
+using CommonModels.Request;
 
 namespace APIClient.Controllers
 {
@@ -52,17 +52,10 @@ namespace APIClient.Controllers
         }
 
 
-        [HttpGet("Delete")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public IActionResult Delete()
+        [HttpGet("DeleteAllData")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public IActionResult DeleteAllData()
         {
-            #region Authorized
-            if (User == null)
-                return Unauthorized();
-            if (!UsersClass.UserHasPermission(User, SystemSectionsEnum.Data, SystemActionsEnum.Delete))
-                return Forbid();
-            #endregion Authorized
-
             try
             {
                 return Ok(DataClass.Delete(User));

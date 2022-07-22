@@ -1,8 +1,7 @@
 ﻿using APIClient.LocalClass;
 using CommonModels.Request;
 using Microsoft.EntityFrameworkCore;
-using Models.Enums;
-using Models.Request;
+using CommonModels.Enums;
 using Newtonsoft.Json;
 using System.Security.Claims;
 
@@ -179,8 +178,9 @@ namespace APIClient.LocalModels.SQLite
         public virtual DbSet<DataSended> DataSended { get; set; }
         public virtual DbSet<Equipments> Equipments { get; set; }
         public virtual DbSet<Maps> Maps { get; set; }
-        public virtual DbSet<Logs_Errors> Logs_Errors { get; set; }
-        public virtual DbSet<Logs_SystemMoves> Logs_SystemMoves { get; set; }
+        public virtual DbSet<Logs> Logs { get; set; }
+        //public virtual DbSet<Logs_Errors> Logs_Errors { get; set; }
+        //public virtual DbSet<Logs_SystemMoves> Logs_SystemMoves { get; set; }
         public virtual DbSet<Stations> Stations { get; set; }
         public virtual DbSet<Users> Users { get; set; }
 
@@ -231,15 +231,20 @@ namespace APIClient.LocalModels.SQLite
 
             });
 
-            modelBuilder.Entity<Logs_Errors>(entity =>
+            modelBuilder.Entity<Logs>(entity =>
             {
 
             });
 
-            modelBuilder.Entity<Logs_SystemMoves>(entity =>
-            {
+            //modelBuilder.Entity<Logs_Errors>(entity =>
+            //{
 
-            });
+            //});
+
+            //modelBuilder.Entity<Logs_SystemMoves>(entity =>
+            //{
+
+            //});
 
             modelBuilder.Entity<Stations>(entity =>
             {

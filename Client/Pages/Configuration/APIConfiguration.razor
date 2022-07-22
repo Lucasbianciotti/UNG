@@ -1,4 +1,4 @@
-﻿@page "/apiconfiguration"
+﻿@page "/apiconfig"
 @inject HttpClient Http
 @inject IURLs_Services _URLs
 @inject ILocalStorage_Services _LocalStorage
@@ -12,15 +12,15 @@
 <Title Value="@_Title"></Title>
 
 
-<div class="d-flex-center h-100 p-4" style="padding-top: 6rem !important;">
+<div class="h-100 p-4 d-flex-center" style="padding-top: 6rem !important; flex-direction: column;">
 
-    <EditForm Model="@_Model" OnInvalidSubmit="(() => StateHasChanged())" OnValidSubmit="(() => SaveURL())">
-        <div class="card-form-items col-12 p-1">
-            <div class="card-header-min">
-                <label><i class="fa-solid fa-box mr-1"></i>Configuration</label>
-            </div>
+    <div class="card-form-items col-lg-6 col-md-8 col-sm-12 p-1">
+        <div class="card-header-min">
+            <label><i class="fa-solid fa-box mr-1"></i>Configuration</label>
+        </div>
 
-            <div class="row card-body-min">
+        <div class="row card-body-min">
+            <EditForm Model="@_Model" OnInvalidSubmit="(() => StateHasChanged())" OnValidSubmit="(() => SaveURL())">
 
                 <div class="col mb-4">
                     <label>API<label class="text-danger">*</label></label>
@@ -74,12 +74,140 @@
                     }
                 </div>
 
+            </EditForm>
+
+        </div>
+
+    </div>
+
+
+    @if (_IsOK)
+    {
+        <div class="card-form-items col-lg-6 col-md-8 col-sm-12 p-1">
+            <div class="card-header-min">
+                <label><i class="fa-solid fa-box mr-1"></i>Database's actions</label>
+            </div>
+
+            <div class="row card-body-min">
+
+                @if (_Loading)
+                {
+                    <div class="d-flex-center">
+                        <_LoadingButton />
+                    </div>
+                }
+                else
+                {
+                    <div class="row d-flex-center">
+                        <button @onclick="OpenModal_RecreateTables" class="btn btn-rounded btn-rounded-text btn-outline-danger mr-1" type="button" title="Recreate tables">
+                            <i class="fa-solid fa-database mr-1"></i> Recreate tables
+                        </button>
+
+                        <button @onclick="OpenModal_RemoveData" class="btn btn-rounded btn-rounded-text btn-outline-danger" type="button" title="Remove data">
+                            <i class="fa-solid fa-eraser mr-1"></i> Remove data
+                        </button>
+
+                        <div class="col-8">
+                            <p>@_Text</p>
+                        </div>
+                    </div>
+                }
 
             </div>
         </div>
-
-    </EditForm>
+    }
 </div>
+
+
+
+<div class="modal @ModalClass_RecreateTables" tabindex="-1" role="dialog" style="display:@ModalDisplay_RecreateTables">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="icon-table text-center">
+                    <h6>
+                        <i class="fa-solid fa-database"></i>
+                        Recreate tables
+                    </h6>
+                </div>
+
+            </div>
+            <div class="modal-body">
+
+                <div class="d-flex-center py-3">
+                    <p>Do you want recreate tables and remove all data?</p>
+                </div>
+
+
+                @if (_Loading)
+                {
+                    <div class="d-flex-center">
+                        <_LoadingButton />
+                    </div>
+                }
+                else
+                {
+                    <div class="row d-flex-center">
+                        <button @onclick="CloseModal_RecreateTables" class="btn btn-rounded btn-outline-default mr-1" type="button" title="Close">
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </button>
+
+                        <button @onclick="_RecreateTables" class="btn btn-rounded btn-rounded-text btn-outline-danger" type="button" title="Recreate">
+                            <i class="fa-solid fa-database mr-1"></i> Recreate
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal @ModalClass_RemoveData" tabindex="-1" role="dialog" style="display:@ModalDisplay_RemoveData">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="icon-table text-center">
+                    <h6>
+                        <i class="fa-solid fa-eraser"></i>
+                        Remove data
+                    </h6>
+                </div>
+
+            </div>
+            <div class="modal-body">
+
+                <div class="d-flex-center py-3">
+                    <p>Do you want remove data?</p>
+                </div>
+
+                @if (_Loading)
+                {
+                    <div class="d-flex-center">
+                        <_LoadingButton />
+                    </div>
+                }
+                else
+                {
+                    <div class="row d-flex-center">
+                        <button @onclick="CloseModal_RemoveData" class="btn btn-rounded btn-outline-default mr-1" type="button" title="Close">
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </button>
+
+                        <button @onclick="_RemoveData" class="btn btn-rounded btn-rounded-text btn-outline-danger" type="button" title="Remove">
+                            <i class="fa-solid fa-eraser mr-1"></i> Remove
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@if (ShowBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}
 
 
 @code {
@@ -100,6 +228,9 @@
 
 
     private Station_Request _Model { get; set; } = new();
+
+    private string _Text { get; set; }
+
     #endregion
 
 
@@ -128,6 +259,10 @@
                 _IsOK = true;
                 CancelEdit();
                 _Toast.ShowSuccess("Connected.");
+            }
+            else
+            {
+                _IsOK = false;
             }
         }
         catch (Exception e)
@@ -167,6 +302,10 @@
                 CancelEdit();
                 _Toast.ShowSuccess("Connected.");
             }
+            else
+            {
+                _IsOK = false;
+            }
         }
         catch (Exception e)
         {
@@ -197,4 +336,110 @@
     {
         _NavigationManager.NavigateTo("/");
     }
+
+
+    protected async Task _RemoveData()
+    {
+        try
+        {
+            _Loading = true;
+            StateHasChanged();
+
+            var response = await HttpClass.GetOnly(Http, await _URLs.Delete_AllData(), _Toast);
+            _Text = "Data removed";
+
+            CloseModal_RemoveData();
+        }
+        catch (Exception e)
+        {
+            _GlobalConfiguration.NuevoLog("Could not remove data", SystemActionsEnum.Delete, e, SystemErrorCodesEnum.Error);
+            _Toast.ShowError("Could not remove.");
+        }
+        finally
+        {
+            _Loading = false;
+            StateHasChanged();
+        }
+    }
+
+
+    protected async Task _RecreateTables()
+    {
+        try
+        {
+            _Loading = true;
+            StateHasChanged();
+
+            var response = await HttpClass.GetOnly(Http, await _URLs.Recreate_Tables(), _Toast);
+            _Text = "Tables recreated";
+
+            CloseModal_RecreateTables();
+        }
+        catch (Exception e)
+        {
+            _GlobalConfiguration.NuevoLog("Could not recreate tables", SystemActionsEnum.Delete, e, SystemErrorCodesEnum.Error);
+            _Toast.ShowError("Could not remove.");
+        }
+        finally
+        {
+            _Loading = false;
+            StateHasChanged();
+        }
+    }
+
+
+    #region Abrir Cerrar Modal
+    private bool ShowBackdrop = false;
+
+
+    private bool _Modal_IsVisible_RecreateTables { get; set; } = false;
+
+    public void OpenModal_RecreateTables()
+    {
+        ModalDisplay_RecreateTables = "block;";
+        ModalClass_RecreateTables = "Show scale-in-center";
+        ShowBackdrop = true;
+        _Modal_IsVisible_RecreateTables = true;
+        StateHasChanged();
+    }
+
+    private string ModalDisplay_RecreateTables = "none;";
+    private string ModalClass_RecreateTables = "";
+
+    public void CloseModal_RecreateTables()
+    {
+        ModalClass_RecreateTables = "slit-out-vertical";
+        StateHasChanged();
+        ShowBackdrop = false;
+        ModalDisplay_RecreateTables = "none";
+        StateHasChanged();
+    }
+    #endregion
+
+
+    #region Abrir Cerrar Modal
+    private bool _Modal_IsVisible_RemoveData { get; set; } = false;
+
+    public void OpenModal_RemoveData()
+    {
+        ModalDisplay_RemoveData = "block;";
+        ModalClass_RemoveData = "Show scale-in-center";
+        ShowBackdrop = true;
+        _Modal_IsVisible_RemoveData = true;
+        StateHasChanged();
+    }
+
+    private string ModalDisplay_RemoveData = "none;";
+    private string ModalClass_RemoveData = "";
+
+    public void CloseModal_RemoveData()
+    {
+        ModalClass_RemoveData = "slit-out-vertical";
+        StateHasChanged();
+        ShowBackdrop = false;
+        ModalDisplay_RemoveData = "none";
+        StateHasChanged();
+    }
+    #endregion
+
 }

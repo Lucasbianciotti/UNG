@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Models.Request
+namespace CommonModels.Request
 {
     public class Data_Request
     {
@@ -80,8 +80,9 @@ namespace Models.Request
         [Required(ErrorMessage = "The data is required.")]
         public double lon { get; set; }
 
+
         [Required(ErrorMessage = "The data is required.")]
-        public int alt { get; set; }
+        public decimal alt { get; set; }
     }
 
 }

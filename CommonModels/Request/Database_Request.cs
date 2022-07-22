@@ -1,4 +1,4 @@
-﻿namespace Models.Request
+﻿namespace CommonModels.Request
 {
     public class Database_Request
     {

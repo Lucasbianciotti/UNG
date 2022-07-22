@@ -1,8 +1,8 @@
 ﻿using APIClient.LocalModels.SQLite;
 using Class;
-using Models.Enums;
-using Models.Global;
-using Models.Request;
+using CommonModels.Enums;
+using CommonModels.Global;
+using CommonModels.Request;
 using Newtonsoft.Json;
 using System.Security.Claims;
 
@@ -10,6 +10,7 @@ namespace APIClient.LocalClass
 {
     public static class EquipmentsClass
     {
+
         #region Get
         //public static LocalResponse_Request CompleteInformation(ClaimsPrincipal _user, long IDstation)
         //{
@@ -97,7 +98,7 @@ namespace APIClient.LocalClass
             }
             catch (Exception e)
             {
-                Logs_ErrorsClass.NuevoLog(_user, "Could not load list of equipments", SystemActionsEnum.SearchList, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
+                LogsClass.NewError(_user, "Could not load list of equipments", SystemActionsEnum.SearchList, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
 
                 throw new Exception("Could not load list of equipments.");
             }
@@ -132,7 +133,7 @@ namespace APIClient.LocalClass
             }
             catch (Exception e)
             {
-                Logs_ErrorsClass.NuevoLog(_user, "Could not search equipment", SystemActionsEnum.SearchList, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
+                LogsClass.NewError(_user, "Could not search equipment", SystemActionsEnum.SearchList, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
 
                 throw new Exception("Could not search equipment.");
             }
@@ -165,7 +166,7 @@ namespace APIClient.LocalClass
                 #region Save move
                 Task.Run(async () =>
                 {
-                    await Logs_SystemMovesClass.Create_Equipment(_user, Equipment);
+                    await LogsClass.Create_Equipment(_user, Equipment);
                 });
                 #endregion Guardado de movimientos
 
@@ -174,7 +175,7 @@ namespace APIClient.LocalClass
             }
             catch (Exception e)
             {
-                Logs_ErrorsClass.NuevoLog(_user, "Could not create the equipment", SystemActionsEnum.Create, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
+                LogsClass.NewError(_user, "Could not create the equipment", SystemActionsEnum.Create, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
 
                 return new GlobalResponse(StatusCodes.Status500InternalServerError, "Could not create. " + e.Message.ToString());
             }
@@ -205,7 +206,7 @@ namespace APIClient.LocalClass
                 #region Guardado de movimientos
                 Task.Run(async () =>
                 {
-                    await Logs_SystemMovesClass.Modify_Equipment(_user, Equipment);
+                    await LogsClass.Modify_Equipment(_user, Equipment);
                 });
                 #endregion Guardado de movimientos
 
@@ -214,7 +215,7 @@ namespace APIClient.LocalClass
             }
             catch (Exception e)
             {
-                Logs_ErrorsClass.NuevoLog(_user, "Could not modify equipment", SystemActionsEnum.Modify, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
+                LogsClass.NewError(_user, "Could not modify equipment", SystemActionsEnum.Modify, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
 
                 return new GlobalResponse(StatusCodes.Status500InternalServerError, "Could not modify. " + e.Message.ToString());
             }
@@ -242,7 +243,7 @@ namespace APIClient.LocalClass
                 #region Guardado de movimientos
                 Task.Run(async () =>
                 {
-                    await Logs_SystemMovesClass.Delete_Equipment(_user, Equipment);
+                    await LogsClass.Delete_Equipment(_user, Equipment);
                 });
                 #endregion Guardado de movimientos
 
@@ -252,7 +253,7 @@ namespace APIClient.LocalClass
             }
             catch (Exception e)
             {
-                Logs_ErrorsClass.NuevoLog(_user, "Could not delete equipment", SystemActionsEnum.Delete, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
+                LogsClass.NewError(_user, "Could not delete equipment", SystemActionsEnum.Delete, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
 
                 return new GlobalResponse(StatusCodes.Status500InternalServerError, "Could not delete. " + e.Message.ToString());
             }

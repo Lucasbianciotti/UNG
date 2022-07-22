@@ -1,4 +1,4 @@
-﻿namespace Models.Request
+﻿namespace CommonModels.Request
 {
     //public class GlobalResponse_Request
     //{
@@ -37,7 +37,7 @@
         public List<Data_Request> ListOfData { get; set; }
         public List<Equipment_Request> ListOfEquipments { get; set; }
         public List<User_Request> ListOfUsers { get; set; }
-        public List<SystemMove_Request> ListOfSystemMoves { get; set; }
+        public List<Log_Request> ListOfMovements { get; set; }
 
 
         public Client_Request Client { get; set; }

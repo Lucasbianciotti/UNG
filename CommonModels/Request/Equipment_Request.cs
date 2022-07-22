@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Models.Request
+namespace CommonModels.Request
 {
     public class Equipment_Request
     {
@@ -30,7 +30,7 @@ namespace Models.Request
 
 
         [Required(ErrorMessage = "The type is required.")]
-        [Range(1, 100, ErrorMessage = "The type is required.")]
+        [Range(0, 100, ErrorMessage = "The type is required.")]
         public int Type { get; set; }
 
 

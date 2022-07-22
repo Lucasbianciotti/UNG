@@ -1,4 +1,4 @@
-using Models.Request;
+using CommonModels.Request;
 
 namespace Client.Services
 {
@@ -18,6 +18,7 @@ namespace Client.Services
             Station = new();
             User = new();
             ListOfData = new();
+            ListOfMovements = new();
         }
 
 
@@ -44,6 +45,9 @@ namespace Client.Services
             if (temp.ListOfData != null)
                 ListOfData = temp.ListOfData;
 
+            if (temp.ListOfMovements != null)
+                ListOfMovements = temp.ListOfMovements;
+
             //ActualizarVista();
         }
 
@@ -55,6 +59,7 @@ namespace Client.Services
         public Client_Request Client { get; set; }
         public Station_Request Station { get; set; }
         public User_Request User { get; set; }
+        public List<Log_Request> ListOfMovements { get; set; }
         #endregion Listas
 
 

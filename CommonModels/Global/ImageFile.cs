@@ -1,4 +1,4 @@
-﻿namespace Models.Global
+﻿namespace CommonModels.Global
 {
     public class ImageFile
     {

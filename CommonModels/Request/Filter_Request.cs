@@ -1,4 +1,4 @@
-namespace Models.Request
+namespace CommonModels.Request
 {
     public class FilterData_Request
     {
@@ -14,13 +14,9 @@ namespace Models.Request
             IDequipment = new List<long>();
             Sended = null;
 
-            Date_Start = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
-            Date_Start -= TimeSpan.FromDays(7);
-            Date_Start = new DateTime(Date_Start.Year, Date_Start.Month, Date_Start.Day, 0, 0, 0);
+            Date_Start = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0);
 
-            Date_End = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);            
-            Date_End = new DateTime(Date_End.Year, Date_End.Month, Date_End.Day, 23, 59, 59);
-
+            Date_End = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 59);
         }
     }
 

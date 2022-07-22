@@ -2,9 +2,9 @@
 
 namespace CommonModels.Request
 {
-    public class SystemMove_Request
+    public class Log_Request
     {
-        public SystemMove_Request()
+        public Log_Request()
         {
             Filters = new Filter_Request();
         }
@@ -15,7 +15,9 @@ namespace CommonModels.Request
         [Key]
         public long ID { get; set; }
 
-        public DateTime Date { get; set; }
+        public DateTime Datetime { get; set; }
+
+        public string Type { get; set; }
 
         public long IDuser { get; set; }
         public string User_Name { get; set; }

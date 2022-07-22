@@ -1,4 +1,4 @@
-﻿using Models.Request;
+﻿using CommonModels.Request;
 
 namespace Client.Services
 {
@@ -14,6 +14,8 @@ namespace Client.Services
 
 
         public List<Data_Request> ListOfData { get; set; }
+
+        public List<Log_Request> ListOfMovements { get; set; }
 
         public Permissions_Request PermissionForSection { get; set; }
     }

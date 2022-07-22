@@ -1,6 +1,6 @@
-﻿using Models.Global;
+﻿using CommonModels.Global;
 
-namespace Models.Enums
+namespace CommonModels.Enums
 {
     public enum ValidImagesEnum
     {
@@ -8,6 +8,7 @@ namespace Models.Enums
         jpg,
         jpeg
     }
+
     public class EmailTypesEnum
     {
         public static string Welcome { get { return "Welcome"; } }
@@ -70,6 +71,65 @@ namespace Models.Enums
                     return "WAP";
                 case 3:
                     return "WAP2";
+                default: break;
+            }
+            return "";
+        }
+    }
+
+    public class FilterDashboardTimeEnum
+    {
+        public static string Today { get { return "1"; } }
+        public static string LastWeekend { get { return "2"; } }
+        public static string LastMonth { get { return "3"; } }
+
+        public static readonly List<string> Types = new()
+        {
+            "Today",
+            "Last Weekend",
+            "Last Month"
+        };
+
+        public static List<xEditableItem> ListEditableItem_Types()
+        {
+            List<xEditableItem> items = new();
+
+            foreach (var i in Types)
+            {
+                var editable = new xEditableItem
+                {
+                    Text = i
+                };
+
+                switch (i)
+                {
+                    case "Today":
+                        editable.Value = 1; break;
+                    case "Last Weekend":
+                        editable.Value = 2; break;
+                    case "Last Month":
+                        editable.Value = 3; break;
+                    default:
+                        break;
+                }
+                items.Add(editable);
+            }
+
+            return items;
+        }
+
+
+        public static string GetType(int? type = 0)
+        {
+
+            switch (type)
+            {
+                case 1:
+                    return "Today";
+                case 2:
+                    return "Last Weekend";
+                case 3:
+                    return "Last Month";
                 default: break;
             }
             return "";

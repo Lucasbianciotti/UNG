@@ -28,14 +28,14 @@
         </div>
     }
 
-    <div class="d-flex-center h-100 p-4" style="padding-top: 6rem !important;">
+    <div class="d-flex-center h-100 p-4" style="padding-top: 2rem !important;">
 
         <div class="row">
 
 
             @*<_Loading />*@
 
-            <div class="col-6 mb-4">
+            <div class="col-6 mb-2">
                 @{
                     string classVolt = string.Empty;
                     if (_GlobalElements.Station.Station_Voltage <= _GlobalElements.Station.Station_MinVoltage)
@@ -80,7 +80,7 @@
 
                     @if (_GlobalElements.Station.Station_Voltage > _GlobalElements.Station.Station_MinVoltage)
                     {
-                        <div class="icon icon-shape bg-gradient-info shadow text-center border-radius-md" title="Station's voltage is correct.">
+                        <div class="icon icon-shape bg-gradient-info shadow text-center border-radius-md" title="Station's voltage is correct." style="background-image: linear-gradient(310deg, #2152ff 0%, #21d4fd 100%);">
                             <i class="fa-solid fa-charging-station text-lg opacity-10" aria-hidden="true"></i>
                         </div>
                     }
@@ -93,7 +93,7 @@
                 </div>
             </div>
 
-            <div class="col-6 mb-4">
+            <div class="col-6 mb-2">
                 <div class="card transparent-card">
                     <div class="text">
                         <p class="text-sm mb-1 text-capitalize font-weight-bold">Drone OnHome</p>
@@ -115,20 +115,20 @@
 
                     @if (_GlobalElements.Station.Drone_Charging)
                     {
-                        <div class="icon icon-shape bg-gradient-info shadow text-center border-radius-md" title="Charging drone">
+                        <div class="icon icon-shape bg-gradient-info shadow text-center border-radius-md" title="Charging drone" style="background-image: linear-gradient(310deg, #2152ff 0%, #21d4fd 100%);">
                             <_SVG_Drone />
                         </div>
                     }
                     else
                     {
-                        <div class="icon icon-shape bg-gradient-info shadow text-center border-radius-md" title="Not present">
+                        <div class="icon icon-shape bg-gradient-info shadow text-center border-radius-md" title="Not present" style="background-image: linear-gradient(310deg, #2152ff 0%, #21d4fd 100%);">
                             <_SVG_Drone />
                         </div>
                     }
                 </div>
             </div>
 
-            <div class="col-6 mb-4">
+            <div class="col-6 mb-2">
                 <div class="card transparent-card">
                     <div class="text">
                         <p class="text-sm mb-1 text-capitalize font-weight-bold">Equipments</p>
@@ -137,7 +137,7 @@
                             <span class="text-sm font-weight-bolder" title="Total equipments: 3">3</span>
                         </h4>
                     </div>
-                    <div class="icon icon-shape bg-gradient-info shadow text-center border-radius-md" title="Total equipments: @_GlobalElements.Station.CountEquipments">
+                    <div class="icon icon-shape bg-gradient-info shadow text-center border-radius-md" title="Total equipments: @_GlobalElements.Station.CountEquipments" style="background-image: linear-gradient(310deg, #2152ff 0%, #21d4fd 100%);">
                         <i class="fa-solid fa-satellite-dish text-lg opacity-10" aria-hidden="true"></i>
                     </div>
                 </div>
@@ -159,7 +159,7 @@
             </div>
             *@
 
-            <div class="col-6 mb-4">
+            <div class="col-6 mb-2">
                 <div class="card transparent-card">
                     <div class="text">
                         <p class="text-sm mb-1 text-capitalize font-weight-bold">Remote Server</p>
@@ -178,7 +178,7 @@
                     </div>
                     @if (_GlobalElements.Station.InternetConnected)
                     {
-                        <div class="icon icon-shape bg-gradient-info shadow text-center border-radius-md" title="Internet connection is okey.">
+                        <div class="icon icon-shape bg-gradient-info shadow text-center border-radius-md" title="Internet connection is okey." style="background-image: linear-gradient(310deg, #2152ff 0%, #21d4fd 100%);">
                             <i class="fa-solid fa-wifi text-lg opacity-10" aria-hidden="true"></i>
                         </div>
                     }
@@ -190,6 +190,7 @@
                     }
                 </div>
             </div>
+
         </div>
 
     </div>

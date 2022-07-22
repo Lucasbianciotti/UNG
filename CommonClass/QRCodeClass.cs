@@ -1,5 +1,5 @@
 ﻿using CommonClass;
-using Models.Request;
+using CommonModels.Request;
 using QRCoder;
 
 namespace Class
@@ -10,17 +10,12 @@ namespace Class
         {
             try
             {
-                station.IP_Private = ConvertToIPClass.ConvertToIP(station.IP_Private);
+                //station.IP_Private = ConvertToIPClass.ConvertToIP(station.IP_Private);
 
-                model.QRcode = "UNG_CONFIG={\"wifi\":{\"red\":\"" + station.SSID_Int +
-                "\",\"password\":\"" + station.PASS_Int +
-                "\",\"security\":" + station.PASS_Int_SecurityType +
-                "},\"server\":{\"ip\":\"" + station.IP_Private +
-                "\",\"host\":\"" + station.Host +
-                "\",\"port\":" + station.Port +
-                ",\"token\":\"\"}" +
-                ",\"engine\":{\"initCommands\":[\"dssdd\"]}," +
-                "\"droneID\":" + model.ID +
+                model.QRcode = "UNG_CONFIG={\"wifi\":{\"red\":\"" + station.SSID_Int + "\",\"password\":\"" + station.PASS_Int + "\",\"security\":" + station.PASS_Int_SecurityType + "}" +
+                ",\"server\":{\"ip\":\"" + station.IP_Private + "\",\"host\":\"" + station.Host + "\",\"port\":" + station.Port + ",\"token\":\"\"}" +
+                ",\"engine\":{\"initCommands\":[]}" +
+                ",\"droneID\":" + model.ID +
                 ",\"tocken\":\"tocken\"}";
 
                 model.QRcodeSRC = await ConvertCodeQRToSRC(model.QRcode);

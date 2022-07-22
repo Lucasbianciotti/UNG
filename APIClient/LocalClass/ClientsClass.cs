@@ -1,7 +1,7 @@
 ﻿using APIClient.LocalModels.SQLite;
-using Models.Enums;
-using Models.Global;
-using Models.Request;
+using CommonModels.Enums;
+using CommonModels.Global;
+using CommonModels.Request;
 using System.Security.Claims;
 
 namespace APIClient.LocalClass
@@ -31,7 +31,7 @@ namespace APIClient.LocalClass
             }
             catch (Exception e)
             {
-                Logs_ErrorsClass.NuevoLog(_user, "Could not load information's client", SystemActionsEnum.SearchList, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
+                LogsClass.NewError(_user, "Could not load information's client", SystemActionsEnum.SearchList, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
 
                 throw new Exception("Could not load information's client.");
             }
@@ -63,7 +63,7 @@ namespace APIClient.LocalClass
                 #region Save move
                 Task.Run(async () =>
                 {
-                    await Logs_SystemMovesClass.Create_Client(_user, client);
+                    await LogsClass.Create_Client(_user, client);
                 });
                 #endregion Guardado de movimientos
 
@@ -73,7 +73,7 @@ namespace APIClient.LocalClass
             {
                 transaction.Rollback();
 
-                Logs_ErrorsClass.NuevoLog(_user, "Could not create the client", SystemActionsEnum.Create, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
+                LogsClass.NewError(_user, "Could not create the client", SystemActionsEnum.Create, SystemTypesEnum.API, e, SystemErrorCodesEnum.Error);
 
                 return new GlobalResponse(StatusCodes.Status500InternalServerError, "Could not create. " + e.Message.ToString());
             }

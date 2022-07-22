@@ -9,6 +9,10 @@
 
   <ItemGroup>
     <Compile Remove="LocalClass\FilesClass.cs" />
+    <Compile Remove="LocalClass\Logs_ErrorsClass.cs" />
+    <Compile Remove="LocalClass\Logs_SystemMovesClass.cs" />
+    <Compile Remove="LocalModels\SQLite\Logs_Errors.cs" />
+    <Compile Remove="LocalModels\SQLite\Logs_SystemMoves.cs" />
   </ItemGroup>
 
   <ItemGroup>
